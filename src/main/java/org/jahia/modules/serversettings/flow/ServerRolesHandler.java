@@ -81,10 +81,9 @@ public class ServerRolesHandler implements Serializable {
             for (String[] strings : entry.getValue()) {
                 String role = strings[2];
 
-                if (!m.containsKey(role)) {
-                    m.put(role, new ArrayList<Principal>());
+                if (m.containsKey(role)) {
+                    m.get(role).add(p);
                 }
-                m.get(role).add(p);
             }
         }
 
@@ -96,6 +95,10 @@ public class ServerRolesHandler implements Serializable {
     }
 
     public void grantRole(String[] principals, MessageContext messageContext) throws Exception {
+        if (principals.length == 0) {
+            return;
+        }
+
         final JCRSessionWrapper session = JCRSessionFactory.getInstance().getCurrentUserSession();
         for (String principal : principals) {
             session.getNode("/").grantRoles(principal, Collections.singleton(role));
@@ -104,6 +107,10 @@ public class ServerRolesHandler implements Serializable {
     }
 
     public void revokeRole(String[] principals, MessageContext messageContext) throws Exception {
+        if (principals.length == 0) {
+            return;
+        }
+
         final JCRSessionWrapper session = JCRSessionFactory.getInstance().getCurrentUserSession();
 
         Map<String,String> roles = new HashMap<String, String>();

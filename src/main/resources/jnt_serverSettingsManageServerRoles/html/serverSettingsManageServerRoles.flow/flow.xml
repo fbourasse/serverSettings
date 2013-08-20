@@ -7,6 +7,10 @@
 
     <var name="flowHandler" class="org.jahia.modules.serversettings.flow.ServerRolesHandler"/>
 
+    <on-start>
+        <set name="flowScope.serverSettingsProperties" value="serverSettingsProperties" type="java.util.Map" />
+    </on-start>
+
     <view-state id="view">
         <on-render>
             <evaluate expression="flowHandler.serverRoles" result="requestScope.serverRoles"/>
