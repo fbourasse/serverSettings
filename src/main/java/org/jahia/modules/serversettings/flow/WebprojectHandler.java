@@ -88,7 +88,6 @@ import org.jahia.services.SpringContextSingleton;
 import org.jahia.services.cache.CacheHelper;
 import org.jahia.services.content.*;
 import org.jahia.services.content.decorator.JCRSiteNode;
-import org.jahia.services.content.decorator.JCRUserNode;
 import org.jahia.services.importexport.ImportExportBaseService;
 import org.jahia.services.importexport.NoCloseZipInputStream;
 import org.jahia.services.importexport.validation.ValidationResults;
@@ -142,7 +141,7 @@ public class WebprojectHandler implements Serializable {
 
     static Logger logger = LoggerFactory.getLogger(WebprojectHandler.class);
     private static final HashSet<String> NON_SITE_IMPORTS = new HashSet<String>(Arrays.asList("serverPermissions.xml",
-            "users.xml", "users.zip", JahiaSitesService.SYSTEM_SITE_KEY + ".zip", "references.zip", "roles.zip", "mounts.zip"));
+            "users.xml", "users.zip", JahiaSitesService.SYSTEM_SITE_KEY + ".zip", "references.zip", "roles.zip"));
     private static final Map<String, Integer> RANK;
 
     private static final long serialVersionUID = -6643519526225787438L;
@@ -156,7 +155,6 @@ public class WebprojectHandler implements Serializable {
         RANK.put("serverPermissions.xml", 20);
         RANK.put("shared.zip", 30);
         RANK.put(JahiaSitesService.SYSTEM_SITE_KEY + ".zip", 40);
-        RANK.put("mounts.zip", 150);
     }
 
     @Autowired
@@ -246,10 +244,9 @@ public class WebprojectHandler implements Serializable {
 
                         if (bean.isCreateAdmin()) {
                             UserProperties admin = bean.getAdminProperties();
-                            JCRUserNode adminSiteUser = userManagerService.createUser(admin.getUsername(), admin.getPassword(),
-                                    admin.getUserProperties(), session);
-                            groupManagerService.getAdministratorGroup(site.getSiteKey(), session).addMember(adminSiteUser);
-                            session.save();
+                            JahiaUser adminSiteUser = userManagerService.createUser(admin.getUsername(), admin.getPassword(),
+                                    admin.getUserProperties());
+                            groupManagerService.getAdministratorGroup(site.getSiteKey()).addMember(adminSiteUser);
                         }
                     } catch (JahiaException e) {
                         logger.error(e.getMessage(), e);
@@ -712,8 +709,6 @@ public class WebprojectHandler implements Serializable {
             if (infos.isSelected() && infos.getImportFileName().equals("users.xml")) {
                 try {
                     importExportBaseService.importUsers(file);
-                } catch (RepositoryException e) {
-                    logger.error(e.getMessage(), e);
                 } catch (IOException e) {
                     logger.error(e.getMessage(), e);
                 } finally {

@@ -9,4 +9,3 @@
 <fmt:message key="serverSettings.manageModules.mandatoryDependency" var="i18nMandatoryDependency"/>
 <c:set var="i18nMandatoryDependency" value="${fn:escapeXml(i18nMandatoryDependency)}"/>
 <fmt:message key="serverSettings.manageModules.downloadSources" var="i18nDownloadSources"/>
-<fmt:message key="serverSettings.manageModules.duplicateModule" var="i18nDuplicateModule"/>

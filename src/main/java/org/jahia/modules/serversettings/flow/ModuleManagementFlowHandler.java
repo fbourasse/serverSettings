@@ -142,9 +142,6 @@ public class ModuleManagementFlowHandler implements Serializable {
     @Autowired
     private transient TemplatePackageRegistry templatePackageRegistry;
 
-    @Autowired
-    private transient SettingsBean settingsBean;
-
     private String moduleName;
 
     public boolean isInModule(RenderContext renderContext) {
@@ -287,7 +284,7 @@ public class ModuleManagementFlowHandler implements Serializable {
             Set<ModuleVersion> allVersions = templateManagerService.getTemplatePackageRegistry().getAvailableVersionsForModule(bundle.getSymbolicName());
             JahiaTemplatesPackage currentVersion = templateManagerService.getTemplatePackageRegistry().lookupById(bundle.getSymbolicName());
             if (allVersions.size() == 1 ||
-                    ((settingsBean.isDevelopmentMode() && currentVersion != null && BundleUtils.getModule(bundle).getVersion().compareTo(currentVersion.getVersion()) > 0))) {
+                    ((SettingsBean.getInstance().isDevelopmentMode() && currentVersion != null && BundleUtils.getModule(bundle).getVersion().compareTo(currentVersion.getVersion()) > 0))) {
                 bundle.start();
                 context.addMessage(new MessageBuilder().source("moduleFile")
                         .code("serverSettings.manageModules.install.uploadedAndStarted")
@@ -501,8 +498,10 @@ public class ModuleManagementFlowHandler implements Serializable {
         context.getRequestScope().put("sitesTemplates", templateSiteDep);
         context.getRequestScope().put("sitesTransitive", transitiveSiteDep);
 
-        populateModuleVersionStateInfo(context, directSiteDep, templateSiteDep, transitiveSiteDep);
-        populateModulesWithNodetypesInfo(context);
+        if (!((RenderContext) context.getExternalContext().getRequestMap().get("renderContext"))
+                .getEditModeConfigName().startsWith("studio")) {
+            populateModuleVersionStateInfo(context, directSiteDep, templateSiteDep, transitiveSiteDep);
+        }
     }
 
     /**
@@ -571,17 +570,6 @@ public class ModuleManagementFlowHandler implements Serializable {
         }
         context.getRequestScope().put("moduleStates", states);
         context.getRequestScope().put("errors", errors);
-    }
-
-    private void populateModulesWithNodetypesInfo(RequestContext context) {
-        Set<String> modulesWithNodetypes = new HashSet<String>();
-        NodeTypeRegistry nodeTypeRegistry = NodeTypeRegistry.getInstance();
-        for (String moduleId : getAllModuleVersions().keySet()) {
-            if (nodeTypeRegistry.getNodeTypes(moduleId).hasNext()) {
-                modulesWithNodetypes.add(moduleId);
-            }
-        }
-        context.getRequestScope().put("modulesWithNodetypes", modulesWithNodetypes);
     }
 
     private ModuleVersionState getModuleVersionState(RequestContext context, ModuleVersion moduleVersion, JahiaTemplatesPackage pkg,
@@ -781,14 +769,5 @@ public class ModuleManagementFlowHandler implements Serializable {
             requestContext.getExternalContext().getSessionMap().remove("adminModuleTableUUID");
             requestContext.getExternalContext().getSessionMap().remove("forgeModuleTableUUID");
         }
-    }
-
-    public String[] getModuleNodetypes(String moduleId) {
-        ArrayList<String> typeNames = new ArrayList<String>();
-        NodeTypeRegistry.JahiaNodeTypeIterator it = NodeTypeRegistry.getInstance().getNodeTypes(moduleId);
-        while (it.hasNext()) {
-            typeNames.add(it.nextNodeType().getName());
-        }
-        return typeNames.toArray(new String[typeNames.size()]);
     }
 }

@@ -104,23 +104,23 @@
     <table class="table table-striped table-bordered table-hover">
         <thead>
         <tr>
-            <th style="width:17%">
+            <th style="width:${isStudio ? '20' : '17'}%">
                 <fmt:message key="serverSettings.manageModules.moduleId"/>
             </th>
-            <th style="width:17%">
+            <th style="width:${isStudio ? '20' : '17'}%">
                 <fmt:message key="serverSettings.manageModules.groupId"/>
             </th>
-            <th style="width:17%">
+            <th style="width:${isStudio ? '20' : '17'}%">
                 <fmt:message key="serverSettings.manageModules.module.state"/>
             </th>
-            <th style="width:17%">
+            <th style="width:${isStudio ? '20' : '17'}%">
                 <fmt:message key="serverSettings.manageModules.module.type"/>
             </th>
-            <th style="width:17%">
+            <th style="width:${isStudio ? '20' : '17'}%">
                 <fmt:message key="serverSettings.manageModules.module.author"/>
             </th>
 
-            <c:if test="${developmentMode}">
+            <c:if test="${developmentMode && not isStudio}">
                 <th style="width:17%">
                     <fmt:message key="serverSettings.manageModules.module.source.uri"/>
                 </th>
@@ -145,11 +145,11 @@
             <td>
                 ${fn:escapeXml(activeVersion.provider)}
             </td>
-            <c:if test="${developmentMode}">
-                <c:set value="${functions:contains(systemSiteRequiredModules, activeVersion.id)}" var="isMandatoryDependency"/>
+            <c:if test="${developmentMode && not isStudio}">
+                <c:set value="${not isStudio && functions:contains(systemSiteRequiredModules, activeVersion.id)}" var="isMandatoryDependency"/>
                 <c:set value="${activeVersion.sourcesDownloadable and not isMandatoryDependency}" var="sourcesDownloadable"/>
                 <td>
-                    <c:if test="${not isStudio and moduleStates[activeVersion.id][activeVersion.version].installed}">
+                    <c:if test="${moduleStates[activeVersion.id][activeVersion.version].installed}">
                     <c:choose>
                         <c:when test="${not empty activeVersion.sourcesFolder}">
                             <c:url var="urlToStudio" value="/cms/studio/${currentResource.locale}/modules/${activeVersion.id}.html"/>
@@ -188,43 +188,6 @@
                         </c:otherwise>
                     </c:choose>
                     </c:if>
-
-                    <c:choose>
-                        <c:when test="${not isMandatoryDependency and (not empty moduleStates[activeVersion.id][activeVersion.version].unresolvedDependencies or  not empty sitesTemplates[activeVersion.id] or not empty sitesDirect[activeVersion.id] or not empty sitesTransitive[activeVersion.id])}">
-                            <%--<button class="btn btn-block button-download" disabled>--%>
-                                <%--<i class="icon-share"></i>--%>
-                                <%--&nbsp;<fmt:message key='serverSettings.manageModules.duplicateModule'/>--%>
-                            <%--</button>--%>
-                        </c:when>
-                        <c:when test="${not empty activeVersion.sourcesFolder and not isMandatoryDependency}">
-                            <form style="margin: 0;" action="${flowExecutionUrl}" method="POST" onsubmit="workInProgress('${i18nWaiting}');">
-                                <input type="hidden" name="moduleName" value="${activeVersion.name}"/>
-                                <input type="hidden" name="moduleId" value="${activeVersion.id}"/>
-                                <input type="hidden" name="groupId" value="${activeVersion.groupId}"/>
-                                <input type="hidden" name="version" value="${activeVersion.version}"/>
-                                <input type="hidden" name="srcPath" value="${activeVersion.sourcesFolder.path}"/>
-                                <button class="btn btn-block button-download" type="submit" name="_eventId_duplicateModuleForm">
-                                    <i class="icon-share"></i>
-                                    &nbsp;<fmt:message key='serverSettings.manageModules.duplicateModule'/>
-                                </button>
-                            </form>
-                        </c:when>
-                        <c:when test="${not empty activeVersion.scmURI and sourcesDownloadable}">
-                            <c:if test="${functions:contains(sourceControls, fn:substringBefore(fn:substringAfter(activeVersion.scmURI, ':'),':'))}">
-                                <form style="margin: 0;" action="${flowExecutionUrl}" method="POST">
-                                    <input type="hidden" name="moduleName" value="${activeVersion.name}"/>
-                                    <input type="hidden" name="moduleId" value="${activeVersion.id}"/>
-                                    <input type="hidden" name="groupId" value="${activeVersion.groupId}"/>
-                                    <input type="hidden" name="version" value="${activeVersion.version}"/>
-                                    <input type="hidden" name="scmUri" value="${activeVersion.scmURI}"/>
-                                    <button class="btn button-download" type="submit" name="_eventId_duplicateModuleForm">
-                                        <i class="icon-share"></i>
-                                        &nbsp;<fmt:message key='serverSettings.manageModules.duplicateModule'/>
-                                    </button>
-                                </form>
-                            </c:if>
-                        </c:when>
-                    </c:choose>
                 </td>
             </c:if>
         </tr>

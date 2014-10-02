@@ -56,6 +56,7 @@
     }
 </script>
 </template:addResources>
+
 <c:set var="multipleProvidersAvailable" value="${fn:length(providersList) > 1}"/>
 
 <div class="box-1">
@@ -85,9 +86,9 @@
                 key="serverSettings.user.properties.selected"/></label>:&nbsp;
 
 
-            <input type="checkbox" class="propCheck" name="properties" value="name" id="propsUsersname"
+            <input type="checkbox" class="propCheck" name="properties" value="username" id="propsUsersname"
                    <c:if test="${searchCriteria.searchIn ne 'properties'}">disabled</c:if>
-                   <c:if test="${not empty searchCriteria.properties and functions:contains(searchCriteria.properties, 'name')}">checked="checked"</c:if> >
+                   <c:if test="${not empty searchCriteria.properties and functions:contains(searchCriteria.properties, 'username')}">checked="checked"</c:if> >
             <label for="propsUsersname"><fmt:message key="label.username"/></label>
 
             <input type="checkbox" class="propCheck" name="properties" value="j:firstName" id="propsFirstName"
@@ -113,6 +114,7 @@
             <c:if test="${multipleProvidersAvailable}">
             <br/>
             <label for="storedOn"><span class="badge badge-info"><fmt:message key="label.on"/></span></label>
+            <%--@elvariable id="providersList" type="java.util.List"--%>
             <input type="radio" name="storedOn" id="storeOnEverywhere" value="everywhere"
                        <c:if test="${empty searchCriteria.storedOn or searchCriteria.storedOn eq 'everywhere'}">checked</c:if>
                        onclick="$('.provCheck').attr('disabled',true);">&nbsp;<label for="storeOnEverywhere"><fmt:message
@@ -123,16 +125,16 @@
                    checked </c:if>
                    onclick="$('.provCheck').removeAttr('disabled');">&nbsp;<label for="storedOn"><fmt:message key="label.providers"/></label>:&nbsp;
 
-                <c:forEach items="${providersList}" var="curProvider">
-                    <input type="checkbox" class="provCheck" name="providers" id="provider-${curProvider}" value="${curProvider}"
-                           <c:if test="${fn:length(providersList) le 1 or searchCriteria.storedOn ne 'providers'}">disabled </c:if>
-                    <c:if test="${fn:length(providersList) le 1 or (not empty searchCriteria.providers and functions:contains(searchCriteria.providers, curProvider))}">
-                           checked </c:if>>
-                    <label for="provider-${curProvider}">
-                        <fmt:message var="i18nProviderLabel" key="providers.${curProvider}.label"/>
-                            ${fn:escapeXml(fn:contains(i18nProviderLabel, '???') ? curProvider : i18nProviderLabel)}
-                    </label>
-                </c:forEach>
+            <c:forEach items="${providersList}" var="curProvider">
+                <input type="checkbox" class="provCheck" name="providers" id="provider-${curProvider.key}" value="${curProvider.key}"
+                       <c:if test="${fn:length(providersList) le 1 or searchCriteria.storedOn ne 'providers'}">disabled </c:if>
+                <c:if test="${fn:length(providersList) le 1 or (not empty searchCriteria.providers and functions:contains(searchCriteria.providers, curProvider.key))}">
+                       checked </c:if>>
+                <label for="provider-${curProvider.key}">
+                <fmt:message var="i18nProviderLabel" key="providers.${curProvider.key}.label"/>
+                ${fn:escapeXml(fn:contains(i18nProviderLabel, '???') ? curProvider.key : i18nProviderLabel)}
+                </label>
+            </c:forEach>
 
             </c:if>
         </fieldset>
@@ -228,27 +230,20 @@
                         <tr class="sortable-row">
                             <td>${loopStatus.count}</td>
                             <td>
-                                <c:choose>
-                                    <c:when test="${user:isReadOnlyProvider(curUser)}">
-                                        &nbsp;
-                                    </c:when>
-                                    <c:otherwise>
-                                        <input type="checkbox" name="userCheckbox" value="${fn:escapeXml(curUser.path)}" class="userCheckbox">
-                                    </c:otherwise>
-                                </c:choose>
+                                <input type="checkbox" name="userCheckbox" value="${fn:escapeXml(curUser.userKey)}" class="userCheckbox">
                             </td>
-                            <td><a href="#" onclick="doUserAction('editUser', '${fn:escapeXml(curUser.path)}')">${user:displayName(curUser)}</a></td>
+                            <td><a href="#" onclick="doUserAction('editUser', '${fn:escapeXml(curUser.userKey)}')">${user:displayName(curUser)}</a></td>
                             <td>${user:fullName(curUser)}</td>
                             <c:if test="${multipleProvidersAvailable}">
                                 <fmt:message var="i18nProviderLabel" key="providers.${curUser.providerName}.label"/>
                                 <td>${fn:escapeXml(fn:contains(i18nProviderLabel, '???') ? curUser.providerName : i18nProviderLabel)}</td>
                             </c:if>
                             <td>
-                                <a style="margin-bottom:0;" class="btn btn-small" title="${i18nEdit}" href="#edit" onclick="doUserAction('editUser', '${fn:escapeXml(curUser.path)}')">
+                                <a style="margin-bottom:0;" class="btn btn-small" title="${i18nEdit}" href="#edit" onclick="doUserAction('editUser', '${fn:escapeXml(curUser.userKey)}')">
                                     <i class="icon-edit"></i>
                                 </a>
-                                <c:if test="${curUser.name != 'guest' && !user:isReadOnlyProvider(curUser)}">
-                                <a style="margin-bottom:0;" class="btn btn-danger btn-small" title="${i18nRemove}" href="#delete" onclick="doUserAction('removeUser', '${fn:escapeXml(curUser.path)}')">
+                                <c:if test="${curUser.username != 'guest' && !user:isReadOnlyProvider(curUser)}">
+                                <a style="margin-bottom:0;" class="btn btn-danger btn-small" title="${i18nRemove}" href="#delete" onclick="doUserAction('removeUser', '${fn:escapeXml(curUser.userKey)}')">
                                     <i class="icon-remove icon-white"></i>
                                 </a>
                                 </c:if>

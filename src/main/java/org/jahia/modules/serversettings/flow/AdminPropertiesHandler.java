@@ -71,26 +71,22 @@
  */
 package org.jahia.modules.serversettings.flow;
 
-import org.apache.commons.lang.StringUtils;
-import org.jahia.modules.serversettings.users.admin.AdminProperties;
-import org.jahia.services.content.JCRContentUtils;
-import org.jahia.services.content.decorator.JCRGroupNode;
-import org.jahia.services.content.decorator.JCRUserNode;
-import org.jahia.services.usermanager.JahiaUserManagerService;
-import org.jahia.taglibs.user.User;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.binding.message.MessageBuilder;
-import org.springframework.binding.message.MessageContext;
-
-import javax.jcr.RepositoryException;
 import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
+import org.jahia.modules.serversettings.users.admin.AdminProperties;
+import org.jahia.services.usermanager.JahiaGroup;
+import org.jahia.services.usermanager.jcr.JCRUser;
+import org.jahia.services.usermanager.jcr.JCRUserManagerProvider;
+import org.jahia.taglibs.user.User;
+import org.springframework.binding.message.MessageBuilder;
+import org.springframework.binding.message.MessageContext;
+
 public class AdminPropertiesHandler implements Serializable {
     private static final long serialVersionUID = -1665000223980422529L;
-    private transient static final Logger logger = LoggerFactory.getLogger(JCRContentUtils.class);
+
     private AdminProperties adminProperties;
 
     public AdminProperties getAdminProperties() {
@@ -101,52 +97,45 @@ public class AdminPropertiesHandler implements Serializable {
      * first method call in the flow. It instantiates and populates the AdminProperties bean
      */
     public void init() {
-        JCRUserNode rootNode = JahiaUserManagerService.getInstance().lookupRootUser();
+        JCRUser rootNode = JCRUserManagerProvider.getInstance().lookupRootUser();
         adminProperties = new AdminProperties();
-        UsersFlowHandler.populateUser(rootNode.getPath(), adminProperties);
+        UsersFlowHandler.populateUser(rootNode.getUserKey(), adminProperties);
     }
 
     /**
      * save the bean in the JCR
      */
     public void save(MessageContext messages) {
-        JCRUserNode rootNode = JahiaUserManagerService.getInstance().lookupRootUser();
+        JCRUser rootNode = JCRUserManagerProvider.getInstance().lookupRootUser();
         if (!StringUtils.isEmpty(adminProperties.getPassword())) {
             rootNode.setPassword(adminProperties.getPassword());
         }
-
-        try {
-            if (!rootNode.hasProperty("j:lastName") || !StringUtils.equals(rootNode.getProperty("j:lastName").getString(), adminProperties.getLastName())) {
-                rootNode.setProperty("j:lastName", adminProperties.getLastName());
-            }
-            if (!rootNode.hasProperty("j:firstName") || !StringUtils.equals(rootNode.getProperty("j:firstName").getString(), adminProperties.getFirstName())) {
-                rootNode.setProperty("j:firstName", adminProperties.getFirstName());
-            }
-            if (!rootNode.hasProperty("j:organization") || !StringUtils.equals(rootNode.getProperty("j:organization").getString(), adminProperties.getOrganization())) {
-                rootNode.setProperty("j:organization", adminProperties.getOrganization());
-            }
-            if (!rootNode.hasProperty("emailNotificationsDisabled") || !StringUtils.equals(rootNode.getProperty("emailNotificationsDisabled").getString(), adminProperties
-                    .getEmailNotificationsDisabled().toString())) {
-                rootNode.setProperty("emailNotificationsDisabled",
-                        Boolean.toString(adminProperties.getEmailNotificationsDisabled()));
-            }
-            if (!rootNode.hasProperty("j:email") || !StringUtils.equals(rootNode.getProperty("j:email").getString(), adminProperties.getEmail())) {
-                rootNode.setProperty("j:email", adminProperties.getEmail());
-            }
-            String lang = adminProperties.getPreferredLanguage().toString();
-            if (!rootNode.hasProperty("preferredLanguage") || !StringUtils.equals(rootNode.getProperty("preferredLanguage").getString(), lang)) {
-                rootNode.setProperty("preferredLanguage", lang);
-            }
-            messages.addMessage(new MessageBuilder().info().code("label.changeSaved").build());
-
-            rootNode.save();
-        } catch (RepositoryException e) {
-            messages.addMessage(new MessageBuilder().error().code("label.error").build());
-            logger.error(e.getMessage(), e);
+        if (!StringUtils.equals(rootNode.getProperty("j:lastName"), adminProperties.getLastName())) {
+            rootNode.setProperty("j:lastName", adminProperties.getLastName());
         }
+        if (!StringUtils.equals(rootNode.getProperty("j:firstName"), adminProperties.getFirstName())) {
+            rootNode.setProperty("j:firstName", adminProperties.getFirstName());
+        }
+        if (!StringUtils.equals(rootNode.getProperty("j:organization"), adminProperties.getOrganization())) {
+            rootNode.setProperty("j:organization", adminProperties.getOrganization());
+        }
+        if (!StringUtils.equals(rootNode.getProperty("emailNotificationsDisabled"), adminProperties
+                .getEmailNotificationsDisabled().toString())) {
+            rootNode.setProperty("emailNotificationsDisabled",
+                    Boolean.toString(adminProperties.getEmailNotificationsDisabled()));
+        }
+        if (!StringUtils.equals(rootNode.getProperty("j:email"), adminProperties.getEmail())) {
+            rootNode.setProperty("j:email", adminProperties.getEmail());
+        }
+        String lang = adminProperties.getPreferredLanguage().toString();
+        if (!StringUtils.equals(rootNode.getProperty("preferredLanguage"), lang)) {
+            rootNode.setProperty("preferredLanguage", lang);
+        }
+
+        messages.addMessage(new MessageBuilder().info().code("label.changeSaved").build());
     }
-    public List<JCRGroupNode> getUserMembership() {
-        return new LinkedList<JCRGroupNode>(User.getUserMembership(JahiaUserManagerService.getInstance().lookupRootUser().getName()).values());
+    public List<JahiaGroup> getUserMembership() {
+        return new LinkedList<JahiaGroup>(User.getUserMembership(JCRUserManagerProvider.getInstance().lookupRootUser().getUsername()).values());
     }
 
 }
