@@ -73,9 +73,7 @@ package org.jahia.modules.serversettings.flow;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Ordering;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -83,8 +81,8 @@ import org.apache.commons.lang.StringUtils;
 import org.jahia.data.templates.JahiaTemplatesPackage;
 import org.jahia.exceptions.JahiaException;
 import org.jahia.modules.serversettings.users.management.UserProperties;
+import org.jahia.osgi.BundleResource;
 import org.jahia.registries.ServicesRegistry;
-import org.jahia.services.SpringContextSingleton;
 import org.jahia.services.cache.CacheHelper;
 import org.jahia.services.content.*;
 import org.jahia.services.content.decorator.JCRSiteNode;
@@ -101,6 +99,7 @@ import org.jahia.services.usermanager.JahiaUserManagerService;
 import org.jahia.settings.SettingsBean;
 import org.jahia.utils.LanguageCodeConverters;
 import org.jahia.utils.Url;
+import org.osgi.framework.Bundle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -116,6 +115,7 @@ import org.springframework.webflow.execution.RequestContext;
 import javax.annotation.Nullable;
 import javax.jcr.RepositoryException;
 import java.io.*;
+import java.net.URL;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -494,48 +494,14 @@ public class WebprojectHandler implements Serializable {
                     ImportInfo value = prepareSiteImport(i, imports.get(i), messageContext);
                     if (value != null) {
                         if (value.isLegacyImport()) {
-                            File fld = new File(SettingsBean.getInstance().getJahiaVarDiskPath(), "legacyMappings");
-                            final File defaultMappingsFolder = fld.isDirectory() ? fld : null;
-                            Collection<File> legacyMappings = null;
-                            Collection<File> legacyDefinitions = null;
-                            if (defaultMappingsFolder != null && defaultMappingsFolder.exists()) {
-                                try {
-                                    legacyMappings = FileUtils.listFiles(defaultMappingsFolder, new String[] { "map" },
-                                            false);
-                                } catch (Exception e) {
-                                    logger.debug("Legacy mappings not found", e);
-                                }
-                                try {
-                                    legacyDefinitions = FileUtils.listFiles(defaultMappingsFolder,
-                                            new String[] { "cnd" }, false);
-                                } catch (Exception e) {
-                                    logger.debug("Legacy definitions not found", e);
-                                }
-                            }
+                            Map<String,Resource> legacyMappings = getLegacyMappingsInModules("map");
+                            Map<String,Resource> legacyDefinitions = getLegacyMappingsInModules("cnd");
 
-                            Resource[] modulesLegacyMappings = SpringContextSingleton.getInstance().getResources(
-                                    "/modules/**/META-INF/legacyMappings/*.map");
-                            if (legacyMappings == null && modulesLegacyMappings.length > 0) {
-                                legacyMappings = new ArrayList<File>();
+                            if (!legacyMappings.isEmpty()) {
+                                value.setLegacyMappings(new HashSet<String>(legacyMappings.keySet()));
                             }
-                            for (Resource modulesLegacyMapping : modulesLegacyMappings) {
-                                legacyMappings.add(modulesLegacyMapping.getFile());
-                            }
-
-                            Resource[] modulesLegacyDefinitions = SpringContextSingleton.getInstance().getResources(
-                                    "/modules/**/META-INF/legacyMappings/*.cnd");
-                            if (legacyDefinitions == null && modulesLegacyDefinitions.length > 0) {
-                                legacyDefinitions = new ArrayList<File>();
-                            }
-                            for (Resource modulesLegacyDefinition : modulesLegacyDefinitions) {
-                                legacyDefinitions.add(modulesLegacyDefinition.getFile());
-                            }
-
-                            if (legacyMappings != null && !legacyMappings.isEmpty()) {
-                                value.setLegacyMappings(legacyMappings);
-                            }
-                            if (legacyDefinitions != null && !legacyDefinitions.isEmpty()) {
-                                value.setLegacyDefinitions(legacyDefinitions);
+                            if (!legacyDefinitions.isEmpty()) {
+                                value.setLegacyDefinitions(new HashSet<String>(legacyDefinitions.keySet()));
                             }
                         }
                         importsInfosList.add(value);
@@ -554,6 +520,40 @@ public class WebprojectHandler implements Serializable {
                 IOUtils.closeQuietly(zis);
             }
         }
+    }
+
+    public static Map<String,Resource> getLegacyMappingsInModules(final String pattern) {
+        File fld = new File(SettingsBean.getInstance().getJahiaVarDiskPath(), "legacyMappings");
+        final File defaultMappingsFolder = fld.isDirectory() ? fld : null;
+
+        final Map<String,Resource> resources = new HashMap<String,Resource>();
+
+        if (defaultMappingsFolder != null && defaultMappingsFolder.exists()) {
+            try {
+                Collection<File> filesList = FileUtils.listFiles(defaultMappingsFolder, new String[] { pattern },false);
+                if (filesList != null) {
+                    for (File file : filesList) {
+                        resources.put(file.getName(), new FileSystemResource(file));
+                    }
+                }
+            } catch (Exception e) {
+                logger.debug("Legacy mappings not found", e);
+            }
+        }
+
+        for (final JahiaTemplatesPackage aPackage : ServicesRegistry.getInstance().getJahiaTemplateManagerService().getAvailableTemplatePackages()) {
+            final Bundle bundle = aPackage.getBundle();
+            if (bundle != null) {
+                final Enumeration<URL> resourceEnum = bundle.findEntries("META-INF/legacyMappings", "*." + pattern, false);
+                if (resourceEnum == null) continue;
+                while (resourceEnum.hasMoreElements()) {
+                    BundleResource bundleResource = new BundleResource(resourceEnum.nextElement(), bundle);
+                    resources.put(bundleResource.getFilename(), bundleResource);
+                }
+            }
+        }
+
+        return resources;
     }
 
     public void prepareImport(MessageContext messageContext) {
@@ -772,8 +772,9 @@ public class WebprojectHandler implements Serializable {
                         try {
                             try {
                                 final String finalTpl = tpl;
-                                final String finalLegacyImportFilePath = legacyImportFilePath;
-                                final String finalLegacyDefinitionsFilePath = legacyDefinitionsFilePath;
+
+                                final Resource finalLegacyMappingFilePath = getLegacyMappingsInModules("map").get(legacyImportFilePath);
+                                final Resource finalLegacyDefinitionsFilePath = getLegacyMappingsInModules("cnd").get(legacyDefinitionsFilePath);
 
                                 final boolean finalDoImportServerPermissions = doImportServerPermissions;
                                 JCRObservationManager.doWithOperationType(null, JCRObservationManager.IMPORT,
@@ -788,7 +789,7 @@ public class WebprojectHandler implements Serializable {
                                                             .getImportFileName(), false,
                                                             finalDoImportServerPermissions, infos
                                                             .getOriginatingJahiaRelease(),
-                                                            finalLegacyImportFilePath, finalLegacyDefinitionsFilePath);
+                                                            finalLegacyMappingFilePath, finalLegacyDefinitionsFilePath);
                                                 } catch (JahiaException e) {
                                                     throw new RepositoryException(e);
                                                 } catch (IOException e) {
