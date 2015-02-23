@@ -86,9 +86,9 @@
     <name>Jahia Server Settings</name>
     <description>Server settings</description>
     <scm>
-        <connection>scm:git:git@github.com:Jahia/serverSettings-ee.git</connection>
-        <developerConnection>scm:git:git@github.com:Jahia/serverSettings-ee.git</developerConnection>
-        <url>scm:git:git@github.com:Jahia/serverSettings-ee.git</url>
+        <connection>scm:git:git@github.com:Jahia/serverSettings.git</connection>
+        <developerConnection>scm:git:git@github.com:Jahia/serverSettings.git</developerConnection>
+        <url>scm:git:git@github.com:Jahia/serverSettings.git</url>
     </scm>
 
     <properties>
