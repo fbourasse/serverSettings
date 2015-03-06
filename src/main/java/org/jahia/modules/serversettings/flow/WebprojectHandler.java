@@ -750,7 +750,7 @@ public class WebprojectHandler implements Serializable {
                         isSite = true;
                     } else if (name.startsWith("export_")) {
                         isLegacySite = true;
-                    } else if (validityCheckOnImport && !isLegacySite && name.contains("repository.xml")) {
+                    } else if (validityCheckOnImport && !isLegacySite && name.contains("repository.xml") && !name.contains("/")) {
                         try {
                             long timer = System.currentTimeMillis();
                             ValidationResults validationResults = importExportBaseService.validateImportFile(
