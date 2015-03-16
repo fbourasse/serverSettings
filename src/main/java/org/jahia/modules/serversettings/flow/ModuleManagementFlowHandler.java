@@ -71,7 +71,6 @@
  */
 package org.jahia.modules.serversettings.flow;
 
-import org.apache.camel.util.FileUtil;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
@@ -92,7 +91,6 @@ import org.jahia.osgi.BundleUtils;
 import org.jahia.osgi.FrameworkService;
 import org.jahia.security.license.LicenseCheckerService;
 import org.jahia.services.content.JCRNodeWrapper;
-import org.jahia.services.content.JCRSessionFactory;
 import org.jahia.services.content.JCRSessionWrapper;
 import org.jahia.services.content.decorator.JCRSiteNode;
 import org.jahia.services.content.nodetypes.ExtendedNodeType;
@@ -759,7 +757,7 @@ public class ModuleManagementFlowHandler implements Serializable {
                     "serverSettings.manageModules.downloadSourcesError.wrongVersion").build());
         } else if (exception instanceof SourceControlException) {
             messageContext.addMessage(new MessageBuilder().error().code(
-                    "serverSettings.manageModules.downloadSourcesError").build());
+                    "serverSettings.manageModules.downloadSourcesError").arg(flowScope.get("version")).build());
         } else {
             String message = exception.getLocalizedMessage();
             if (StringUtils.isBlank(message)) {
