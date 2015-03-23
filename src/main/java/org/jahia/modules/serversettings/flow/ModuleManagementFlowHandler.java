@@ -690,7 +690,7 @@ public class ModuleManagementFlowHandler implements Serializable {
         reloadTablesUUIDFromSession(requestContext);
         if (!requestContext.getFlowScope().contains("adminModuleTableUUID")) {
             requestContext.getFlowScope().put("adminModuleTableUUID", UUID.randomUUID().toString());
-            requestContext.getFlowScope().put("storeModuleTableUUID", UUID.randomUUID().toString());
+            requestContext.getFlowScope().put("forgeModuleTableUUID", UUID.randomUUID().toString());
         }
 
         if (!isStudio(renderContext)) {

@@ -35,12 +35,30 @@
 <template:addResources>
     <script type="text/javascript">
         $(document).ready(function () {
-            $('#${moduleTableId}').dataTable({
+            var tableId = "${moduleTableId}";
+
+            function save_dt_view (oSettings, oData) {
+                localStorage.setItem( 'DataTables_adminModulesForgeView', JSON.stringify({id:tableId, data:oData}));
+            }
+            function load_dt_view (oSettings) {
+                var item = localStorage.getItem('DataTables_adminModulesForgeView');
+                if(item){
+                    var itemJSON = JSON.parse(item);
+                    if(itemJSON.data && itemJSON.id == tableId){
+                        return itemJSON.data;
+                    }
+                }
+                return undefined;
+            }
+
+            $('#' + tableId).dataTable({
                 "sDom": "<'row-fluid'<'span6'l><'span6'<'refresh_modules'>f>r>t<'row-fluid'<'span6'i><'span6'p>>",
                 "iDisplayLength": 10,
                 "sPaginationType": "bootstrap",
                 "aaSorting": [[ 5, "asc" ],[ 1, "asc" ]],
-                "bStateSave": true
+                "bStateSave": true,
+                "fnStateSave": function(oSettings, oData) { save_dt_view(oSettings, oData); },
+                "fnStateLoad": function(oSettings) { return load_dt_view(oSettings); }
             });
 
             var refreshModulesButton = $("<button class='btn'><i class='icon-refresh'/>&nbsp; ${i18nRefreshModules}</button>");

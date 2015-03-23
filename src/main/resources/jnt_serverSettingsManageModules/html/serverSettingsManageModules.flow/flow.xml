@@ -74,7 +74,7 @@
             <evaluate expression="flowScope.branchTagInfos == null ? flowScope.branchOrTag : flowHandler.guessBranchOrTag(flowScope.version, flowScope.scmUri, flowScope.branchTagInfos, flowScope.branchOrTag)" result="flowScope.branchOrTag"/>
         </on-entry>
         <transition on="downloadSources" to="downloadSources"/>
-        <transition on="cancel" to="sourceDownloadEnd"/>
+        <transition on="cancel" to="end"/>
     </view-state>
 
     <view-state id="detailedView">
@@ -114,7 +114,7 @@
             <evaluate expression="flowHandler.handleError(rootCauseException, flowScope, messageContext)"/>
             <evaluate expression="flowHandler.logError(rootCauseException)"/>
         </transition>
-        <transition to="sourceDownloadEnd">
+        <transition to="end">
             <evaluate expression="flowHandler.storeTablesUUID(flowRequestContext)"/>
         </transition>
     </action-state>
@@ -134,8 +134,6 @@
         </transition>
         <transition to="duplicateModuleForm"/>
     </action-state>
-
-    <end-state id="sourceDownloadEnd"/>
 
     <view-state id="duplicateModuleForm">
         <on-entry>
@@ -190,17 +188,13 @@
     <action-state id="startModule">
         <evaluate
                 expression="flowHandler.startModule(requestParameters.module,requestParameters.version,flowRequestContext)"/>
-        <transition to="moduleStarted"/>
+        <transition to="end"/>
     </action-state>
-
-    <end-state id="moduleStarted"/>
 
     <action-state id="stopModule">
         <evaluate expression="flowHandler.stopModule(requestParameters.module,flowRequestContext)"/>
-        <transition to="moduleStopped"/>
+        <transition to="end"/>
     </action-state>
-
-    <end-state id="moduleStopped"/>
 
     <action-state id="undeployModule">
         <evaluate expression="JahiaTemplateManagerService.undeployModule(requestParameters.module,requestParameters.version)"/>
@@ -255,4 +249,5 @@
         <transition on="viewInstalledModules" to="view"/>
     </view-state>
 
+    <end-state id="end"/>
 </flow>
