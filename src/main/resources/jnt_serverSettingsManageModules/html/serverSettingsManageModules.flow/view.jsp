@@ -38,17 +38,35 @@
     </script>
     <script type="text/javascript">
         $(document).ready(function () {
+            var tableId = "${moduleTableId}";
+
+            function save_dt_view (oSettings, oData) {
+                localStorage.setItem( 'DataTables_adminModulesView', JSON.stringify({id:tableId, data:oData}));
+            }
+            function load_dt_view (oSettings) {
+                var item = localStorage.getItem('DataTables_adminModulesView');
+                if(item){
+                    var itemJSON = JSON.parse(item);
+                    if(itemJSON.data && itemJSON.id == tableId){
+                        return itemJSON.data;
+                    }
+                }
+                return undefined;
+            }
+
             var oldStart = 0;
-            $('#${moduleTableId}').dataTable({
+            $('#' + tableId).dataTable({
                 "sDom": "<'row-fluid'<'span6'l><'span6'<'refresh_modules'>f>r>t<'row-fluid'<'span6'i><'span6'p>>",
                 "iDisplayLength": 25,
                 "sPaginationType": "bootstrap",
                 "aaSorting": [], //this option disable sort by default, the user steal can use column names to sort the table
                 "bStateSave": true,
+                "fnStateSave": function(oSettings, oData) { save_dt_view(oSettings, oData); },
+                "fnStateLoad": function(oSettings) { return load_dt_view(oSettings); },
                 "fnDrawCallback": function (o) {
                     // auto scroll to top on paginate
                     if ( o._iDisplayStart != oldStart ) {
-                        var targetOffset = $('#${moduleTableId}').offset().top;
+                        var targetOffset = $('#' + tableId).offset().top;
                         $('html,body').animate({scrollTop: targetOffset}, 350);
                         oldStart = o._iDisplayStart;
                     }
