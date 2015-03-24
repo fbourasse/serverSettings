@@ -132,27 +132,35 @@
                 <td>
 
                 <c:choose>
-
-                <c:when test="${!module.installable}">
-                    <fmt:message key="serverSettings.manageModules.module.canNotInstall" />
-                </c:when>
-
-                <c:when test="${not empty allModuleVersions[module.id] and functions:contains(allModuleVersions[module.id],module.version)}">
-                    <fmt:message key="serverSettings.manageModules.module.alreadyInstalled" />
-                </c:when>
-                <%--<c:when test="${not empty allModuleVersions[module.id]}">--%>
-                    <%--Other versions installed--%>
-                <%--</c:when>--%>
-                <c:otherwise>
-                    <form style="margin: 0;" action="${flowExecutionUrl}" method="POST" onsubmit="workInProgress('${i18nWaiting}');">
-                        <input type="hidden" name="forgeId" value="${module.forgeId}"/>
-                        <input type="hidden" name="moduleUrl" value="${module.downloadUrl}"/>
-                        <button class="btn btn-block button-download" type="submit" name="_eventId_installForgeModule">
-                            <i class="icon-download"></i>
-                            &nbsp;<fmt:message key="serverSettings.manageModules.download"/>
-                        </button>
-                    </form>
-                </c:otherwise>
+                    <c:when test="${!module.installable}">
+                        <fmt:message key="serverSettings.manageModules.module.canNotInstall" />
+                    </c:when>
+                    <c:otherwise>
+                        <c:remove var="alreadyInstalled" />
+                        <c:if test="${not empty allModuleVersions[module.id]}">
+                            <c:forEach items="${allModuleVersions[module.id]}" var="entry">
+                                <c:if test="${entry.key eq module.version}">
+                                    <c:set var="alreadyInstalled" value="true" />
+                                </c:if>
+                            </c:forEach>
+                        </c:if>
+                        
+                        <c:choose>
+                            <c:when test="${not empty alreadyInstalled}">
+                                <fmt:message key="serverSettings.manageModules.module.alreadyInstalled" />
+                            </c:when>
+                            <c:otherwise>
+                                <form style="margin: 0;" action="${flowExecutionUrl}" method="POST" onsubmit="workInProgress('${i18nWaiting}');">
+                                    <input type="hidden" name="forgeId" value="${module.forgeId}"/>
+                                    <input type="hidden" name="moduleUrl" value="${module.downloadUrl}"/>
+                                    <button class="btn btn-block button-download" type="submit" name="_eventId_installForgeModule">
+                                        <i class="icon-download"></i>
+                                        &nbsp;<fmt:message key="serverSettings.manageModules.download"/>
+                                    </button>
+                                </form>
+                            </c:otherwise>
+                        </c:choose>
+                    </c:otherwise>
                 </c:choose>
 
                 </td>
