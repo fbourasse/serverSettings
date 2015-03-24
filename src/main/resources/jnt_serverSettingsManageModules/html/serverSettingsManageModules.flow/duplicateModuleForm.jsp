@@ -26,9 +26,48 @@
         </script>
     </template:addResources>
 </c:if>
+<template:addResources type="inlinejavascript">
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $("#duplicateModuleForm").submit(function(event) {
+                workInProgress('${i18nWaiting}');
+                var $this = $(this);
+                $.ajax({
+                    type: $this.attr('method'),
+                    dataType: 'json',
+                    data: $this.serialize(),
+                    url: $this.attr('action')
+                }).done(function (data) {
+                    if ('error' in data) {
+                        $("#errors").append("<div class=\"alert alert-error\">" +
+                                "<button type=\"button\" class=\"close\" data-dismiss=\"alert\">&times;</button>" +
+                                data.error + "</div>");
+                    } else if ('bundleError' in data) {
+                        alert(data.bundleError);
+                        var url = window.location.href;
+                        var paramStart = url.indexOf('?');
+                        if (paramStart > -1) {
+                            url = url.substring(0, paramStart);
+                        }
+                        window.location.assign(url);
+                    } else {
+                        window.parent.location.assign(data.newModuleStudioUrl);
+                    }
+                }).fail(function (jqXHR, textStatus, errorThrown) {
+                    alert(errorThrown);
+                }).always(function () {
+                    window.parent.hideMask();
+                });
+                event.preventDefault();
+                return false;
+            });
+        });
+    </script>
+</template:addResources>
 <h2>
     <fmt:message key='serverSettings.manageModules.duplicateModule' />
 </h2>
+<div id="errors">
 <c:forEach items="${flowRequestContext.messageContext.allMessages}" var="message">
     <c:if test="${message.severity eq 'ERROR'}">
         <div class="alert alert-error">
@@ -37,32 +76,41 @@
         </div>
     </c:if>
 </c:forEach>
+</div>
 
-<form action="${flowExecutionUrl}" method="POST" onsubmit="workInProgress('${i18nWaiting}');">
+<template:tokenizedForm allowsMultipleSubmits="true">
+<form id="duplicateModuleForm" action="<c:url value='${url.base}${renderContext.mainResource.node.path}.duplicateModule.do'/>" method="POST">
     <fieldset>
-        <c:if test="${empty srcPath}">
         <c:choose>
-        <c:when test="${not empty branchTagInfos}">
-            <label for="newScmUri"><fmt:message key="serverSettings.manageModules.downloadSources.scm.${fn:endsWith(version,'-SNAPSHOT') ? 'branch' : 'tag'}" /></label>
-            <input type="hidden" id="branchOrTag" name="branchOrTag" value="${not empty branchOrTag ? branchOrTag : ''}"/>
-            <select name="newScmUri" id="newScmUri">
-                <c:forEach var="branchTagInfo" items="${branchTagInfos}">
-                    <option value="${branchTagInfo.value}" ${branchTagInfo.key eq branchOrTag ? 'selected' : ''}>${branchTagInfo.key}</option>
-                </c:forEach>
-            </select>
-        </c:when>
-        <c:when test="${hasError}">
-            <label for="newScmUriText"><fmt:message key="serverSettings.manageModules.downloadSources.scmUri" /></label>
-            <input type="text" id="newScmUriText" name="newScmUri" value="${not empty newScmUri ? newScmUri : scmUri}"/>
-            <label for="branchOrTagText"><fmt:message key="serverSettings.manageModules.downloadSources.branchOrTag" /></label>
-            <input type="text" id="branchOrTagText" name="branchOrTag" value="${not empty branchOrTag ? branchOrTag : ''}"/>
-        </c:when>
-        <c:when test="${not empty newScmUri}">
-            <input type="hidden" name="newScmUri" value="${newScmUri}"/>
-            <input type="hidden" name="branchOrTag" value="${not empty branchOrTag ? branchOrTag : ''}"/>
-        </c:when>
+            <c:when test="${empty srcPath}">
+                <c:choose>
+                <c:when test="${not empty branchTagInfos}">
+                    <label for="newScmUri"><fmt:message key="serverSettings.manageModules.downloadSources.scm.${fn:endsWith(version,'-SNAPSHOT') ? 'branch' : 'tag'}" /></label>
+                    <input type="hidden" id="branchOrTag" name="branchOrTag" value="${not empty branchOrTag ? branchOrTag : ''}"/>
+                    <select name="newScmUri" id="newScmUri">
+                        <c:forEach var="branchTagInfo" items="${branchTagInfos}">
+                            <option value="${branchTagInfo.value}" ${branchTagInfo.key eq branchOrTag ? 'selected' : ''}>${branchTagInfo.key}</option>
+                        </c:forEach>
+                    </select>
+                </c:when>
+                <c:when test="${hasError}">
+                    <label for="newScmUriText"><fmt:message key="serverSettings.manageModules.downloadSources.scmUri" /></label>
+                    <input type="text" id="newScmUriText" name="newScmUri" value="${not empty newScmUri ? newScmUri : scmUri}"/>
+                    <label for="branchOrTagText"><fmt:message key="serverSettings.manageModules.downloadSources.branchOrTag" /></label>
+                    <input type="text" id="branchOrTagText" name="branchOrTag" value="${not empty branchOrTag ? branchOrTag : ''}"/>
+                </c:when>
+                <c:when test="${not empty newScmUri}">
+                    <input type="hidden" name="newScmUri" value="${newScmUri}"/>
+                    <input type="hidden" name="branchOrTag" value="${not empty branchOrTag ? branchOrTag : ''}"/>
+                </c:when>
+                </c:choose>
+            </c:when>
+            <c:otherwise>
+                <input type="hidden" name="srcPath" value="${srcPath}"/>
+                <input type="hidden" name="newScmUri" value="${scmUri}"/>
+                <input type="hidden" name="branchOrTag" value="${not empty branchOrTag ? branchOrTag : ''}"/>
+            </c:otherwise>
         </c:choose>
-        </c:if>
 
         <fmt:message key='label.moduleName.copy' var="moduleNameCopy">
             <fmt:param value="${moduleName}"/>
@@ -86,9 +134,15 @@
                 <fmt:param value="${fn:join(moduleNodetypes, ', ')}" />
             </fmt:message>
         </div>
+        <input type="hidden" name="containsTypeDefinitions" value="true" />
     </c:if>
+    <c:if test="${not empty tempSources}">
+        <input type="hidden" name="areSourcesTemporary" value="true" />
+    </c:if>
+    <input type="hidden" name="moduleId" value="${moduleId}" />
+    <input type="hidden" name="version" value="${version}" />
     <div>
-        <button class="btn btn-primary" type="submit" name="_eventId_duplicateModule">
+        <button class="btn btn-primary" type="submit">
             <i class="icon-chevron-right icon-white"></i>
             &nbsp;<fmt:message key='label.next'/>
         </button>
@@ -98,6 +152,7 @@
         </button>
     </div>
 </form>
+</template:tokenizedForm>
 
 <form id="${currentNode.identifier}CancelForm" action="${flowExecutionUrl}" method="POST" onsubmit="workInProgress('${i18nWaiting}');">
     <input type="hidden" name="_eventId" value="cancelDuplicate" />
