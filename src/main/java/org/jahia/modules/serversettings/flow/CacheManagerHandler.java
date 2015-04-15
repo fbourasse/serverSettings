@@ -123,16 +123,19 @@ public class CacheManagerHandler implements Serializable {
     public void performAction() {
         boolean propagate = StringUtils.equals(cacheManagement.getPropagate(), "true");
         String action = StringUtils.defaultString(cacheManagement.getAction());
-        if ("flushOutputCaches".equals(action)) {
-            CacheHelper.flushOutputCaches(propagate);
-        } else if ("flushOutputCaches".equals(action)) {
-            CacheHelper.flushOutputCaches(propagate);
-        } else if ("flushCaches".equals(action)) {
-            CacheHelper.flushCachesForManager(cacheManagement.getName(), propagate);
-        } else if ("flush".equals(action)) {
-            CacheHelper.flushEhcacheByName(cacheManagement.getName(), propagate);
-        } else if ("flushAllCaches".equals(action)) {
-            CacheHelper.flushAllCaches(propagate);
+        switch (action) {
+            case "flushOutputCaches":
+                CacheHelper.flushOutputCaches(propagate);
+                break;
+            case "flushCaches":
+                CacheHelper.flushCachesForManager(cacheManagement.getName(), propagate);
+                break;
+            case "flush":
+                CacheHelper.flushEhcacheByName(cacheManagement.getName(), propagate);
+                break;
+            case "flushAllCaches":
+                CacheHelper.flushAllCaches(propagate);
+                break;
         }
     }
 }
