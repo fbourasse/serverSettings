@@ -1,6 +1,3 @@
-<%@ page import="org.springframework.web.servlet.tags.form.FormTag" %>
-<%@ page import="javax.servlet.jsp.tagext.*" %>
-<%@ page import="java.util.Arrays" %>
 <%@ page language="java" contentType="text/html;charset=UTF-8" %>
 <%@ taglib prefix="template" uri="http://www.jahia.org/tags/templateLib" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
@@ -65,7 +62,9 @@
     </script>
 </template:addResources>
 <h2>
-    <fmt:message key='serverSettings.manageModules.duplicateModule' />
+    <fmt:message key='serverSettings.manageModules.duplicateModule.title'>
+        <fmt:param value="${moduleName}"/>
+    </fmt:message>
 </h2>
 <div id="errors">
 <c:forEach items="${flowRequestContext.messageContext.allMessages}" var="message">
