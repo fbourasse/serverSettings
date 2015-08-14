@@ -105,15 +105,14 @@ import java.util.*;
 
 public class ForgeService {
 
-    static Logger logger = LoggerFactory.getLogger(ForgeService.class);
+    private static final Logger logger = LoggerFactory.getLogger(ForgeService.class);
 
     private HttpClientService httpClientService;
     private Set<Forge> forges = new HashSet<Forge>();
-
-    private static List<Module> modules = new ArrayList<Module>();
+    private List<Module> modules = new ArrayList<Module>();
     private long loadModulesDelay;
-    private static long lastModulesLoad = new Date().getTime();
-    private static boolean flushModules = true;
+    private long lastModulesLoad = new Date().getTime();
+    private boolean flushModules = true;
 
     public ForgeService() {
         loadForges();
