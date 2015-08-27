@@ -167,14 +167,6 @@
                     </tr>
                     <tr>
                         <td align="left">
-                            <a class="btn" href="http://java.net/projects/tda/downloads/download/webstart/tda.jnlp" target="_blank">
-                                <i class="icon-share"></i>
-                                &nbsp;<fmt:message key="serverSettings.manageMemory.launchTda"/>
-                            </a>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td align="left">
                             <form action="${flowExecutionUrl}" method="POST" style="display: inline;">
 
                                     <c:choose>
