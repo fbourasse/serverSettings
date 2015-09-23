@@ -3,73 +3,85 @@
  * =                   JAHIA'S DUAL LICENSING - IMPORTANT INFORMATION                       =
  * ==========================================================================================
  *
- *     Copyright (C) 2002-2015 Jahia Solutions Group SA. All rights reserved.
+ * Copyright (C) 2002-2015 Jahia Solutions Group SA. All rights reserved.
  *
- *     THIS FILE IS AVAILABLE UNDER TWO DIFFERENT LICENSES:
- *     1/GPL OR 2/JSEL
+ * THIS FILE IS AVAILABLE UNDER TWO DIFFERENT LICENSES:
+ * 1/GPL OR 2/JSEL
  *
- *     1/ GPL
- *     ======================================================================================
+ * 1/ GPL
+ * ======================================================================================
  *
- *     IF YOU DECIDE TO CHOSE THE GPL LICENSE, YOU MUST COMPLY WITH THE FOLLOWING TERMS:
+ * IF YOU DECIDE TO CHOSE THE GPL LICENSE, YOU MUST COMPLY WITH THE FOLLOWING TERMS:
  *
- *     "This program is free software; you can redistribute it and/or
- *     modify it under the terms of the GNU General Public License
- *     as published by the Free Software Foundation; either version 2
- *     of the License, or (at your option) any later version.
+ * "This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
  *
- *     This program is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- *     GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
  *
- *     You should have received a copy of the GNU General Public License
- *     along with this program; if not, write to the Free Software
- *     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *     As a special exception to the terms and conditions of version 2.0 of
- *     the GPL (or any later version), you may redistribute this Program in connection
- *     with Free/Libre and Open Source Software ("FLOSS") applications as described
- *     in Jahia's FLOSS exception. You should have received a copy of the text
- *     describing the FLOSS exception, also available here:
- *     http://www.jahia.com/license"
+ * As a special exception to the terms and conditions of version 2.0 of
+ * the GPL (or any later version), you may redistribute this Program in connection
+ * with Free/Libre and Open Source Software ("FLOSS") applications as described
+ * in Jahia's FLOSS exception. You should have received a copy of the text
+ * describing the FLOSS exception, also available here:
+ * http://www.jahia.com/license"
  *
- *     2/ JSEL - Commercial and Supported Versions of the program
- *     ======================================================================================
+ * 2/ JSEL - Commercial and Supported Versions of the program
+ * ======================================================================================
  *
- *     IF YOU DECIDE TO CHOOSE THE JSEL LICENSE, YOU MUST COMPLY WITH THE FOLLOWING TERMS:
+ * IF YOU DECIDE TO CHOOSE THE JSEL LICENSE, YOU MUST COMPLY WITH THE FOLLOWING TERMS:
  *
- *     Alternatively, commercial and supported versions of the program - also known as
- *     Enterprise Distributions - must be used in accordance with the terms and conditions
- *     contained in a separate written agreement between you and Jahia Solutions Group SA.
+ * Alternatively, commercial and supported versions of the program - also known as
+ * Enterprise Distributions - must be used in accordance with the terms and conditions
+ * contained in a separate written agreement between you and Jahia Solutions Group SA.
  *
- *     If you are unsure which license is appropriate for your use,
- *     please contact the sales department at sales@jahia.com.
+ * If you are unsure which license is appropriate for your use,
+ * please contact the sales department at sales@jahia.com.
  *
  *
  * ==========================================================================================
  * =                                   ABOUT JAHIA                                          =
  * ==========================================================================================
  *
- *     Rooted in Open Source CMS, Jahia’s Digital Industrialization paradigm is about
- *     streamlining Enterprise digital projects across channels to truly control
- *     time-to-market and TCO, project after project.
- *     Putting an end to “the Tunnel effect”, the Jahia Studio enables IT and
- *     marketing teams to collaboratively and iteratively build cutting-edge
- *     online business solutions.
- *     These, in turn, are securely and easily deployed as modules and apps,
- *     reusable across any digital projects, thanks to the Jahia Private App Store Software.
- *     Each solution provided by Jahia stems from this overarching vision:
- *     Digital Factory, Workspace Factory, Portal Factory and eCommerce Factory.
- *     Founded in 2002 and headquartered in Geneva, Switzerland,
- *     Jahia Solutions Group has its North American headquarters in Washington DC,
- *     with offices in Chicago, Toronto and throughout Europe.
- *     Jahia counts hundreds of global brands and governmental organizations
- *     among its loyal customers, in more than 20 countries across the globe.
+ * Rooted in Open Source CMS, Jahia’s Digital Industrialization paradigm is about
+ * streamlining Enterprise digital projects across channels to truly control
+ * time-to-market and TCO, project after project.
+ * Putting an end to “the Tunnel effect”, the Jahia Studio enables IT and
+ * marketing teams to collaboratively and iteratively build cutting-edge
+ * online business solutions.
+ * These, in turn, are securely and easily deployed as modules and apps,
+ * reusable across any digital projects, thanks to the Jahia Private App Store Software.
+ * Each solution provided by Jahia stems from this overarching vision:
+ * Digital Factory, Workspace Factory, Portal Factory and eCommerce Factory.
+ * Founded in 2002 and headquartered in Geneva, Switzerland,
+ * Jahia Solutions Group has its North American headquarters in Washington DC,
+ * with offices in Chicago, Toronto and throughout Europe.
+ * Jahia counts hundreds of global brands and governmental organizations
+ * among its loyal customers, in more than 20 countries across the globe.
  *
- *     For more information, please visit http://www.jahia.com
+ * For more information, please visit http://www.jahia.com
  */
 package org.jahia.modules.serversettings.flow;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.Serializable;
+import java.net.URL;
+import java.util.*;
+import java.util.jar.Attributes;
+import java.util.jar.JarFile;
+import java.util.jar.Manifest;
+import javax.jcr.RepositoryException;
+import javax.jcr.nodetype.NodeTypeIterator;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
@@ -106,19 +118,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.binding.message.MessageBuilder;
 import org.springframework.binding.message.MessageContext;
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.webflow.core.collection.MutableAttributeMap;
 import org.springframework.webflow.execution.RequestContext;
-
-import javax.jcr.RepositoryException;
-import javax.jcr.nodetype.NodeTypeIterator;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.Serializable;
-import java.net.URL;
-import java.util.*;
-import java.util.jar.Attributes;
-import java.util.jar.JarFile;
-import java.util.jar.Manifest;
 
 /**
  * WebFlow handler for managing modules.
@@ -228,7 +229,7 @@ public class ModuleManagementFlowHandler implements Serializable {
         boolean isWarFile = FilenameUtils.isExtension(StringUtils.lowerCase(originalFilename), Arrays.asList("war"));
         Attributes manifestAttributes = jarFile.getManifest().getMainAttributes();
         String jahiaRequiredVersion = manifestAttributes.getValue("Jahia-Required-Version");
-        if(!isWarFile) {
+        if (!isWarFile) {
             if (StringUtils.isEmpty(jahiaRequiredVersion)) {
                 context.addMessage(new MessageBuilder().source("moduleFile")
                         .code("serverSettings.manageModules.install.required.version.missing.error").error()
@@ -243,7 +244,7 @@ public class ModuleManagementFlowHandler implements Serializable {
             }
         }
         String jahiaPackageName = manifestAttributes.getValue("Jahia-Package-Name");
-        if(jahiaPackageName!=null && jahiaPackageName.trim().length()==0){
+        if (jahiaPackageName != null && jahiaPackageName.trim().length() == 0) {
             context.addMessage(new MessageBuilder().source("moduleFile")
                     .code("serverSettings.manageModules.install.package.name.error").error()
                     .build());
@@ -254,7 +255,7 @@ public class ModuleManagementFlowHandler implements Serializable {
         if (isPackage) {
             //Check license
             String licenseFeature = manifestAttributes.getValue("Jahia-Package-License");
-            if(licenseFeature != null && !LicenseCheckerService.Stub.isAllowed(licenseFeature)){
+            if (licenseFeature != null && !LicenseCheckerService.Stub.isAllowed(licenseFeature)) {
                 context.addMessage(new MessageBuilder().source("moduleFile")
                         .code("serverSettings.manageModules.install.package.missing.license")
                         .args(new String[]{originalFilename, licenseFeature})
@@ -317,7 +318,7 @@ public class ModuleManagementFlowHandler implements Serializable {
                         .build());
                 return null;
             }
-            if(!forceUpdate) {
+            if (!forceUpdate) {
                 Set<ModuleVersion> aPackage = templatePackageRegistry.getAvailableVersionsForModule(symbolicName);
                 ModuleVersion moduleVersion = new ModuleVersion(version);
                 if (!moduleVersion.isSnapshot() && aPackage.contains(moduleVersion)) {
@@ -426,9 +427,9 @@ public class ModuleManagementFlowHandler implements Serializable {
                 if (module.getId().equals(selectedModuleName)) {
                     populateActiveVersion(context, module);
                     final List<String> missing = getMissingDependenciesFrom(module.getDepends());
-                    if(!missing.isEmpty())
+                    if (!missing.isEmpty())
                         createMessageForMissingDependencies(context.getMessageContext(), missing);
-                    else if(module.getState().getState()== ModuleState.State.WAITING_TO_BE_PARSED) {
+                    else if (module.getState().getState() == ModuleState.State.WAITING_TO_BE_PARSED) {
                         context.getMessageContext().addMessage(new MessageBuilder().source("moduleFile")
                                 .code("serverSettings.manageModules.install.missingDependencies")
                                 .arg(module.getState().getDetails())
@@ -730,6 +731,14 @@ public class ModuleManagementFlowHandler implements Serializable {
      */
     public void logError(Exception e) {
         logger.error(e.getMessage(), e);
+    }
+
+    public void handleError(Exception exception, MutableAttributeMap flowScope, MessageContext messageContext) {
+        String message = exception.getLocalizedMessage();
+        if (StringUtils.isBlank(message)) {
+            message = exception.toString();
+        }
+        messageContext.addMessage(new MessageBuilder().error().defaultText(message).build());
     }
 
     public void startModule(String moduleId, String version, RequestContext requestContext) throws RepositoryException, BundleException {
