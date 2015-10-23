@@ -379,6 +379,7 @@ public class ModuleManagementFlowHandler implements Serializable {
     }
 
     private void createMessageForMissingDependencies(MessageContext context, List<String> missingDeps) {
+        logger.warn("Missing dependencies : " + missingDeps);
         context.addMessage(new MessageBuilder().source("moduleFile")
                 .code("serverSettings.manageModules.install.missingDependencies")
                 .arg(StringUtils.join(missingDeps, ","))
