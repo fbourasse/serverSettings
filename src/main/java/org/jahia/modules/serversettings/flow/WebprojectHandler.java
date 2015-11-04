@@ -179,10 +179,10 @@ public class WebprojectHandler implements Serializable {
     private String importPath;
     private Properties importProperties;
 
-    private Map<String, ImportInfo> importsInfos = Collections.emptyMap();
+    private transient Map<String, ImportInfo> importsInfos = Collections.emptyMap();
     private boolean deleteFilesAtEnd = true;
 
-    private Map<String, String> prepackagedSites = new HashMap<String, String>();
+    private transient Map<String, String> prepackagedSites = new HashMap<String, String>();
 
     private String selectedPrepackagedSite;
 
