@@ -174,7 +174,7 @@ public class UserProperties implements Serializable {
                 JahiaUser jahiaUser = ServicesRegistry.getInstance().getJahiaUserManagerService()
                         .lookupUserByKey(userKey);
                 PolicyEnforcementResult evalResult = pwdPolicyService.enforcePolicyOnPasswordChange(jahiaUser,
-                        password, true);
+                        password, false);
                 if (!evalResult.isSuccess()) {
                     List<String> textMessages = evalResult.getTextMessages();
                     for (String textMessage : textMessages) {
