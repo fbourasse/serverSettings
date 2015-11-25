@@ -80,6 +80,9 @@ import org.jahia.modules.serversettings.users.management.CsvFile;
 import org.jahia.modules.serversettings.users.management.SearchCriteria;
 import org.jahia.modules.serversettings.users.management.UserProperties;
 import org.jahia.registries.ServicesRegistry;
+import org.jahia.services.content.JCRCallback;
+import org.jahia.services.content.JCRSessionWrapper;
+import org.jahia.services.content.JCRTemplate;
 import org.jahia.services.preferences.user.UserPreferencesHelper;
 import org.jahia.services.pwdpolicy.JahiaPasswordPolicyService;
 import org.jahia.services.pwdpolicy.PolicyEnforcementResult;
@@ -93,6 +96,7 @@ import org.springframework.binding.message.MessageBuilder;
 import org.springframework.binding.message.MessageContext;
 import org.springframework.context.i18n.LocaleContextHolder;
 
+import javax.jcr.RepositoryException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Serializable;
@@ -105,17 +109,17 @@ import java.util.*;
 public class UsersFlowHandler implements Serializable {
     private static Logger logger = LoggerFactory.getLogger(UsersFlowHandler.class);
     private static final long serialVersionUID = -7240178997123886031L;
-    
+
     public static UserProperties populateUser(String userKey, UserProperties propertiesToPopulate) {
         JahiaUserManagerService service = ServicesRegistry.getInstance().getJahiaUserManagerService();
         JahiaUser jahiaUser = service.lookupUserByKey(userKey);
         if (propertiesToPopulate == null) {
             propertiesToPopulate = new UserProperties();
         }
-        
+
         org.jahia.services.usermanager.UserProperties props = jahiaUser.getUserProperties();
         Set<String> readOnlyProperties = propertiesToPopulate.getReadOnlyProperties();
-        
+
         propertiesToPopulate.setFirstName(jahiaUser.getProperty("j:firstName"));
         if (props.isReadOnly("j:firstName")) {
             readOnlyProperties.add("j:firstName");
@@ -150,12 +154,12 @@ public class UsersFlowHandler implements Serializable {
         propertiesToPopulate.setDisplayName(PrincipalViewHelper.getDisplayName(jahiaUser,
                 LocaleContextHolder.getLocale()));
         propertiesToPopulate.setLocalPath(jahiaUser.getLocalPath());
-        
+
         propertiesToPopulate.setReadOnly(service.getProvider(jahiaUser.getProviderName()).isReadOnly());
 
         return propertiesToPopulate;
     }
-    
+
     private transient JahiaPasswordPolicyService pwdPolicyService;
 
     private transient JahiaUserManagerService userManagerService;
@@ -188,13 +192,16 @@ public class UsersFlowHandler implements Serializable {
         return result;
     }
 
-    public boolean bulkAddUser(CsvFile csvFile, MessageContext context) {
+    public boolean bulkAddUser(final CsvFile csvFile, final MessageContext context) throws  RepositoryException{
         logger.info("Bulk adding users");
-        long timer = 0;
-        boolean hasErrors = false;
+        long timer = System.currentTimeMillis();;
+        boolean hasErrors = JCRTemplate.getInstance().doExecuteWithSystemSession(new JCRCallback<Boolean>() {
+            @Override
+            public Boolean doInJCR(JCRSessionWrapper session) throws RepositoryException {
         CSVReader csvReader = null;
+                boolean hasErrors = false;
         try {
-            timer = System.currentTimeMillis();
+
             csvReader = new CSVReader(new InputStreamReader(csvFile.getCsvFile().getInputStream(), "UTF-8"),
                     csvFile.getCsvSeparator().charAt(0));
             // the first line contains the column names;
@@ -247,6 +254,10 @@ public class UsersFlowHandler implements Serializable {
         } finally {
             IOUtils.closeQuietly(csvReader);
         }
+                return hasErrors;
+
+            }
+        });
 
 
         logger.info("Batch user create took " + (System.currentTimeMillis() - timer) + " ms");
@@ -275,7 +286,7 @@ public class UsersFlowHandler implements Serializable {
     public UserProperties initUser() {
         return new UserProperties();
     }
-    
+
     public UserProperties populateUser(String selectedUser) {
         return populateUser(selectedUser, null);
     }
