@@ -14,7 +14,7 @@
 <%--@elvariable id="url" type="org.jahia.services.render.URLGenerator"--%>
 
     <h2>
-            Digital Factory&nbsp;<%= Jahia.VERSION %>&nbsp;[<%= Jahia.CODE_NAME %>] - Community Distribution -&nbsp;<fmt:message key="serverSettings.aboutJahia.build"/>&nbsp;<%= Jahia.getBuildNumber() %>.<%= Jahia.getEEBuildNumber() %>
+            Digital Experience Manager&nbsp;<%= Jahia.VERSION %>&nbsp;[<%= Jahia.CODE_NAME %>] - Community Distribution -&nbsp;<fmt:message key="serverSettings.aboutJahia.build"/>&nbsp;<%= Jahia.getBuildNumber() %>.<%= Jahia.getEEBuildNumber() %>
             <c:if test="${ licensePackage.customTermsAndConditions eq 'true' }">
                 / <fmt:message key="serverSettings.aboutJahia.LicenceInfo.customTermsAndConditionsNotice" />
             </c:if>
