@@ -78,10 +78,10 @@
     <groupId>org.jahia.modules</groupId>
     <artifactId>jahia-modules</artifactId>
     <version>7.0.0.5</version>
-    <relativePath/>
+    <relativePath />
   </parent>
   <artifactId>serverSettings</artifactId>
-  <version>7.0.2-SNAPSHOT</version>
+  <version>7.0.2</version>
   <packaging>bundle</packaging>
   <name>Jahia Server Settings</name>
   <description>Server settings</description>
@@ -89,7 +89,7 @@
         <connection>scm:git:git@github.com:Jahia/serverSettings.git</connection>
         <developerConnection>scm:git:git@github.com:Jahia/serverSettings.git</developerConnection>
         <url>scm:git:git@github.com:Jahia/serverSettings.git</url>
-		<tag>JAHIA-7-0-X-X-BRANCH</tag>
+		<tag>7_0_2</tag>
     </scm>
   <repositories>
     <repository>
