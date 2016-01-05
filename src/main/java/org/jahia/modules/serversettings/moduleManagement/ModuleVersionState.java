@@ -66,6 +66,8 @@ public class ModuleVersionState implements Serializable {
 
     private boolean canBeUninstalled;
 
+    private boolean canBeReinstalled = false;
+
     private Set<String> dependencies = new TreeSet<String>();
 
     private boolean systemDependency;
@@ -98,6 +100,10 @@ public class ModuleVersionState implements Serializable {
         return canBeUninstalled;
     }
 
+    public boolean isCanBeReinstalled() {
+        return canBeReinstalled;
+    }
+
     public boolean isSystemDependency() {
         return systemDependency;
     }
@@ -120,6 +126,10 @@ public class ModuleVersionState implements Serializable {
 
     public void setCanBeUninstalled(boolean canBeUninstalled) {
         this.canBeUninstalled = canBeUninstalled;
+    }
+
+    public void setCanBeReinstalled(boolean canBeReinstalled) {
+        this.canBeReinstalled = canBeReinstalled;
     }
 
     public void setSystemDependency(boolean systemDependency) {

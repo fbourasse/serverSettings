@@ -61,6 +61,7 @@ import org.jahia.modules.serversettings.moduleManagement.ModuleFile;
 import org.jahia.modules.serversettings.moduleManagement.ModuleVersionState;
 import org.jahia.osgi.BundleUtils;
 import org.jahia.osgi.FrameworkService;
+import org.jahia.osgi.ProvisionActivator;
 import org.jahia.security.license.LicenseCheckerService;
 import org.jahia.services.content.JCRNodeWrapper;
 import org.jahia.services.content.JCRSessionWrapper;
@@ -570,7 +571,7 @@ public class ModuleManagementFlowHandler implements Serializable {
                 }
             }
         }
-        if (pkg.getState().getState() == ModuleState.State.WAITING_TO_BE_PARSED) {
+        if (pkg.getState().getState() == ModuleState.State.WAITING_TO_BE_PARSED ||pkg.getState().getState() == ModuleState.State.WAITING_TO_BE_STARTED) {
             String dependency = (String) pkg.getState().getDetails();
             state.getUnresolvedDependencies().add(dependency);
         }
@@ -605,24 +606,26 @@ public class ModuleManagementFlowHandler implements Serializable {
                 state.setCanBeUninstalled(state.getUsedInSites().isEmpty() || multipleVersionsOfModuleInstalled);
                 if (details != null) {
                     String dspMsg = Messages.getWithArgs("resources.JahiaServerSettings", "serverSettings.manageModules.incompatibleVersion", LocaleContextHolder.getLocale(), details.toString());
-                    errors.put(moduleId, dspMsg);
+                    addError(moduleVersion, errors, moduleId, dspMsg);
                 }
             } else if (pkg.getState().getState() == ModuleState.State.ERROR_WITH_DEFINITIONS) {
                 state.setCanBeStarted(false);
                 state.setInstalled(false);
                 state.setCanBeUninstalled(state.getUsedInSites().isEmpty() || multipleVersionsOfModuleInstalled);
+                state.setCanBeReinstalled(true);
                 String dspMsg = Messages.getWithArgs("resources.JahiaServerSettings", "serverSettings.manageModules.errorWithDefinitions", LocaleContextHolder.getLocale(), ((Exception)details).getCause().getMessage());
-                errors.put(moduleId, dspMsg);
+                addError(moduleVersion, errors, moduleId, dspMsg);
             } else if (pkg.getState().getState() == ModuleState.State.ERROR_DURING_START) {
                 state.setCanBeStarted(true);
                 state.setCanBeUninstalled(state.getUsedInSites().isEmpty() || multipleVersionsOfModuleInstalled);
                 String dspMsg = Messages.getWithArgs("resources.JahiaServerSettings", "serverSettings.manageModules.errorDuringStart", LocaleContextHolder.getLocale(), details.toString());
-                errors.put(moduleId, dspMsg);
+                addError(moduleVersion, errors, moduleId, dspMsg);
             } else if (pkg.getState().getState() == ModuleState.State.WAITING_TO_BE_IMPORTED) {
                 state.setCanBeStarted(false);
                 state.setCanBeUninstalled(state.getUsedInSites().isEmpty() || multipleVersionsOfModuleInstalled);
+                state.setCanBeReinstalled(true);
                 String dspMsg = Messages.getWithArgs("resources.JahiaServerSettings", "serverSettings.manageModules.waitingToBeImported", LocaleContextHolder.getLocale());
-                errors.put(moduleId, dspMsg);
+                addError(moduleVersion, errors, moduleId, dspMsg);
             } else if (state.getUnresolvedDependencies().isEmpty()) {
                 // no unresolved dependencies -> can start module version
                 state.setCanBeStarted(true);
@@ -635,6 +638,14 @@ public class ModuleManagementFlowHandler implements Serializable {
         }
 
         return state;
+    }
+
+    private void addError(ModuleVersion moduleVersion, Map<String, String> errors, String moduleId, String dspMsg) {
+        if (errors.containsKey(moduleId)) {
+            errors.put(moduleId, errors.get(moduleId) + "\n\n" + moduleVersion + " : " + dspMsg);
+        } else {
+            errors.put(moduleId,  moduleVersion + " : " + dspMsg);
+        }
     }
 
     private void populateActiveVersion(RequestContext context, JahiaTemplatesPackage value) {
@@ -872,4 +883,22 @@ public class ModuleManagementFlowHandler implements Serializable {
             FileUtils.deleteQuietly(tempSources);
         }
     }
+
+
+    public void updateModule(String id, String version) throws RepositoryException {
+        Bundle[] bundles = ProvisionActivator.getInstance().getBundleContext().getBundles();
+        for (Bundle bundle : bundles) {
+            String moduleId = BundleUtils.getModuleId(bundle);
+            String moduleVersion = BundleUtils.getModuleVersion(bundle);
+            if (moduleId.equals(id) && moduleVersion.equals(version)) {
+                try {
+                    bundle.update();
+                    return;
+                } catch (BundleException e) {
+                    logger.error("Cannot undeploy module", e);
+                }
+            }
+        }
+    }
+
 }
