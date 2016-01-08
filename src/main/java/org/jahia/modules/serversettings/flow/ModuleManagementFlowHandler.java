@@ -347,6 +347,12 @@ public class ModuleManagementFlowHandler implements Serializable {
             List<String> missingDeps = getMissingDependenciesFrom(deps);
             if (!missingDeps.isEmpty()) {
                 createMessageForMissingDependencies(context, missingDeps);
+            } else if (BundleUtils.getModule(bundle).getState().getState() == ModuleState.State.ERROR_WITH_DEFINITIONS) {
+                context.addMessage(new MessageBuilder().source("moduleFile")
+                        .code("serverSettings.manageModules.errorWithDefinitions")
+                        .arg(((Exception)BundleUtils.getModule(bundle).getState().getDetails()).getCause().getMessage())
+                        .error()
+                        .build());
             } else {
                 return bundle;
             }
