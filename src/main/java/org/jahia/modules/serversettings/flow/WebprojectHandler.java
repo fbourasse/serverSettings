@@ -704,7 +704,8 @@ public class WebprojectHandler implements Serializable {
 
             boolean isSite = false;
             boolean isLegacySite = false;
-            if ("6.1".equals(importInfos.getOriginatingJahiaRelease())) isLegacySite = true;
+            boolean isLegacyImport = false;
+            if ("6.1".equals(importInfos.getOriginatingJahiaRelease())) isLegacyImport = true;
             try {
                 while ((z = zis2.getNextEntry()) != null) {
                     final String name = z.getName();
@@ -728,7 +729,7 @@ public class WebprojectHandler implements Serializable {
                         isSite = true;
                     } else if (name.startsWith("export_")) {
                         isLegacySite = true;
-                    } else if (validityCheckOnImport && !isLegacySite && name.contains("repository.xml") && !name.contains("/")) {
+                    } else if (validityCheckOnImport && !isLegacyImport && name.contains("repository.xml") && !name.contains("/")) {
                         try {
                             long timer = System.currentTimeMillis();
                             ValidationResults validationResults = importExportBaseService.validateImportFile(
