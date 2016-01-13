@@ -782,7 +782,9 @@ public class ModuleManagementFlowHandler implements Serializable {
         }
         if (missingDependencies.isEmpty()) {
             templateManagerService.activateModuleVersion(moduleId, version);
-            requestContext.getExternalContext().getSessionMap().put("moduleHasBeenStarted", moduleId);
+            if (module.getBundle().getState() == Bundle.ACTIVE) {
+                requestContext.getExternalContext().getSessionMap().put("moduleHasBeenStarted", moduleId);
+            }
         } else {
             requestContext.getExternalContext().getSessionMap().put("missingDependencies", missingDependencies);
         }
