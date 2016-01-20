@@ -52,7 +52,7 @@
         <version>7.1.1.0</version>
     </parent>
     <artifactId>serverSettings</artifactId>
-    <version>7.1.2</version>
+    <version>7.1.3-SNAPSHOT</version>
     <packaging>bundle</packaging>
     <name>Jahia Server Settings</name>
     <description>Server settings</description>
@@ -60,7 +60,7 @@
         <connection>scm:git:git@github.com:Jahia/serverSettings.git</connection>
         <developerConnection>scm:git:git@github.com:Jahia/serverSettings.git</developerConnection>
         <url>scm:git:git@github.com:Jahia/serverSettings.git</url>
-      <tag>7_1_2</tag>
+      <tag>7_1_x</tag>
   </scm>
 
     <properties>
