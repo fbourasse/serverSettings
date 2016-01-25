@@ -20,24 +20,24 @@
 <template:addResources type="javascript" resources="jquery.min.js,jquery-ui.min.js,jquery.blockUI.js,workInProgress.js,admin-bootstrap.js"/>
 <template:addResources type="css" resources="jquery-ui.smoothness.css,jquery-ui.smoothness-jahia.css"/>
 <fmt:message key="label.workInProgressTitle" var="i18nWaiting"/><c:set var="i18nWaiting" value="${functions:escapeJavaScript(i18nWaiting)}"/>
-<!--c:url value='${currentNode.path}.checkprocess.do' context='${url.base}' var="checkImportActURL"/-->
-<!--c:url value='${url.server}${url.base}${renderContext.mainResource.node.path}.checkprocess.do' var="checkImportActURL"/-->
 <c:url value='${url.server}${url.base}${renderContext.mainResource.node.path}.checkprocess.do' var="checkImportActURL"/>
 <template:addResources>
 <script type="text/javascript">
     $(document).ready(function() {
         $('#${currentNode.identifier}-processImport').click(function() {
-        		//TODO: ajax call
+        		var sKey = '${importInfoMap.value.siteKey}' + 'siteKey';
+        		var $importKey = $(sKey);
         		var procCheckUrl = '${checkImportActURL}';
         		(function poll() {
         		    setTimeout(function () {
         		        $.ajax({
         		            type: 'POST',
         		            dataType: 'json',
+        		            data: {cp: $importKey},
         		            url: procCheckUrl,
         		            success: function (data) {
-        		                // nothing todo
         		                console.info(data);
+        		                console.info(data.sts);
         		            },
         		            complete: poll
         		        });
