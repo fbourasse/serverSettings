@@ -340,6 +340,12 @@ public class ModuleManagementFlowHandler implements Serializable {
             List<String> missingDeps = getMissingDependenciesFrom(deps);
             if (!missingDeps.isEmpty()) {
                 createMessageForMissingDependencies(context, missingDeps);
+            } else if (BundleUtils.getModule(bundle).getState().getState() == ModuleState.State.ERROR_WITH_DEFINITIONS) {
+                context.addMessage(new MessageBuilder().source("moduleFile")
+                        .code("serverSettings.manageModules.errorWithDefinitions")
+                        .arg(((Exception)BundleUtils.getModule(bundle).getState().getDetails()).getCause().getMessage())
+                        .error()
+                        .build());
             } else {
                 return bundle;
             }
@@ -776,7 +782,9 @@ public class ModuleManagementFlowHandler implements Serializable {
         }
         if (missingDependencies.isEmpty()) {
             templateManagerService.activateModuleVersion(moduleId, version);
-            requestContext.getExternalContext().getSessionMap().put("moduleHasBeenStarted", moduleId);
+            if (module.getBundle().getState() == Bundle.ACTIVE) {
+                requestContext.getExternalContext().getSessionMap().put("moduleHasBeenStarted", moduleId);
+            }
         } else {
             requestContext.getExternalContext().getSessionMap().put("missingDependencies", missingDependencies);
         }

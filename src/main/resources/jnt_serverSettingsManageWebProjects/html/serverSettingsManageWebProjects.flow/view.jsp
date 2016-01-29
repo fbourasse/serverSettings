@@ -25,6 +25,8 @@
 <fmt:message key="serverSettings.manageWebProjects.noWebProjectSelected" var="i18nNoSiteSelected"/>
 <c:set var="i18nNoSiteSelected" value="${functions:escapeJavaScript(i18nNoSiteSelected)}"/>
 <c:set var="exportAllowed" value="${renderContext.user.root}"/>
+<c:url value='${url.server}${url.base}${renderContext.mainResource.node.path}.checkprocess.do' var="checkImportActURL"/>
+<%-- fmt:message key="serverSettings.manageWebProjects.import.processingMessage" var="i18nImporting"/ --%>
 <script type="text/javascript">
     function submitSiteForm(act, site) {
     	if (typeof site != 'undefined') {
@@ -103,7 +105,55 @@
             "sPaginationType": "bootstrap",
             "aaSorting": [] //this option disable sort by default, the user steal can use column names to sort the table
         });
+        
+        // QA-8160: Timout during import admin screen
+        // Async and polling implementation
+        var procCheckUrl = '${checkImportActURL}';
+        function poll() {
+		    setTimeout(function () {
+		        $.ajax({
+		            type: 'POST',
+		            dataType: 'json',
+		            data: {ca: 'a'},
+		            url: procCheckUrl,
+		            success: function (data) {
+		            	// nothing todo
+		            },
+		            complete: function(jqXHR,status) {
+		            	if(!$.trim(jqXHR.responseText)){
+		            		window.location.reload(true);
+		            	}
+		            	var data = $.parseJSON(jqXHR.responseText);
+		            	if(data == null || data == '') {
+		            		window.location.reload(true);
+		            	} else {
+		            		poll();
+		            	}
+		            }
+		        });
+		    }, 5000); // each 5s
+		}
+        (function checkRunningImport() {
+	        $.ajax({
+	            type: 'POST',
+	            dataType: 'json',
+	            data: {ca: 'a'},
+	            url: procCheckUrl,
+	            success: function (data) {
+	                if(data != null && data.sts != null){
+	                	workInProgress('${i18nWaiting}');
+	            		/*var imports = data.sts.split(',');
+	            		for(var i = 0; i < imports.length; i++) {
+	            			check individual state (imports[i]);
+	            		}*/
+	            		poll();
+	            	}
+	            }
+	        });
+		    
+		})();
     });
+    
 </script>
 <form id="sitesForm" action="${flowExecutionUrl}" method="post">
     <fieldset>
