@@ -1502,7 +1502,7 @@ public class WebprojectHandler implements Serializable {
                         new Object[] {jahiaUser.getUsername(), siteKeyValue});
         String processKey = "import_jahia_site_"
                         + siteKeyValue /* + "_" + jahiaUser.getUsername() */;
-        AsyncImportSiteProcessManager.addSiteImportTask(processKey, importTask);
+        AsyncImportSiteProcessManager.getInstance().addSiteImportTask(processKey, importTask);
     }
 
 }

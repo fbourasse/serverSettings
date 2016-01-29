@@ -25,24 +25,6 @@
 <script type="text/javascript">
     $(document).ready(function() {
         $('#${currentNode.identifier}-processImport').click(function() {
-        		var sKey = '${importInfoMap.value.siteKey}' + 'siteKey';
-        		var $importKey = $(sKey);
-        		var procCheckUrl = '${checkImportActURL}';
-        		(function poll() {
-        		    setTimeout(function () {
-        		        $.ajax({
-        		            type: 'POST',
-        		            dataType: 'json',
-        		            data: {cp: $importKey},
-        		            url: procCheckUrl,
-        		            success: function (data) {
-        		                console.info(data);
-        		                console.info(data.sts);
-        		            },
-        		            complete: poll
-        		        });
-        		    }, 10000); // each 10s
-        		})();
         		workInProgress('${i18nWaiting}');
         	}
         );

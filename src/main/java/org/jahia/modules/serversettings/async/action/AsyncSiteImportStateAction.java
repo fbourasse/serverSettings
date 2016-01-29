@@ -63,7 +63,7 @@ import org.json.JSONObject;
  * @author bdjiba
  *
  */
-public class KeepSessionAliveAction extends Action{
+public class AsyncSiteImportStateAction extends Action {
 
   @Override
   public ActionResult doExecute(HttpServletRequest req, RenderContext renderContext,
@@ -75,8 +75,8 @@ public class KeepSessionAliveAction extends Action{
     if(StringUtils.isNotBlank(procID)) {
       
       String lastStep = "0";
-      if(AsyncImportSiteProcessManager.isProcessReady(procID)) {
-        lastStep = AsyncImportSiteProcessManager.getProcessLastStep(procID);
+      if(AsyncImportSiteProcessManager.getInstance().isProcessReady(procID)) {
+        lastStep = AsyncImportSiteProcessManager.getInstance().getProcessLastStep(procID);
       }
       JSONObject result = new JSONObject();
       result.put("sts", lastStep);
@@ -85,7 +85,7 @@ public class KeepSessionAliveAction extends Action{
     // checking all pending processes
     String allProcReqParam = req.getParameter("ca");
     if(StringUtils.isNotBlank(allProcReqParam) && "a".equals(allProcReqParam)) {
-      List<String> runningImportList = AsyncImportSiteProcessManager.getPendingImport();
+      List<String> runningImportList = AsyncImportSiteProcessManager.getInstance().getPendingImport();
       if(!runningImportList.isEmpty()) {
         JSONObject result = new JSONObject();
         result.put("sts", StringUtils.join(runningImportList.toArray(new String[0]), ","));

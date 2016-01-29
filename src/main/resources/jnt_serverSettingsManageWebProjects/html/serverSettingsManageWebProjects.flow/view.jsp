@@ -26,6 +26,7 @@
 <c:set var="i18nNoSiteSelected" value="${functions:escapeJavaScript(i18nNoSiteSelected)}"/>
 <c:set var="exportAllowed" value="${renderContext.user.root}"/>
 <c:url value='${url.server}${url.base}${renderContext.mainResource.node.path}.checkprocess.do' var="checkImportActURL"/>
+<%-- fmt:message key="serverSettings.manageWebProjects.import.processingMessage" var="i18nImporting"/ --%>
 <script type="text/javascript">
     function submitSiteForm(act, site) {
     	if (typeof site != 'undefined') {
@@ -139,8 +140,6 @@
 	            data: {ca: 'a'},
 	            url: procCheckUrl,
 	            success: function (data) {
-	                console.info(data);
-	                debugger;
 	                if(data != null && data.sts != null){
 	                	workInProgress('${i18nWaiting}');
 	            		/*var imports = data.sts.split(',');
