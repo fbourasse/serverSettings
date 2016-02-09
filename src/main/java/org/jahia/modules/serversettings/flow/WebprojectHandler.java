@@ -959,6 +959,7 @@ public class WebprojectHandler implements Serializable {
     public boolean processImport(final JahiaUser user, MessageContext context) {
         logger.info("Processing Import");
 
+		boolean successful = true;
         boolean doImportServerPermissions = false;
         for (ImportInfo infos : importsInfos.values()) {
             if (infos.isSelected() && infos.getImportFileName().equals("serverPermissions.xml")) {
@@ -1093,7 +1094,7 @@ public class WebprojectHandler implements Serializable {
                                     .defaultText(
                                             "Cannot create site " + infos.getSiteTitle() + ".<br/>" + e.getMessage())
                                     .build());
-                            return false;
+                            successful = false;
                         }
                     }
                 }
@@ -1108,7 +1109,7 @@ public class WebprojectHandler implements Serializable {
 
         CompositeSpellChecker.updateSpellCheckerIndex();
 
-        return true;
+        return successful;
     }
 
     private List<String> readInstalledModules(File i) throws IOException {
