@@ -21,19 +21,46 @@
 <c:forEach var="checks" items="${importInfoMap.value.validationResult.results}">
     <c:if test="${!checks.successful}">
         <c:set target="${validationErrors}" property="${importInfoMap.key}" value="${importInfoMap.key}"/>
-        <c:if test="${checks.class.name == 'org.jahia.services.importexport.validation.MissingModulesValidationResult'}">
-            <c:if test="${!checks.targetTemplateSetPresent}">
-                <fmt:message key="failure.import.missingTemplateSet" var="errorSummary">
-                    <fmt:param value="${checks.targetTemplateSet}"/>
-                </fmt:message>
-                <div class="alert${checks.blocking ? ' alert-error' : ''}">
-                    <button type="button" class="close" data-dismiss="alert">&times;</button>
-                        ${fn:escapeXml(errorSummary)}
-                </div>
-            </c:if>
-            <c:if test="${not empty checks.missingModules}">
-                <fmt:message key="failure.import.missingModules" var="errorSummary">
-                    <fmt:param value="${fn:length(checks.missingModules)}"/>
+        <c:choose>
+            <c:when test="${checks.class.name == 'org.jahia.services.importexport.validation.MissingModulesValidationResult'}">
+                <c:if test="${!checks.targetTemplateSetPresent}">
+                    <fmt:message key="failure.import.missingTemplateSet" var="errorSummary">
+                        <fmt:param value="${checks.targetTemplateSet}"/>
+                    </fmt:message>
+                    <div class="alert${checks.blocking ? ' alert-error' : ''}">
+                        <button type="button" class="close" data-dismiss="alert">&times;</button>
+                            ${fn:escapeXml(errorSummary)}
+                    </div>
+                </c:if>
+                <c:if test="${not empty checks.missingModules}">
+                    <fmt:message key="failure.import.missingModules" var="errorSummary">
+                        <fmt:param value="${fn:length(checks.missingModules)}"/>
+                    </fmt:message>
+                    <div>
+                        <div class="alert${checks.blocking ? ' alert-error' : ''}">
+                            <button type="button" class="close" data-dismiss="alert">&times;</button>
+                                ${fn:escapeXml(errorSummary)}
+                        </div>
+                        <fmt:message key="label.detailed" var="i18nHelp"/><c:set var="i18nHelp"
+                                                                                 value="${fn:escapeXml(i18nHelp)}"/>
+                        <a class="btn btn-info" href="#details"
+                           onclick="$('#validationErrorsDetailsModules${importInfoMap.value.siteKey}').toggle(); return false;"
+                           title="${i18nHelp}"><i class="icon-info-sign icon-white"></i>&nbsp;${i18nHelp}</a>
+                    </div>
+                    <div id="validationErrorsDetailsModules${importInfoMap.value.siteKey}" style="display: none">
+                        <ul>
+                            <c:forEach var="module" items="${checks.missingModules}">
+                                <li>${fn:escapeXml(module)}</li>
+                            </c:forEach>
+                        </ul>
+                    </div>
+                </c:if>
+            </c:when>
+
+            <c:when test="${checks.class.name == 'org.jahia.services.importexport.validation.MissingNodetypesValidationResult'}">
+                <fmt:message key="failure.import.missingNodetypes" var="errorSummary">
+                    <fmt:param value="${fn:length(checks.missingNodetypes)}"/>
+                    <fmt:param value="${fn:length(checks.missingMixins)}"/>
                 </fmt:message>
                 <div>
                     <div class="alert${checks.blocking ? ' alert-error' : ''}">
@@ -43,175 +70,172 @@
                     <fmt:message key="label.detailed" var="i18nHelp"/><c:set var="i18nHelp"
                                                                              value="${fn:escapeXml(i18nHelp)}"/>
                     <a class="btn btn-info" href="#details"
-                       onclick="$('#validationErrorsDetailsModules${importInfoMap.value.siteKey}').toggle(); return false;"
+                       onclick="$('#validationErrorsDetailsNodetypes${importInfoMap.value.siteKey}').toggle(); return false;"
                        title="${i18nHelp}"><i class="icon-info-sign icon-white"></i>&nbsp;${i18nHelp}</a>
                 </div>
-                <div id="validationErrorsDetailsModules${importInfoMap.value.siteKey}" style="display: none">
-                    <ul>
-                        <c:forEach var="module" items="${checks.missingModules}">
-                            <li>${fn:escapeXml(module)}</li>
-                        </c:forEach>
-                    </ul>
-                </div>
-            </c:if>
-        </c:if>
-
-        <c:if test="${checks.class.name == 'org.jahia.services.importexport.validation.MissingNodetypesValidationResult'}">
-            <fmt:message key="failure.import.missingNodetypes" var="errorSummary">
-                <fmt:param value="${fn:length(checks.missingNodetypes)}"/>
-                <fmt:param value="${fn:length(checks.missingMixins)}"/>
-            </fmt:message>
-            <div>
-                <div class="alert${checks.blocking ? ' alert-error' : ''}">
-                    <button type="button" class="close" data-dismiss="alert">&times;</button>
-                        ${fn:escapeXml(errorSummary)}
-                </div>
-                <fmt:message key="label.detailed" var="i18nHelp"/><c:set var="i18nHelp"
-                                                                         value="${fn:escapeXml(i18nHelp)}"/>
-                <a class="btn btn-info" href="#details"
-                   onclick="$('#validationErrorsDetailsNodetypes${importInfoMap.value.siteKey}').toggle(); return false;"
-                   title="${i18nHelp}"><i class="icon-info-sign icon-white"></i>&nbsp;${i18nHelp}</a>
-            </div>
-            <div id="validationErrorsDetailsNodetypes${importInfoMap.value.siteKey}" style="display: none">
-                <c:if test="${not empty checks.missingNodetypes}">
-                    <h2><fmt:message key="serverSettings.manageWebProjects.import.missingNodetypes"/></h2>
-                    <ul>
-                        <c:forEach var="nt" items="${checks.missingNodetypes}">
-                            <li>${fn:escapeXml(nt.key)}
-                                <ul>
-                                    <c:forEach var="path" items="${nt.value}" begin="0" end="2">
-                                        <li>${fn:escapeXml(path)}</li>
-                                    </c:forEach>
-                                    <c:if test="${fn:length(nt.value) > 3}">
-                                        <c:set var="all">
-                                            <c:forEach var="path" items="${nt.value}">
-                                                ${path}${lineBreak}
-                                            </c:forEach>
-                                        </c:set>
-                                        <li><a href="#showAll"
-                                               onclick='alert("${functions:escapeJavaScript(all)}"); return false;'>...&lt;<fmt:message
-                                                key="label.all"/>&gt;</a></li>
-                                    </c:if>
-                                </ul>
-                            </li>
-                        </c:forEach>
-                    </ul>
-                </c:if>
-                <c:if test="${not empty checks.missingMixins}">
-                    <h2><fmt:message key="serverSettings.manageWebProjects.import.missingMixins"/></h2>
-                    <ul>
-                        <c:forEach var="nt" items="${checks.missingMixins}">
-                            <li>${fn:escapeXml(nt.key)}
-                                <ul>
-                                    <c:forEach var="path" items="${nt.value}" begin="0" end="2">
-                                        <li>${fn:escapeXml(path)}</li>
-                                    </c:forEach>
-                                    <c:if test="${fn:length(nt.value) > 3}">
-                                        <c:set var="all">
-                                            <c:forEach var="path" items="${nt.value}">
-                                                ${path}${lineBreak}
-                                            </c:forEach>
-                                        </c:set>
-                                        <li><a href="#showAll"
-                                               onclick='alert("${functions:escapeJavaScript(all)}"); return false;'>...&lt;<fmt:message
-                                                key="label.all"/>&gt;</a></li>
-                                    </c:if>
-                                </ul>
-                            </li>
-                        </c:forEach>
-                    </ul>
-                </c:if>
-            </div>
-        </c:if>
-
-        <c:if test="${checks.class.name == 'org.jahia.services.importexport.validation.MissingTemplatesValidationResult'}">
-            <fmt:message key="failure.import.missingTemplates" var="errorSummary">
-                <fmt:param value="${fn:length(checks.missingTemplates)}"/>
-            </fmt:message>
-            <div style="display: block">
-                <div class="alert${checks.blocking ? ' alert-error' : ''}">
-                    <button type="button" class="close" data-dismiss="alert">&times;</button>
-                        ${fn:escapeXml(errorSummary)}
-                </div>
-                <fmt:message key="label.detailed" var="i18nHelp"/><c:set var="i18nHelp"
-                                                                         value="${fn:escapeXml(i18nHelp)}"/>
-                <a class="btn btn-info" href="#details"
-                   onclick="$('#validationErrorsDetailsTemplates${importInfoMap.value.siteKey}').toggle(); return false;"
-                   title="${i18nHelp}"><i class="icon-info-sign icon-white"></i>&nbsp;${i18nHelp}</a>
-            </div>
-            <div id="validationErrorsDetailsTemplates${importInfoMap.value.siteKey}" style="display: none">
-                <ul>
-                    <c:forEach var="tmpl" items="${checks.missingTemplates}">
-                        <li>${fn:escapeXml(tmpl.key)}
-                            <ul>
-                                <c:forEach var="path" items="${tmpl.value}" begin="0" end="2">
-                                    <li>${fn:escapeXml(path)}</li>
-                                </c:forEach>
-                                <c:if test="${fn:length(tmpl.value) > 3}">
-                                    <c:set var="all">
-                                        <c:forEach var="path" items="${tmpl.value}">
-                                            ${path}${lineBreak}
+                <div id="validationErrorsDetailsNodetypes${importInfoMap.value.siteKey}" style="display: none">
+                    <c:if test="${not empty checks.missingNodetypes}">
+                        <h2><fmt:message key="serverSettings.manageWebProjects.import.missingNodetypes"/></h2>
+                        <ul>
+                            <c:forEach var="nt" items="${checks.missingNodetypes}">
+                                <li>${fn:escapeXml(nt.key)}
+                                    <ul>
+                                        <c:forEach var="path" items="${nt.value}" begin="0" end="2">
+                                            <li>${fn:escapeXml(path)}</li>
                                         </c:forEach>
-                                    </c:set>
-                                    <li><a href="#showAll"
-                                           onclick='alert("${functions:escapeJavaScript(all)}"); return false;'>...&lt;<fmt:message
-                                            key="label.all"/>&gt;</a></li>
-                                </c:if>
-                            </ul>
-                        </li>
-                    </c:forEach>
-                </ul>
-            </div>
-        </c:if>
-        <c:if test="${checks.class.name == 'org.jahia.services.importexport.validation.MissingPortletsValidationResult'}">
-            <fmt:message key="serverSettings.manageWebProjects.import.missingPortlets" var="errorSummary">
-                <fmt:param value="${fn:length(checks.missingPortlets)}"/>
-            </fmt:message>
-            <div style="display: block">
-                <div class="alert${checks.blocking ? ' alert-error' : ''}">
-                    <button type="button" class="close" data-dismiss="alert">&times;</button>
-                        ${fn:escapeXml(errorSummary)}
+                                        <c:if test="${fn:length(nt.value) > 3}">
+                                            <c:set var="all">
+                                                <c:forEach var="path" items="${nt.value}">
+                                                    ${path}${lineBreak}
+                                                </c:forEach>
+                                            </c:set>
+                                            <li><a href="#showAll"
+                                                   onclick='alert("${functions:escapeJavaScript(all)}"); return false;'>...&lt;<fmt:message
+                                                    key="label.all"/>&gt;</a></li>
+                                        </c:if>
+                                    </ul>
+                                </li>
+                            </c:forEach>
+                        </ul>
+                    </c:if>
+                    <c:if test="${not empty checks.missingMixins}">
+                        <h2><fmt:message key="serverSettings.manageWebProjects.import.missingMixins"/></h2>
+                        <ul>
+                            <c:forEach var="nt" items="${checks.missingMixins}">
+                                <li>${fn:escapeXml(nt.key)}
+                                    <ul>
+                                        <c:forEach var="path" items="${nt.value}" begin="0" end="2">
+                                            <li>${fn:escapeXml(path)}</li>
+                                        </c:forEach>
+                                        <c:if test="${fn:length(nt.value) > 3}">
+                                            <c:set var="all">
+                                                <c:forEach var="path" items="${nt.value}">
+                                                    ${path}${lineBreak}
+                                                </c:forEach>
+                                            </c:set>
+                                            <li><a href="#showAll"
+                                                   onclick='alert("${functions:escapeJavaScript(all)}"); return false;'>...&lt;<fmt:message
+                                                    key="label.all"/>&gt;</a></li>
+                                        </c:if>
+                                    </ul>
+                                </li>
+                            </c:forEach>
+                        </ul>
+                    </c:if>
                 </div>
+            </c:when>
 
-                <fmt:message key="label.detailed" var="i18nHelp"/><c:set var="i18nHelp"
-                                                                         value="${fn:escapeXml(i18nHelp)}"/>
-                <a class="btn btn-info" href="#details"
-                   onclick="$('#validationErrorsDetailsTemplates${importInfoMap.value.siteKey}').toggle(); return false;"
-                   title="${i18nHelp}"><i class="icon-info-sign icon-white"></i>&nbsp;${i18nHelp}</a>
-            </div>
-            <div id="validationErrorsDetailsTemplates${importInfoMap.value.siteKey}" style="display: none">
-                <ul>
-                    <c:forEach var="portlet" items="${checks.missingPortlets}">
-                        <li>${fn:escapeXml(portlet)}</li>
-                    </c:forEach>
-                </ul>
-            </div>
-        </c:if>
-
-        <c:if test="${checks.class.name == 'org.jahia.services.importexport.validation.ProviderAvailabilityValidatorResult'}">
-            <fmt:message key="serverSettings.manageWebProjects.import.unavailableProviders" var="errorSummary">
-                <fmt:param value="${fn:length(checks.unavailableProviders)}"/>
-            </fmt:message>
-            <div style="display: block">
-                <div class="alert${checks.blocking ? ' alert-error' : ''}">
-                    <button type="button" class="close" data-dismiss="alert">&times;</button>
-                        ${fn:escapeXml(errorSummary)}
+            <c:when test="${checks.class.name == 'org.jahia.services.importexport.validation.MissingTemplatesValidationResult'}">
+                <fmt:message key="failure.import.missingTemplates" var="errorSummary">
+                    <fmt:param value="${fn:length(checks.missingTemplates)}"/>
+                </fmt:message>
+                <div style="display: block">
+                    <div class="alert${checks.blocking ? ' alert-error' : ''}">
+                        <button type="button" class="close" data-dismiss="alert">&times;</button>
+                            ${fn:escapeXml(errorSummary)}
+                    </div>
+                    <fmt:message key="label.detailed" var="i18nHelp"/><c:set var="i18nHelp"
+                                                                             value="${fn:escapeXml(i18nHelp)}"/>
+                    <a class="btn btn-info" href="#details"
+                       onclick="$('#validationErrorsDetailsTemplates${importInfoMap.value.siteKey}').toggle(); return false;"
+                       title="${i18nHelp}"><i class="icon-info-sign icon-white"></i>&nbsp;${i18nHelp}</a>
                 </div>
+                <div id="validationErrorsDetailsTemplates${importInfoMap.value.siteKey}" style="display: none">
+                    <ul>
+                        <c:forEach var="tmpl" items="${checks.missingTemplates}">
+                            <li>${fn:escapeXml(tmpl.key)}
+                                <ul>
+                                    <c:forEach var="path" items="${tmpl.value}" begin="0" end="2">
+                                        <li>${fn:escapeXml(path)}</li>
+                                    </c:forEach>
+                                    <c:if test="${fn:length(tmpl.value) > 3}">
+                                        <c:set var="all">
+                                            <c:forEach var="path" items="${tmpl.value}">
+                                                ${path}${lineBreak}
+                                            </c:forEach>
+                                        </c:set>
+                                        <li><a href="#showAll"
+                                               onclick='alert("${functions:escapeJavaScript(all)}"); return false;'>...&lt;<fmt:message
+                                                key="label.all"/>&gt;</a></li>
+                                    </c:if>
+                                </ul>
+                            </li>
+                        </c:forEach>
+                    </ul>
+                </div>
+            </c:when>
+            <c:when test="${checks.class.name == 'org.jahia.services.importexport.validation.MissingPortletsValidationResult'}">
+                <fmt:message key="serverSettings.manageWebProjects.import.missingPortlets" var="errorSummary">
+                    <fmt:param value="${fn:length(checks.missingPortlets)}"/>
+                </fmt:message>
+                <div style="display: block">
+                    <div class="alert${checks.blocking ? ' alert-error' : ''}">
+                        <button type="button" class="close" data-dismiss="alert">&times;</button>
+                            ${fn:escapeXml(errorSummary)}
+                    </div>
 
-                <fmt:message key="label.detailed" var="i18nHelp"/><c:set var="i18nHelp"
-                                                                         value="${fn:escapeXml(i18nHelp)}"/>
-                <a class="btn btn-info" href="#details"
-                   onclick="$('#validationErrorsDetailsProviders${importInfoMap.value.siteKey}').toggle(); return false;"
-                   title="${i18nHelp}"><i class="icon-info-sign icon-white"></i>&nbsp;${i18nHelp}</a>
-            </div>
-            <div id="validationErrorsDetailsProviders${importInfoMap.value.siteKey}" style="display: none">
-                <ul>
-                    <c:forEach var="provider" items="${checks.unavailableProviders}">
-                        <li>${fn:escapeXml(provider)}</li>
-                    </c:forEach>
-                </ul>
-            </div>
-        </c:if>
+                    <fmt:message key="label.detailed" var="i18nHelp"/><c:set var="i18nHelp"
+                                                                             value="${fn:escapeXml(i18nHelp)}"/>
+                    <a class="btn btn-info" href="#details"
+                       onclick="$('#validationErrorsDetailsTemplates${importInfoMap.value.siteKey}').toggle(); return false;"
+                       title="${i18nHelp}"><i class="icon-info-sign icon-white"></i>&nbsp;${i18nHelp}</a>
+                </div>
+                <div id="validationErrorsDetailsTemplates${importInfoMap.value.siteKey}" style="display: none">
+                    <ul>
+                        <c:forEach var="portlet" items="${checks.missingPortlets}">
+                            <li>${fn:escapeXml(portlet)}</li>
+                        </c:forEach>
+                    </ul>
+                </div>
+            </c:when>
+
+            <c:when test="${checks.class.name == 'org.jahia.services.importexport.validation.ProviderAvailabilityValidatorResult'}">
+                <fmt:message key="serverSettings.manageWebProjects.import.unavailableProviders" var="errorSummary">
+                    <fmt:param value="${fn:length(checks.unavailableProviders)}"/>
+                </fmt:message>
+                <div style="display: block">
+                    <div class="alert${checks.blocking ? ' alert-error' : ''}">
+                        <button type="button" class="close" data-dismiss="alert">&times;</button>
+                            ${fn:escapeXml(errorSummary)}
+                    </div>
+
+                    <fmt:message key="label.detailed" var="i18nHelp"/><c:set var="i18nHelp"
+                                                                             value="${fn:escapeXml(i18nHelp)}"/>
+                    <a class="btn btn-info" href="#details"
+                       onclick="$('#validationErrorsDetailsProviders${importInfoMap.value.siteKey}').toggle(); return false;"
+                       title="${i18nHelp}"><i class="icon-info-sign icon-white"></i>&nbsp;${i18nHelp}</a>
+                </div>
+                <div id="validationErrorsDetailsProviders${importInfoMap.value.siteKey}" style="display: none">
+                    <ul>
+                        <c:forEach var="provider" items="${checks.unavailableProviders}">
+                            <li>${fn:escapeXml(provider)}</li>
+                        </c:forEach>
+                    </ul>
+                </div>
+            </c:when>
+
+            <c:otherwise>
+                <div style="display: block">
+                    <c:catch var="exception">${checks.messageKey} ${checks.messageParams}</c:catch>
+                    <c:if test="${empty exception}">
+                        <fmt:message key="${checks.messageKey}" var="errorSummary">
+                            <c:forEach items="${checks.messageParams}" var="p">
+                                <fmt:param value="${p}"/>
+                            </c:forEach>
+                        </fmt:message>
+                    </c:if>
+                    <c:if test="${not empty exception}">
+                        <c:set var="errorSummary" value="${checks}"/>
+                    </c:if>
+
+                    <div class="alert${checks.blocking ? ' alert-error' : ''}">
+                        <button type="button" class="close" data-dismiss="alert">&times;</button>
+                            ${fn:escapeXml(errorSummary)}
+                    </div>
+
+                </div>
+            </c:otherwise>
+        </c:choose>
     </c:if>
     <c:if test="${checks.class.name == 'org.jahia.services.importexport.validation.MissingTemplatesValidationResult'}">
         <c:set var="templateSetsMissingCounts" value="${checks.templateSetsMissingCounts}"
