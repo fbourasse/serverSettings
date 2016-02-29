@@ -216,7 +216,7 @@
 
             <c:otherwise>
                 <div style="display: block">
-                    <c:catch var="exception">${checks.messageKey} ${checks.messageParams}</c:catch>
+                    <c:catch var="exception"><c:set var="dummy" value="${checks.messageKey} ${checks.messageParams}"/></c:catch>
                     <c:if test="${empty exception}">
                         <fmt:message key="${checks.messageKey}" var="errorSummary">
                             <c:forEach items="${checks.messageParams}" var="p">
