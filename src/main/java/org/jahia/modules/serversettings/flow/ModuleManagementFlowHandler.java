@@ -123,6 +123,7 @@ public class ModuleManagementFlowHandler implements Serializable {
     private transient SettingsBean settingsBean;
 
     private String moduleName;
+    private int startLevel;
 
     public boolean isInModule(RenderContext renderContext) {
         try {
@@ -320,7 +321,7 @@ public class ModuleManagementFlowHandler implements Serializable {
                 InputStream is = new URL(location).openStream();
                 try {
                     bundle = FrameworkService.getBundleContext().installBundle(location, is);
-                    bundle.adapt(BundleStartLevel.class).setStartLevel(2);
+                    bundle.adapt(BundleStartLevel.class).setStartLevel(startLevel);
                 } finally {
                     IOUtils.closeQuietly(is);
                 }
@@ -408,12 +409,6 @@ public class ModuleManagementFlowHandler implements Serializable {
                     final List<String> missing = getMissingDependenciesFrom(module.getDepends());
                     if(!missing.isEmpty()) {
                         createMessageForMissingDependencies(context.getMessageContext(), missing);
-                    } else if(module.getState().getState()== ModuleState.State.WAITING_TO_BE_PARSED) {
-                        context.getMessageContext().addMessage(new MessageBuilder().source("moduleFile")
-                                .code("serverSettings.manageModules.install.missingDependencies")
-                                .arg(module.getState().getDetails())
-                                .error()
-                                .build());
                     }
                     break;
                 }
@@ -577,10 +572,6 @@ public class ModuleManagementFlowHandler implements Serializable {
                 }
             }
         }
-        if (pkg.getState().getState() == ModuleState.State.WAITING_TO_BE_PARSED ||pkg.getState().getState() == ModuleState.State.WAITING_TO_BE_STARTED) {
-            String dependency = (String) pkg.getState().getDetails();
-            state.getUnresolvedDependencies().add(dependency);
-        }
         List<JahiaTemplatesPackage> dependantModules = templateManagerService.getTemplatePackageRegistry()
                 .getDependantModules(pkg);
         for (JahiaTemplatesPackage dependant : dependantModules) {
@@ -620,11 +611,6 @@ public class ModuleManagementFlowHandler implements Serializable {
                 state.setCanBeUninstalled(state.getUsedInSites().isEmpty() || multipleVersionsOfModuleInstalled);
                 state.setCanBeReinstalled(true);
                 String dspMsg = Messages.getWithArgs("resources.JahiaServerSettings", "serverSettings.manageModules.errorWithDefinitions", LocaleContextHolder.getLocale(), ((Exception)details).getCause().getMessage());
-                addError(moduleVersion, errors, moduleId, dspMsg);
-            } else if (pkg.getState().getState() == ModuleState.State.ERROR_DURING_START) {
-                state.setCanBeStarted(true);
-                state.setCanBeUninstalled(state.getUsedInSites().isEmpty() || multipleVersionsOfModuleInstalled);
-                String dspMsg = Messages.getWithArgs("resources.JahiaServerSettings", "serverSettings.manageModules.errorDuringStart", LocaleContextHolder.getLocale(), details.toString());
                 addError(moduleVersion, errors, moduleId, dspMsg);
             } else if (pkg.getState().getState() == ModuleState.State.WAITING_TO_BE_IMPORTED) {
                 state.setCanBeStarted(false);
@@ -689,6 +675,8 @@ public class ModuleManagementFlowHandler implements Serializable {
     }
 
     public void initModules(RequestContext requestContext, RenderContext renderContext) {
+        startLevel = Integer.parseInt(settingsBean.getPropertiesFile().getProperty("jahia.moduleStartLevel", "90"));
+
         // generate tables ids, used by datatable jquery plugin to store the state of a table in the user localestorage.
         // new flow = new ids
         reloadTablesUUIDFromSession(requestContext);
@@ -772,21 +760,11 @@ public class ModuleManagementFlowHandler implements Serializable {
     }
 
     public void startModule(String moduleId, String version, RequestContext requestContext) throws RepositoryException, BundleException {
-        List<String> missingDependencies = new ArrayList<String>();
         JahiaTemplatesPackage module = templateManagerService.getTemplatePackageRegistry().lookupByIdAndVersion(moduleId,
                 new ModuleVersion(version));
-        for (JahiaTemplatesPackage dep : module.getDependencies()) {
-            if (!dep.isActiveVersion()) {
-                missingDependencies.add(dep.getName());
-            }
-        }
-        if (missingDependencies.isEmpty()) {
-            templateManagerService.activateModuleVersion(moduleId, version);
-            if (module.getBundle().getState() == Bundle.ACTIVE) {
-                requestContext.getExternalContext().getSessionMap().put("moduleHasBeenStarted", moduleId);
-            }
-        } else {
-            requestContext.getExternalContext().getSessionMap().put("missingDependencies", missingDependencies);
+        templateManagerService.activateModuleVersion(moduleId, version);
+        if (module.getBundle().getState() == Bundle.ACTIVE) {
+            requestContext.getExternalContext().getSessionMap().put("moduleHasBeenStarted", moduleId);
         }
         storeTablesUUID(requestContext);
     }
