@@ -17,8 +17,6 @@
 
 [jnt:serverSettingsManageMemory] > jnt:content, jmix:siteComponent, mix:title, jmix:studioOnly
 
-[jnt:serverSettingsManageModules] > jnt:content, jmix:siteComponent, mix:title, jmix:studioOnly
-
 [jnt:serverSettingsManagePortlets] > jnt:content, jmix:siteComponent, mix:title, jmix:studioOnly
 
 [jnt:serverSettingsPasswordPolicy] > jnt:content, jmix:siteComponent, mix:title, jmix:studioOnly

@@ -20,14 +20,5 @@
             </map>
         </property>
     </bean>
-    <bean class="org.jahia.modules.serversettings.forge.ForgeService">
-        <property name="httpClientService" ref="HttpClientService"/>
-        <property name="loadModulesDelay" value="${jahia.settings.forgeModulesUpdateDelay:86400000}"/>
-    </bean>
-
-    <bean class="org.jahia.modules.serversettings.moduleManagement.DuplicateModuleAction">
-        <property name="requiredPermission" value="adminTemplates" />
-        <property name="jahiaTemplateManagerService" ref="JahiaTemplateManagerService" />
-    </bean>
     
 </beans>

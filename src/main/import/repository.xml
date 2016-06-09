@@ -64,16 +64,6 @@
                                 </search_x0020_settings>
                             </configurations>
                             <system_x0020_components jcr:primaryType="jnt:folder">
-                                <modules jcr:primaryType="jnt:folder">
-                                    <modules.png j:height="16"
-                                     j:width="16"
-                                     jcr:mixinTypes="jmix:image"
-                                     jcr:primaryType="jnt:file">
-                                        <jcr:content jcr:mimeType="image/png" jcr:primaryType="jnt:resource"/>
-                                        <thumbnail jcr:mimeType="image/png" jcr:primaryType="jnt:resource"/>
-                                        <thumbnail2 jcr:mimeType="image/png" jcr:primaryType="jnt:resource"/>
-                                    </modules.png>
-                                </modules>
                                 <portlets jcr:primaryType="jnt:folder">
                                     <portlets.png j:height="16"
                                       j:width="16"
@@ -298,18 +288,6 @@
                                 j:titleKey="serverSettings.systemComponents"
                                 jcr:mixinTypes="jmix:rbTitle"
                                 jcr:primaryType="jnt:template">
-                            <manageModules j:applyOn="jnt:globalSettings"
-                                 j:defaultTemplate="false"
-                                 j:hiddenTemplate="false"
-                                 j:icon="/modules/serverSettings/templates/files/serveradmin/system_x0020_components/modules/modules.png"
-                                 j:requiredPermissionNames="adminTemplates"
-                                 j:titleKey="serverSettings.manageModules"
-                                 jcr:mixinTypes="jmix:rbTitle"
-                                 jcr:primaryType="jnt:contentTemplate">
-                                <pagecontent jcr:primaryType="jnt:contentList">
-                                    <manage-modules jcr:primaryType="jnt:serverSettingsManageModules"/>
-                                </pagecontent>
-                            </manageModules>
                             <managePortlets j:applyOn="jnt:globalSettings"
                                   j:defaultTemplate="false"
                                   j:hiddenTemplate="false"
