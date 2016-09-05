@@ -57,18 +57,20 @@
                 </div>
             </div>
 
-            <div class="row-fluid">
-                <div class="span4">
-                    <label for="password"><fmt:message key="label.password"/></label>
-                    <form:input class="span12" type="password" id="password" path="password" autocomplete="off"/>
-                    <span class="text-info">(<fmt:message key="siteSettings.user.edit.password.no.change"/>)</span>
+            <c:if test="${renderContext.user.root}">
+                <div class="row-fluid">
+                    <div class="span4">
+                        <label for="password"><fmt:message key="label.password"/></label>
+                        <form:input class="span12" type="password" id="password" path="password" autocomplete="off"/>
+                        <span class="text-info">(<fmt:message key="siteSettings.user.edit.password.no.change"/>)</span>
+                    </div>
+                    <div class="span4">
+                        <label for="passwordConfirm"><fmt:message key="label.confirmPassword"/></label>
+                        <form:input type="password" class="span12" id="passwordConfirm" path="passwordConfirm" autocomplete="off"/>
+                        <span class="text-info">(<fmt:message key="siteSettings.user.edit.password.no.change"/>)</span>
+                    </div>
                 </div>
-                <div class="span4">
-                    <label for="passwordConfirm"><fmt:message key="label.confirmPassword"/></label>
-                    <form:input type="password" class="span12" id="passwordConfirm" path="passwordConfirm" autocomplete="off"/>
-                    <span class="text-info">(<fmt:message key="siteSettings.user.edit.password.no.change"/>)</span>
-                </div>
-            </div>
+            </c:if>
             <div class="row-fluid">
                 <div class="span12" style="margin-top:15px;">
                     <button class="btn btn-primary" id="submit" type="submit" name="_eventId_submit"><i class="icon-ok icon-white"></i>&nbsp;<fmt:message key='label.save'/></button>
