@@ -86,7 +86,9 @@ public class DuplicateModuleAction extends Action {
 
         try {
             JahiaTemplatesPackage newModule = jahiaTemplateManagerService.duplicateModule(newModuleName, newModuleId, newGroupId, srcPath, newScmUri, branchOrTag, moduleId, version, containsTypeDefinitions, newDstPath, areSourcesTemporary, session);
-            String newModuleStudioUrl = "/cms/studio/default/" + resource.getLocale() + "/modules/" + newModule.getId() + ".html";
+            String contextPath = renderContext.getRequest().getContextPath();
+            String newModuleStudioUrl = (StringUtils.equals(contextPath, "/") ? "" : contextPath) + "/cms/studio/default/" + resource.getLocale() +
+                    "/modules/" + newModule.getId() + ".html";
             JSONObject json = new JSONObject();
             json.put("newModuleStudioUrl", newModuleStudioUrl);
             return new ActionResult(HttpServletResponse.SC_OK, null, json);
