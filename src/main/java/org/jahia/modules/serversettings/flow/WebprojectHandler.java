@@ -48,7 +48,6 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Ordering;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.jahia.commons.Version;
@@ -495,7 +494,7 @@ public class WebprojectHandler implements Serializable {
             deleteFilesAtEnd = !(zis instanceof DirectoryZipInputStream);
 
             while ((z = zis.getNextEntry()) != null) {
-                String n = FilenameUtils.normalize(z.getName(), true);
+                String n = z.getName().replace('\\', '/');
 
                 File i;
                 if (!(zis instanceof DirectoryZipInputStream)) {
@@ -705,7 +704,7 @@ public class WebprojectHandler implements Serializable {
             if ("6.1".equals(importInfos.getOriginatingJahiaRelease())) isLegacyImport = true;
             try {
                 while ((z = zis2.getNextEntry()) != null) {
-                    final String name = FilenameUtils.normalize(z.getName(), true);
+                    final String name = z.getName().replace('\\', '/');
                     if ("site.properties".equals(name)) {
                         Properties p = new Properties();
                         p.load(zis2);
