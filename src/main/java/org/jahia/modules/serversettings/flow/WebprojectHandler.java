@@ -48,6 +48,7 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Ordering;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.jahia.commons.Version;
@@ -56,7 +57,6 @@ import org.jahia.exceptions.JahiaException;
 import org.jahia.modules.sitesettings.users.management.UserProperties;
 import org.jahia.osgi.BundleResource;
 import org.jahia.registries.ServicesRegistry;
-import org.jahia.services.SpringContextSingleton;
 import org.jahia.services.cache.CacheHelper;
 import org.jahia.services.content.*;
 import org.jahia.services.content.decorator.JCRSiteNode;
@@ -90,12 +90,10 @@ import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.webflow.execution.RequestContext;
-import org.xml.sax.SAXException;
 
 import javax.annotation.Nullable;
 import javax.jcr.RepositoryException;
 import javax.servlet.ServletContext;
-import javax.xml.transform.TransformerException;
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -472,7 +470,6 @@ public class WebprojectHandler implements Serializable {
     private void prepareFileImports(File f, String name, MessageContext messageContext) {
         ZipInputStream zis = null;
         if (f != null && f.exists()) {
-            ZipEntry z = null;
             try {
                 if (f != null && f.isDirectory()) {
                     zis = new DirectoryZipInputStream(f);
@@ -498,7 +495,7 @@ public class WebprojectHandler implements Serializable {
             deleteFilesAtEnd = !(zis instanceof DirectoryZipInputStream);
 
             while ((z = zis.getNextEntry()) != null) {
-                String n = z.getName();
+                String n = FilenameUtils.normalize(z.getName(), true);
 
                 File i;
                 if (!(zis instanceof DirectoryZipInputStream)) {
@@ -708,7 +705,7 @@ public class WebprojectHandler implements Serializable {
             if ("6.1".equals(importInfos.getOriginatingJahiaRelease())) isLegacyImport = true;
             try {
                 while ((z = zis2.getNextEntry()) != null) {
-                    final String name = z.getName();
+                    final String name = FilenameUtils.normalize(z.getName(), true);
                     if ("site.properties".equals(name)) {
                         Properties p = new Properties();
                         p.load(zis2);
