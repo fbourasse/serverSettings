@@ -45,6 +45,8 @@
                         <input type="checkbox" class="importCheckbox${importInfoMap.value.validationResult.blocking ? ' importBlocking' : ''}" id="${importInfoMap.key}" name="importsInfos['${importInfoMap.key}'].selected" value="true"
                                <c:if test="${importInfoMap.value.selected}">checked="checked"</c:if>/> ${importInfoMap.key}
                         <input type="hidden" id="${importInfoMap.key}" name="_importsInfos['${importInfoMap.key}'].selected"/>
+                        <c:if test="${importInfoMap.value.validationResult.blocking}"> (<input type="checkbox" onchange="swicthClass($(this).prev().prev())"/>
+                            <fmt:message key="serverSettings.manageWebProjects.import.ignore.errors"/>)</c:if>
                     </label>
                     <%@include file="importValidation.jspf"%>
                     <c:if test="${importInfoMap.value.site}">
@@ -132,16 +134,24 @@
 <c:if test="${not empty validationErrors}">
 <script type="text/javascript">
     $(document).ready(function () {
-        function checkBlockingImports() {
-            if ($(".importBlocking:checked").length == 0) {
-                $("#${currentNode.identifier}-processImport").removeAttr("disabled");
-            } else {
-                $("#${currentNode.identifier}-processImport").attr("disabled", "disabled");
-            }
-        }
         checkBlockingImports();
         $(".importBlocking").change(checkBlockingImports);
     });
+    function checkBlockingImports() {
+        if ($(".importBlocking:checked").length == 0) {
+            $("#${currentNode.identifier}-processImport").removeAttr("disabled");
+        } else {
+            $("#${currentNode.identifier}-processImport").attr("disabled", "disabled");
+        }
+    }
+    function swicthClass(el) {
+        if (el.hasClass("importBlocking")) {
+            el.removeClass("importBlocking");
+        } else {
+            el.addClass("importBlocking");
+        }
+        checkBlockingImports();
+    }
 </script>
 </c:if>
 
