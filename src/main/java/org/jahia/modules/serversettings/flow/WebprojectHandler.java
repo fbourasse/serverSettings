@@ -357,8 +357,6 @@ public class WebprojectHandler implements Serializable {
 
     public void deleteSites() {
         if (sitesKey != null) {
-            JahiaSite defSite = sitesService.getDefaultSite();
-            String siteKey = defSite.getSiteKey();
             for (String site : sitesKey) {
                 try {
                     sitesService.removeSite(sitesService.getSiteByKey(site));
@@ -366,25 +364,7 @@ public class WebprojectHandler implements Serializable {
                     logger.error(e.getMessage(), e);
                 }
             }
-
-            if (sitesKey.contains(siteKey)) {
-                try {
-                    List<JCRSiteNode> sitesNodeList =
-                                    sitesService.getSitesNodeList();
-                    sitesService.setDefaultSite(null);
-                    for (JCRSiteNode siteNode : sitesNodeList) {
-                        if (!siteNode.getName().equals("systemsite")) {
-                            sitesService.setDefaultSite(sitesService
-                                            .getSiteByKey(siteNode.getName()));
-                            break;
-                        }
-                    }
-                } catch (JahiaException | RepositoryException e) {
-                    logger.error(e.getMessage(), e);
-                }
-            }
         }
-
     }
 
     private Locale determineDefaultLocale(Locale defaultLocale,
