@@ -140,31 +140,36 @@ import com.google.common.collect.Ordering;
  */
 public class WebprojectHandler implements Serializable {
 
-    private static final Comparator<ImportInfo> IMPORTS_COMPARATOR =
-                    new Comparator<ImportInfo>() {
-                        public int compare(ImportInfo o1, ImportInfo o2) {
-                            Integer rank1 = RANK.get(o1.getImportFileName());
-                            Integer rank2 = RANK.get(o2.getImportFileName());
-                            rank1 = rank1 != null ? rank1 : 100;
-                            rank2 = rank2 != null ? rank2 : 100;
-                            return rank1.compareTo(rank2);
-                        }
-                    };
+    private static final long serialVersionUID = -6643519526225787438L;
+
+    private static final Comparator<ImportInfo> IMPORTS_COMPARATOR = new Comparator<ImportInfo>() {
+
+        @Override
+        public int compare(ImportInfo o1, ImportInfo o2) {
+            Integer rank1 = RANK.get(o1.getImportFileName());
+            Integer rank2 = RANK.get(o2.getImportFileName());
+            rank1 = rank1 != null ? rank1 : 100;
+            rank2 = rank2 != null ? rank2 : 100;
+            return rank1.compareTo(rank2);
+        }
+    };
 
     private static final Pattern LANGUAGE_RANK_PATTERN =
                     Pattern.compile("(?:language.)(\\w+)(?:.rank)");
 
-    static Logger logger = LoggerFactory.getLogger(WebprojectHandler.class);
-    private static final HashSet<String> NON_SITE_IMPORTS =
-                    new HashSet<>(Arrays.asList("serverPermissions.xml",
-                                    "users.xml", "users.zip",
-                                    JahiaSitesService.SYSTEM_SITE_KEY + ".zip",
-                                    "references.zip", "roles.zip",
-                                    "mounts.zip"));
+    static final Logger logger = LoggerFactory.getLogger(WebprojectHandler.class);
+
+    private static final HashSet<String> NON_SITE_IMPORTS = new HashSet<>(Arrays.asList(
+        "serverPermissions.xml",
+        "users.xml",
+        "users.zip",
+        JahiaSitesService.SYSTEM_SITE_KEY + ".zip",
+        "references.zip",
+        "roles.zip",
+        "mounts.zip"
+    ));
+
     private static final Map<String, Integer> RANK;
-
-    private static final long serialVersionUID = -6643519526225787438L;
-
     static {
         RANK = new HashMap<>(8);
         RANK.put("mounts.zip", 4);
@@ -183,22 +188,6 @@ public class WebprojectHandler implements Serializable {
     @Autowired
     private transient ImportExportBaseService importExportBaseService;
 
-    private transient MultipartFile importFile;
-    private String importPath;
-    private Properties importProperties;
-
-    private Map<String, ImportInfo> importsInfos = Collections.emptyMap();
-    private boolean deleteFilesAtEnd = true;
-
-    private Map<String, String> prepackagedSites =
-                    new HashMap<String, String>();
-
-    private String selectedPrepackagedSite;
-
-    private transient List<JahiaSite> sites;
-
-    private List<String> sitesKey;
-
     @Autowired
     private transient JahiaSitesService sitesService;
 
@@ -208,11 +197,18 @@ public class WebprojectHandler implements Serializable {
     @Autowired
     private transient JahiaUserManagerService userManagerService;
 
-
     @Autowired
     private transient JCRTemplate template;
 
-
+    private transient MultipartFile importFile;
+    private String importPath;
+    private Properties importProperties;
+    private Map<String, ImportInfo> importsInfos = Collections.emptyMap();
+    private boolean deleteFilesAtEnd = true;
+    private Map<String, String> prepackagedSites = new HashMap<String, String>();
+    private String selectedPrepackagedSite;
+    private transient List<JahiaSite> sites;
+    private List<String> sitesKey;
     private boolean validityCheckOnImport = true;
 
     public WebprojectHandler() {
@@ -271,23 +267,25 @@ public class WebprojectHandler implements Serializable {
     }
 
     public List<JCRSiteNode> getAllSites() {
+
         try {
-            Function<JCRSiteNode, String> getTitle =
-                            new Function<JCRSiteNode, String>() {
-                                public String apply(
-                                                @Nullable JCRSiteNode input) {
-                                    return input != null ? input.getTitle()
-                                                    : "";
-                                }
-                            };
-            Predicate<JCRSiteNode> notSystemSite =
-                            new Predicate<JCRSiteNode>() {
-                                @Override
-                                public boolean apply(JCRSiteNode jcrSiteNode) {
-                                    return !jcrSiteNode.getName()
-                                                    .equals("systemsite");
-                                }
-                            };
+
+            Function<JCRSiteNode, String> getTitle = new Function<JCRSiteNode, String>() {
+
+                @Override
+                public String apply(@Nullable JCRSiteNode input) {
+                    return input != null ? input.getTitle() : "";
+                }
+            };
+
+            Predicate<JCRSiteNode> notSystemSite = new Predicate<JCRSiteNode>() {
+
+                @Override
+                public boolean apply(JCRSiteNode jcrSiteNode) {
+                    return !jcrSiteNode.getName().equals("systemsite");
+                }
+            };
+
             return Ordering.natural().onResultOf(getTitle)
                             .sortedCopy(Iterables.filter(
                                             sitesService.getSitesNodeList(),
@@ -302,11 +300,15 @@ public class WebprojectHandler implements Serializable {
     public void createSite(final SiteBean bean) {
 
         try {
+
             template.doExecuteWithSystemSession(new JCRCallback<Object>() {
+
                 @Override
                 public Object doInJCR(JCRSessionWrapper session)
                                 throws RepositoryException {
+
                     try {
+
                         JahiaSite site = sitesService.addSite(
                                         JCRSessionFactory.getInstance()
                                                         .getCurrentUser(),
@@ -352,7 +354,6 @@ public class WebprojectHandler implements Serializable {
         } catch (RepositoryException e) {
             logger.error(e.getMessage(), e);
         }
-
     }
 
     public void deleteSites() {
@@ -405,6 +406,7 @@ public class WebprojectHandler implements Serializable {
 
     public void exportToFile(RequestContext requestContext, boolean staging)
                     throws Exception {
+
         String exportPath =
                         requestContext.getRequestParameters().get("exportPath");
         if (StringUtils.isEmpty(exportPath)) {
@@ -526,6 +528,7 @@ public class WebprojectHandler implements Serializable {
     }
 
     public SiteBean getSelectedSiteBean() {
+
         getSites();
         if (sites.isEmpty()) {
             return null;
@@ -578,7 +581,9 @@ public class WebprojectHandler implements Serializable {
 
     private void prepareFileImports(ZipInputStream zis, String name,
                     MessageContext messageContext) {
+
         try {
+
             ZipEntry z;
             importProperties = new Properties();
             Map<File, String> imports = new HashMap<>();
@@ -700,6 +705,7 @@ public class WebprojectHandler implements Serializable {
 
     public static Map<String, Resource> getLegacyMappingsInModules(
                     final String pattern) {
+
         File fld = new File(SettingsBean.getInstance().getJahiaVarDiskPath(),
                         "legacyMappings");
         final File defaultMappingsFolder = fld.isDirectory() ? fld : null;
@@ -830,7 +836,6 @@ public class WebprojectHandler implements Serializable {
                             ? new DirectoryZipInputStream(i)
                             : new NoCloseZipInputStream(new BufferedInputStream(
                                             new FileInputStream(i)));
-
             boolean isSite = false;
             boolean isLegacySite = false;
             boolean isLegacyImport = false;
@@ -936,9 +941,10 @@ public class WebprojectHandler implements Serializable {
     }
 
     public boolean processImport(final JahiaUser user, MessageContext context) {
+
         logger.info("Processing Import");
 
-		boolean successful = true;
+        boolean successful = true;
         boolean doImportServerPermissions = false;
         for (ImportInfo infos : importsInfos.values()) {
             if (infos.isSelected() && infos.getImportFileName().equals("serverPermissions.xml")) {
@@ -988,7 +994,9 @@ public class WebprojectHandler implements Serializable {
                                     pathMapping.put("/sites/" + infos2.getOldSiteKey(), "/sites/" + infos2.getSiteKey());
                                 }
                             }
+
                             JCRTemplate.getInstance().doExecuteWithSystemSessionAsUser(user, null, null, new JCRCallback<Object>() {
+
                                 @Override
                                 public Object doInJCR(JCRSessionWrapper session) throws RepositoryException {
                                     try {
@@ -1041,25 +1049,27 @@ public class WebprojectHandler implements Serializable {
                                 final Resource finalLegacyDefinitionsFilePath = getLegacyMappingsInModules("cnd").get(legacyDefinitionsFilePath);
 
                                 final boolean finalDoImportServerPermissions = doImportServerPermissions;
-                                JCRObservationManager.doWithOperationType(null, JCRObservationManager.IMPORT,
-                                        new JCRCallback<Object>() {
-                                            public Object doInJCR(JCRSessionWrapper jcrSession)
-                                                    throws RepositoryException {
-                                                try {
-                                                    sitesService.addSite(user, infos.getSiteTitle(), infos
-                                                                    .getSiteServername(), infos.getSiteKey(), "",
-                                                            defaultLocale, finalTpl, null, "fileImport",
-                                                            file == null ? null : new FileSystemResource(file), infos
-                                                                    .getImportFileName(), false,
-                                                            finalDoImportServerPermissions, infos
-                                                                    .getOriginatingJahiaRelease(),
-                                                            finalLegacyMappingFilePath, finalLegacyDefinitionsFilePath);
-                                                } catch (JahiaException | IOException e) {
-                                                    throw new RepositoryException(e);
-                                                }
-                                                return null;
-                                            }
-                                        });
+
+                                JCRObservationManager.doWithOperationType(null, JCRObservationManager.IMPORT, new JCRCallback<Object>() {
+
+                                    @Override
+                                    public Object doInJCR(JCRSessionWrapper jcrSession)
+                                            throws RepositoryException {
+                                        try {
+                                            sitesService.addSite(user, infos.getSiteTitle(), infos
+                                                            .getSiteServername(), infos.getSiteKey(), "",
+                                                    defaultLocale, finalTpl, null, "fileImport",
+                                                    file == null ? null : new FileSystemResource(file), infos
+                                                            .getImportFileName(), false,
+                                                    finalDoImportServerPermissions, infos
+                                                            .getOriginatingJahiaRelease(),
+                                                    finalLegacyMappingFilePath, finalLegacyDefinitionsFilePath);
+                                        } catch (JahiaException | IOException e) {
+                                            throw new RepositoryException(e);
+                                        }
+                                        return null;
+                                    }
+                                });
                             } catch (RepositoryException e) {
                                 if (e.getCause() != null
                                         && (e.getCause() instanceof JahiaException || e.getCause() instanceof IOException)) {
@@ -1098,7 +1108,6 @@ public class WebprojectHandler implements Serializable {
         ZipInputStream zis2 = i.isDirectory() ? new DirectoryZipInputStream(i)
                         : new NoCloseZipInputStream(new BufferedInputStream(
                                         new FileInputStream(i)));
-
         try {
             while ((z = zis2.getNextEntry()) != null) {
                 try {
@@ -1178,7 +1187,9 @@ public class WebprojectHandler implements Serializable {
     }
 
     public void updateSite(SiteBean bean, MessageContext messages) {
+
         try {
+
             JCRSessionWrapper session = JCRSessionFactory.getInstance()
                             .getCurrentUserSession();
             final String siteKey = getSites().get(0).getSiteKey();
@@ -1344,5 +1355,4 @@ public class WebprojectHandler implements Serializable {
     public int getNumberOfSites() throws JahiaException {
         return sitesService.getNbSites() - 1;
     }
-
 }
