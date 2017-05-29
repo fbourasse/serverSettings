@@ -1032,8 +1032,16 @@ public class WebprojectHandler implements Serializable {
                 CacheHelper.flushOutputCachesForPath(site.getJCRLocalPath(), true);
                 JahiaTemplateManagerService jahiaTemplateManagerService = ServicesRegistry.getInstance().getJahiaTemplateManagerService();
                 for (String moduleId : site.getAllInstalledModules()) {
-                    JahiaTemplatesPackage templatePackage = jahiaTemplateManagerService.getTemplatePackageById(moduleId);
-                    CacheHelper.flushOutputCachesForPath("/modules/" + templatePackage.getIdWithVersion() + "/templates", true);
+                    JahiaTemplatesPackage templatePackage =
+                            jahiaTemplateManagerService
+                                    .getTemplatePackageById(
+                                            moduleId);
+
+                    if (templatePackage != null) {
+                        CacheHelper.flushOutputCachesForPath("/modules/"
+                                + templatePackage.getIdWithVersion()
+                                + "/templates", true);
+                    }
                 }
             }
 
