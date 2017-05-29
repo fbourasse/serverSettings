@@ -1230,9 +1230,12 @@ public class WebprojectHandler implements Serializable {
                                     jahiaTemplateManagerService
                                                     .getTemplatePackageById(
                                                                     moduleId);
-                    CacheHelper.flushOutputCachesForPath("/modules/"
-                                    + templatePackage.getIdWithVersion()
-                                    + "/templates", true);
+
+                    if (templatePackage != null) {
+                        CacheHelper.flushOutputCachesForPath("/modules/"
+                                + templatePackage.getIdWithVersion()
+                                + "/templates", true);
+                    }
                 }
             }
 
