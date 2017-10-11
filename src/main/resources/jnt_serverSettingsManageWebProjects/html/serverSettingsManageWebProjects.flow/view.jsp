@@ -16,9 +16,9 @@
 <jcr:node var="sites" path="/sites"/>
 <jcr:nodeProperty name="j:defaultSite" node="${sites}" var="defaultSite"/>
 <c:set var="defaultPrepackagedSite" value="acmespaceelektra.zip"/>
-<template:addResources type="javascript" resources="jquery.min.js,workInProgress.js"/>
-<template:addResources type="javascript" resources="datatables/jquery.dataTables.js,i18n/jquery.dataTables-${currentResource.locale}.js,datatables/dataTables.bootstrap-ext.js,dataTables.initializer.js"/>
-<template:addResources type="css" resources="datatables/css/bootstrap-theme.css"/>
+<template:addResources type="javascript" resources="jquery.min.js,jquery-ui.min.js,admin-bootstrap.js,bootstrap-filestyle.min.js,jquery.metadata.js,jquery.tablesorter.js,jquery.tablecloth.js,workInProgress.js"/>
+<template:addResources type="css" resources="jquery-ui.smoothness.css,jquery-ui.smoothness-jahia.css,tablecloth.css"/>
+<template:addResources type="javascript" resources="datatables/jquery.dataTables.js,i18n/jquery.dataTables-${currentResource.locale}.js,datatables/dataTables.bootstrap-ext.js"/>
 <jsp:useBean id="nowDate" class="java.util.Date" />
 <fmt:formatDate value="${nowDate}" pattern="yyyy-MM-dd-HH-mm" var="now"/>
 <fmt:message key="label.workInProgressTitle" var="i18nWaiting"/><c:set var="i18nWaiting" value="${functions:escapeJavaScript(i18nWaiting)}"/>
@@ -45,10 +45,7 @@
     	$("a.sitesAction").click(function () {
     		var act=$(this).attr('id');
     		if (act != 'createSite' && $("#sitesForm input:checkbox[name='selectedSites']:checked").length == 0) {
-                $.snackbar({
-                    content: "${i18nNoSiteSelected}",
-                    style: "error"
-                });
+        		alert("${i18nNoSiteSelected}");
     			return false;
     		}
     		submitSiteForm(act);
@@ -62,10 +59,7 @@
                 selectedSites.push($(this).val());
             });
             if(selectedSites.length==0) {
-                $.snackbar({
-                    content: "${i18nNoSiteSelected}",
-                    style: "error"
-                });
+                alert("${i18nNoSiteSelected}");
                 return false;
             }
             var name = selectedSites.length>1?"sites":selectedSites;
@@ -84,10 +78,7 @@
                 selectedSites.push($(this).val());
             });
             if(selectedSites.length==0) {
-                $.snackbar({
-                    content: "${i18nNoSiteSelected}",
-                    style: "error"
-                });
+                alert("${i18nNoSiteSelected}");
                 return false;
             }
             var name = selectedSites.length>1?"sites":selectedSites;
@@ -99,249 +90,206 @@
             window.open("${url.context}/cms/export/default/"+name+ '_staging_export_${now}.zip?exportformat=site&live=false'+sitebox);
         });
         </c:if>
+        $(":file").filestyle({classButton: "btn",classIcon: "icon-folder-open"/*,buttonText:"Translation"*/});
     })
 </script>
 <script type="text/javascript" charset="utf-8">
     $(document).ready(function() {
-        dataTablesSettings.init('sitesTable', 10, [], null, null);
+        var sitesTable = $('#sitesTable');
+
+        sitesTable.dataTable({
+            "sDom": "<'row-fluid'<'span6'l><'span6 text-right'f>r>t<'row-fluid'<'span6'i><'span6 text-right'p>>",
+            "iDisplayLength": 10,
+            "sPaginationType": "bootstrap",
+            "aaSorting": [] //this option disable sort by default, the user steal can use column names to sort the table
+        });
     });
 </script>
-
-<div class="page-header">
-    <h2>
-        <fmt:message key="serverSettings.manageWebProjects.virtualSitesListe"/>
-    </h2>
-</div>
-
 <form id="sitesForm" action="${flowExecutionUrl}" method="post">
-    <div class="panel panel-default">
-        <div class="panel-heading">
-            <fmt:message key="serverSettings.manageWebProjects.sitesManagement"/>
-        </div>
-        <div class="panel-body">
-            <input type="hidden" id="sitesFormAction" name="_eventId" value="" />
-            <a href="#create" id="createSite" class="btn btn-primary btn-sm sitesAction">
-                <i class="material-icons">add</i>
+    <fieldset>
+        <h2><fmt:message key="label.virtualSitesManagement"/></h2>
+        <input type="hidden" id="sitesFormAction" name="_eventId" value="" />
+        <div class="btn-group">
+            <a href="#create" id="createSite" class="btn sitesAction">
+                <i class="icon-plus"></i>
                 <fmt:message key="serverSettings.manageWebProjects.add"/>
             </a>
             <c:if test="${exportAllowed}">
-                <a href="#export" id="exportSites" class="btn btn-default btn-sm sitesAction-hide">
-                    <i class="material-icons">file_download</i>
-                    <fmt:message key="label.export"/>
-                </a>
-                <a href="#exportStaging" id="exportStagingSites" class="btn btn-default btn-sm sitesAction-hide">
-                    <i class="material-icons">file_download</i>
-                    <fmt:message key="label.export"/> (<fmt:message key="label.stagingContent"/>)
-                </a>
+            <a href="#export" id="exportSites" class="btn sitesAction-hide">
+                <i class="icon-upload"></i>
+                <fmt:message key="label.export"/>
+            </a>
+            <a href="#exportStaging" id="exportStagingSites" class="btn sitesAction-hide">
+                <i class=" icon-circle-arrow-up"></i>
+                <fmt:message key="label.export"/> (<fmt:message key="label.stagingContent"/>)
+            </a>
             </c:if>
-            <a href="#delete" id="deleteSites" class="btn btn-danger btn-sm sitesAction">
-                <i class="material-icons">delete</i>
+            <a href="#delete" id="deleteSites" class="btn sitesAction">
+                <i class="icon-remove"></i>
                 <fmt:message key="label.delete"/>
             </a>
+        </div>
+    </fieldset>
 
-            <c:forEach var="msg" items="${flowRequestContext.messageContext.allMessages}">
-                <div class="alert ${msg.severity == 'ERROR' ? 'validationError' : ''} ${msg.severity == 'ERROR' ? 'alert-error' : 'alert-success'}">
-                    <button type="button" class="close" data-dismiss="alert">&times;</button>
-                    ${fn:escapeXml(msg.text)}
-                </div>
-            </c:forEach>
+    <fieldset>
+        <h2><fmt:message key="serverSettings.manageWebProjects.virtualSitesListe"/></h2>
 
-            <table id="sitesTable" class="table table-bordered table-striped table-hover">
-                <thead>
-                    <tr>
-                        <th class="{sorter: false}">&nbsp;</th>
-                        <th>#</th>
-                        <th>
-                            <fmt:message key="label.name"/>
-                        </th>
-                        <th>
-                            <fmt:message key="serverSettings.manageWebProjects.webProject.siteKey"/>
-                        </th>
-                        <th>
-                            <fmt:message key="serverSettings.manageWebProjects.webProject.serverName"/>
-                        </th>
-                        <th>
-                            <fmt:message key="serverSettings.manageWebProjects.webProject.templateSet"/>
-                        </th>
-                        <th class="{sorter: false}">
-                            <fmt:message key="label.actions"/>
-                        </th>
-                    </tr>
-                </thead>
+        <c:forEach var="msg" items="${flowRequestContext.messageContext.allMessages}">
+            <div class="alert ${msg.severity == 'ERROR' ? 'validationError' : ''} ${msg.severity == 'ERROR' ? 'alert-error' : 'alert-success'}">
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
+                ${fn:escapeXml(msg.text)}
+            </div>
+        </c:forEach>
 
-                <tbody>
-                    <c:forEach items="${webprojectHandler.allSites}" var="site" varStatus="loopStatus">
-                        <c:if test="${site.name ne 'systemsite'}">
-                            <tr>
-                                <td>
-                                    <div class="checkbox">
-                                        <label>
-                                            <input name="selectedSites" type="checkbox" value="${site.name}"/>
-                                        </label>
-                                    </div>
-                                </td>
-                                <td>
-                                    ${loopStatus.index + 1}
-                                    <c:if test="${site.identifier == defaultSite.string}">
-                                        <i class="material-icons material-icons-small">star_rate</i>
-                                    </c:if>
-                                </td>
-                                <td><a href="#edit" onclick="submitSiteForm('editSite', '${site.name}'); return false;">${fn:escapeXml(site.title)}</a></td>
-                                <td>${fn:escapeXml(site.name)}</td>
-                                <td>${fn:escapeXml(site.serverName)}</td>
-                                <td title="${fn:escapeXml(site.templatePackageName)}">${fn:escapeXml(site.templateFolder)}</td>
-                                <td>
-                                    <c:set var="i18nExportStaging"><fmt:message key="label.export"/> (<fmt:message key="label.stagingContent"/>)</c:set>
-                                    <c:set var="i18nExportStaging" value="${fn:escapeXml(i18nExportStaging)}"/>
-                                    <c:if test="${jcr:hasPermission(site,'editModeAccess')}">
-                                        <c:choose>
-                                            <c:when test="${renderContext.settings.distantPublicationServerMode}">
-                                                <c:url var="editUrl" value="/cms/settings/default/${site.defaultLanguage}${site.path}.manageLanguages.html"/>
-                                                <a style="margin-bottom:0;" class="btn btn-fab btn-fab-xs btn-default" href="${editUrl}" title="<fmt:message key='serverSettings.manageWebProjects.exitToEdit'/>">
-                                                    <i class="material-icons">exit_to_app</i>
+        <table id="sitesTable" class="table table-bordered table-striped table-hover">
+        <thead>
+                <tr>
+                    <th class="{sorter: false}">&nbsp;</th>
+                    <th>#</th>
+                    <th>
+                        <fmt:message key="label.name"/>
+                    </th>
+                    <th>
+                        <fmt:message key="serverSettings.manageWebProjects.webProject.siteKey"/>
+                    </th>
+                    <th>
+                        <fmt:message key="serverSettings.manageWebProjects.webProject.serverName"/>
+                    </th>
+                    <th>
+                        <fmt:message key="serverSettings.manageWebProjects.webProject.templateSet"/>
+                    </th>
+                    <th class="{sorter: false}">
+                        <fmt:message key="label.actions"/>
+                    </th>
+                </tr>
+            </thead>
+
+            <tbody>
+                <c:forEach items="${webprojectHandler.allSites}" var="site" varStatus="loopStatus">
+                    <c:if test="${site.name ne 'systemsite'}">
+                        <tr>
+                            <td><input name="selectedSites" type="checkbox" value="${site.name}"/></td>
+                            <td>
+                                ${loopStatus.index + 1}
+                                <c:if test="${site.identifier == defaultSite.string}">
+                                    &nbsp;<i class="icon-star"></i>
+                                </c:if>
+                            </td>
+                            <td><a href="#edit" onclick="submitSiteForm('editSite', '${site.name}'); return false;">${fn:escapeXml(site.title)}</a></td>
+                            <td>${fn:escapeXml(site.name)}</td>
+                            <td>${fn:escapeXml(site.serverName)}</td>
+                            <td title="${fn:escapeXml(site.templatePackageName)}">${fn:escapeXml(site.templateFolder)}</td>
+                            <td>
+                                <c:set var="i18nExportStaging"><fmt:message key="label.export"/> (<fmt:message key="label.stagingContent"/>)</c:set>
+                                <c:set var="i18nExportStaging" value="${fn:escapeXml(i18nExportStaging)}"/>
+                                <c:if test="${jcr:hasPermission(site,'editModeAccess')}">
+                                    <c:choose>
+                                        <c:when test="${renderContext.settings.distantPublicationServerMode}">
+                                            <c:url var="editUrl" value="/cms/settings/default/${site.defaultLanguage}${site.path}.manageLanguages.html"/>
+                                            <a style="margin-bottom:0;" class="btn btn-small" href="${editUrl}" title="<fmt:message key='serverSettings.manageWebProjects.exitToEdit'/>">
+                                                <i class="icon-pencil"></i>
+                                            </a>
+                                        </c:when>
+                                        <c:otherwise>
+                                            <jcr:node var="editSite" path="${site.path}"/>
+                                            <c:if test="${not jcr:isNodeType(editSite, 'jmix:remotelyPublished')}">
+                                                <c:url var="editUrl" value="/cms/edit/default/${site.defaultLanguage}${editSite.home.path}.html"/>
+                                                <a style="margin-bottom:0;" class="btn btn-small" href="${editUrl}" title="<fmt:message key='serverSettings.manageWebProjects.exitToEdit'/>">
+                                                    <i class="icon-pencil"></i>
                                                 </a>
-                                            </c:when>
-                                            <c:otherwise>
-                                                <jcr:node var="editSite" path="${site.path}"/>
-                                                <c:if test="${not jcr:isNodeType(editSite, 'jmix:remotelyPublished')}">
-                                                    <c:url var="editUrl" value="/cms/edit/default/${site.defaultLanguage}${editSite.home.path}.html"/>
-                                                    <a style="margin-bottom:0;" class="btn btn-fab btn-fab-xs btn-default" href="${editUrl}" title="<fmt:message key='serverSettings.manageWebProjects.exitToEdit'/>">
-                                                        <i class="material-icons">exit_to_app</i>
-                                                    </a>
-                                                </c:if>
-                                            </c:otherwise>
-                                        </c:choose>
-                                    </c:if>
-                                    <a style="margin-bottom:0;" class="btn btn-fab btn-fab-xs btn-default" href="#edit" title="<fmt:message key='serverSettings.manageWebProjects.editSite'/>" onclick="submitSiteForm('editSite', '${site.name}'); return false;">
-                                        <i class="material-icons">mode_edit</i>
+                                            </c:if>
+                                        </c:otherwise>
+                                    </c:choose>
+                                </c:if>
+                                <a style="margin-bottom:0;" class="btn btn-small" href="#edit" title="<fmt:message key='serverSettings.manageWebProjects.editSite'/>" onclick="submitSiteForm('editSite', '${site.name}'); return false;">
+                                    <i class=" icon-edit"></i>
+                                </a>
+                                <%--
+                                    <a style="margin-bottom:0;" class="btn btn-small" href="#edit" title="<fmt:message key='label.export'/>" href="#edit" onclick="submitSiteForm('exportSites', '${site.name}'); return false;">
+                                        <i class="icon-upload"></i>
                                     </a>
-                                    <%--
-                                        <a style="margin-bottom:0;" class="btn btn-fab btn-fab-xs btn-default" href="#edit" title="<fmt:message key='label.export'/>" onclick="submitSiteForm('exportSites', '${site.name}'); return false;">
-                                            <i class="material-icons">file_download</i>
-                                        </a>
-                                        <a style="margin-bottom:0;" class="btn btn-fab btn-fab-xs btn-default" href="#edit" title="${i18nExportStaging}" onclick="submitSiteForm('exportStagingSites', '${site.name}'); return false;">
-                                            <i class="material-icons">file_download</i>
-                                        </a>
-                                    --%>
-                                    <a style="margin-bottom:0;" class="btn btn-fab btn-fab-xs btn-danger" title="<fmt:message key='label.delete'/>" href="#delete" onclick="submitSiteForm('deleteSites', '${site.name}'); return false;">
-                                        <i class="material-icons">delete</i>
+                                    <a style="margin-bottom:0;" class="btn btn-small" href="#edit" title="${i18nExportStaging}" href="#edit" onclick="submitSiteForm('exportStagingSites', '${site.name}'); return false;">
+                                        <i class="icon-circle-arrow-up"></i>
                                     </a>
-                                </td>
-                            </tr>
-                        </c:if>
-                    </c:forEach>
-                </tbody>
-            </table>
+                                --%>
+                                <a style="margin-bottom:0;" class="btn btn-danger btn-small" title="<fmt:message key='label.delete'/>" href="#delete" onclick="submitSiteForm('deleteSites', '${site.name}'); return false;">
+                                    <i class="icon-remove icon-white"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    </c:if>
+                </c:forEach>
+            </tbody>
+        </table>
 
-            <c:if test="${exportAllowed}">
-                <div class="form-group label-floating is-empty">
-                    <div class="input-group">
-                        <label class="control-label"><fmt:message key="serverSettings.manageWebProjects.exportServerDirectory"/></label>
-                        <input class="form-control" type="text" name="exportPath"/>
-                        <span class="input-group-btn">
-                            <a  class="btn btn-sm btn-default sitesAction" id="exportToFile" href="#exportToFile" title="<fmt:message key='label.export'/>">
-                                <i class="material-icons">file_download</i>
-                                &nbsp;<fmt:message key='label.export'/>
-                            </a>
-                            <a  class="btn btn-sm btn-default sitesAction" id="exportToFileStaging" href="#exportToFileStaging" title="<fmt:message key="label.export"/> (<fmt:message key="label.stagingContent"/>)">
-                                <i class="material-icons">file_download</i>
-                                &nbsp; <fmt:message key="label.export"/> (<fmt:message key="label.stagingContent"/>)
-                            </a>
-                        </span>
-                    </div>
-                </div>
-            </c:if>
-        </div>
-    </div>
-
-    <div class="row">
         <c:if test="${exportAllowed}">
-            <div class="col-md-6">
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <fmt:message key="serverSettings.manageWebProjects.systemsite"/>
-                    </div>
-                    <div class="panel-body">
-                        <div class="form-group is-empty">
-                            <div class="input-group">
-                                <span class="input-group-btn">
-                                    <a class="btn btn-sm btn-default" href="<c:url value='/cms/export/default/systemsite_export_${now}.zip?exportformat=site&live=true&sitebox=systemsite' />">
-                                        <i class="material-icons">file_download</i>
-                                        <fmt:message key='label.export' />
-                                    </a>
-                                    <a class="btn btn-sm btn-default" href="<c:url value='/cms/export/default/systemsite_staging_export_${now}.zip?exportformat=site&live=false&sitebox=systemsite' />">
-                                        <i class="material-icons">file_download</i>
-                                        <fmt:message key="label.export"/> (<fmt:message key="label.stagingContent"/>)
-                                    </a>
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </c:if>
-        <c:set value="${(exportAllowed)?'col-md-6':'col-md-12'}" var="colSizeClass"/>
-        <div class="${colSizeClass}">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <fmt:message key="serverSettings.manageWebProjects.importprepackaged"/>
-                </div>
-                <div class="panel-body">
-                    <div class="form-group is-empty">
-                        <div class="input-group">
-                            <select class="form-control" name="selectedPrepackagedSite">
-                                <c:forEach items="${webprojectHandler.prepackagedSites}" var="file">
-                                    <option value="${file.key}"${file.value == defaultPrepackagedSite ? ' selected="selected"':''}>${fn:escapeXml(file.value)}</option>
-                                </c:forEach>
-                            </select>
-                            <span class="input-group-btn">
-                                <button class="btn btn-sm btn-primary" type="submit" name="importPrepackaged" onclick="submitSiteForm('importPrepackaged'); return false;">
-                                    <i class="material-icons">done</i>
-                                    &nbsp;<fmt:message key='serverSettings.manageWebProjects.importprepackaged.proceed' />
-                                </button>
-                            </span>
-                        </div>
-                        <span class="material-input"></span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</form>
+        <div class="box-1">
+            <p><fmt:message key="serverSettings.manageWebProjects.exportServerDirectory"/></p>
+            <input class="span5" type="text"  name="exportPath"/>
 
-<div class="panel panel-default">
-    <div class="panel-heading">
-        <fmt:message key="serverSettings.manageWebProjects.multipleimport"/>
-    </div>
-    <div class="panel-body">
+            <a  class="btn btn-primary sitesAction" id="exportToFile" href="#exportToFile" title="<fmt:message key='label.export'/>">
+                <i class="icon-download icon-white"></i>
+                &nbsp;<fmt:message key='label.export'/>
+            </a>
+            <a  class="btn btn-primary sitesAction" id="exportToFileStaging" href="#exportToFileStaging" title="<fmt:message key="label.export"/> (<fmt:message key="label.stagingContent"/>)">
+                <i class="icon-download icon-white"></i>
+                &nbsp; <fmt:message key="label.export"/> (<fmt:message key="label.stagingContent"/>)
+            </a>
+        </div>
+        </c:if>
+
+    </fieldset>
+
+    <c:if test="${exportAllowed}">
+    <fieldset>
+        <h2><fmt:message key="serverSettings.manageWebProjects.systemsite"/></h2>
+        <div class="btn-group">
+            <a class="btn" href="<c:url value='/cms/export/default/systemsite_export_${now}.zip?exportformat=site&live=true&sitebox=systemsite' />">
+                <i class="icon-upload"></i>
+                <fmt:message key='label.export' />
+            </a>
+            <a class="btn" href="<c:url value='/cms/export/default/systemsite_staging_export_${now}.zip?exportformat=site&live=false&sitebox=systemsite' />">
+                <i class=" icon-circle-arrow-up"></i>
+                <fmt:message key="label.export"/> (<fmt:message key="label.stagingContent"/>)
+            </a>
+        </div>
+    </fieldset>
+    </c:if>
+
+    <fieldset>
+        <h2><fmt:message key="serverSettings.manageWebProjects.importprepackaged"/></h2>
+        <select class="span5" name="selectedPrepackagedSite">
+            <c:forEach items="${webprojectHandler.prepackagedSites}" var="file">
+                <option value="${file.key}"${file.value == defaultPrepackagedSite ? ' selected="selected"':''}>${fn:escapeXml(file.value)}</option>
+            </c:forEach>
+        </select>
+        <button class="btn btn-primary" type="submit" name="importPrepackaged" onclick="submitSiteForm('importPrepackaged'); return false;">
+            <i class="icon-ok icon-white"></i>
+            &nbsp;<fmt:message key='serverSettings.manageWebProjects.importprepackaged.proceed' />
+        </button>
+    </fieldset>
+
+</form>
+    <fieldset>
+        <h2><fmt:message key="serverSettings.manageWebProjects.multipleimport"/></h2>
         <form action="${flowExecutionUrl}" method="post" enctype="multipart/form-data">
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="form-group is-empty is-fileinput label-floating">
-                        <input type="file" name="importFile"/>
-                        <div class="input-group">
-                            <span class="input-group-addon"><i class="material-icons">touch_app</i></span>
-                            <label class="control-label"><fmt:message key="serverSettings.manageWebProjects.multipleimport.fileselect"/></label>
-                            <input class="form-control" type="text" readonly>
-                        </div>
-                        <span class="material-input"></span>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="form-group is-empty label-floating">
-                        <div class="input-group">
-                            <label class="control-label"><fmt:message key="serverSettings.manageWebProjects.multipleimport.fileinput"/></label>
-                            <input class="form-control" type="text" name="importPath"/>
-                            <span class="input-group-btn">
-                                <button class="btn btn-sm btn-primary" type="submit" name="_eventId_import" onclick="">
-                                    <i class="material-icons">file_upload</i>
-                                    <fmt:message key='serverSettings.manageWebProjects.fileImport'/>
-                                </button>
-                            </span>
-                        </div>
-                    </div>
-                </div>
+            <div class="alert alert-info">
+                <p><fmt:message key="serverSettings.manageWebProjects.multipleimport.fileselect"/></p>
+                <input type="file" name="importFile"/>
+                <button class="btn btn-primary" type="submit" name="_eventId_import" onclick="">
+                    <i class="icon-download icon-white"></i>
+                    &nbsp;<fmt:message key='serverSettings.manageWebProjects.fileImport'/>
+                </button>
             </div>
+            <div class="box-1">
+                <p><fmt:message key="serverSettings.manageWebProjects.multipleimport.fileinput"/></p>
+                <input class="span5" type="text"  name="importPath"/>
+                <button class="btn btn-primary" type="submit" name="_eventId_import" onclick="">
+                    <i class="icon-download icon-white"></i>
+                    &nbsp;<fmt:message key='serverSettings.manageWebProjects.fileImport'/>
+                </button>
+            </div>
+
+
         </form>
-    </div>
-</div>
+    </fieldset>
