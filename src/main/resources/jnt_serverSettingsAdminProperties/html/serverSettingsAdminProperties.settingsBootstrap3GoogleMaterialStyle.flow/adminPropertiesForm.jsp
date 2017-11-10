@@ -35,7 +35,7 @@
                 <form:form modelAttribute="adminProperties" class="form" autocomplete="off">
                     <div class="row">
                         <div class="col-md-6">
-                            <div class="form-group form-group-sm label-floating">
+                            <div class="form-group label-floating">
                                 <label class="control-label" for="firstName">
                                     <fmt:message key="label.firstName"/>
                                 </label>
@@ -43,7 +43,7 @@
                             </div>
                         </div>
                         <div class="col-md-6">
-                            <div class="form-group form-group-sm label-floating">
+                            <div class="form-group label-floating">
                                 <label class="control-label" for="lastName">
                                     <fmt:message key="label.lastName"/>
                                 </label>
@@ -53,7 +53,7 @@
                     </div>
                     <div class="row">
                         <div class="col-md-6">
-                            <div class="form-group form-group-sm label-floating">
+                            <div class="form-group label-floating">
                                 <label class="control-label" for="email">
                                     <fmt:message key="label.email"/>
                                 </label>
@@ -61,7 +61,7 @@
                             </div>
                         </div>
                         <div class="col-md-6">
-                            <div class="form-group form-group-sm label-floating">
+                            <div class="form-group label-floating">
                                 <label class="control-label" for="organization">
                                     <fmt:message key="label.organization"/>
                                 </label>
@@ -96,7 +96,7 @@
                     <c:if test="${renderContext.user.root}">
                     <div class="row">
                         <div class="col-md-6">
-                            <div class="form-group form-group-sm label-floating">
+                            <div class="form-group label-floating">
                                 <label class="control-label" for="password">
                                     <fmt:message key="label.password"/>
                                 </label>
@@ -105,7 +105,7 @@
                             </div>
                         </div>
                         <div class="col-md-6">
-                            <div class="form-group form-group-sm label-floating">
+                            <div class="form-group label-floating">
                                 <label class="control-label" for="passwordConfirm">
                                     <fmt:message key="label.confirmPassword"/>
                                 </label>
@@ -119,7 +119,6 @@
                         <div class="col-md-12">
                             <div class="form-group form-group-sm" style="margin-top:15px;">
                                 <button class="btn btn-sm btn-primary pull-right" id="submit" type="submit" name="_eventId_submit">
-                                    <i class="material-icons">save</i>
                                     <fmt:message key='label.save'/>
                                 </button>
                             </div>

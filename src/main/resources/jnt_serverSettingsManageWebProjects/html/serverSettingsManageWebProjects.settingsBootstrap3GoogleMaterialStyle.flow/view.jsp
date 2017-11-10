@@ -121,21 +121,17 @@
         <div class="panel-body">
             <input type="hidden" id="sitesFormAction" name="_eventId" value="" />
             <a href="#create" id="createSite" class="btn btn-primary btn-sm sitesAction">
-                <i class="material-icons">add</i>
                 <fmt:message key="serverSettings.manageWebProjects.add"/>
             </a>
             <c:if test="${exportAllowed}">
                 <a href="#export" id="exportSites" class="btn btn-default btn-sm sitesAction-hide">
-                    <i class="material-icons">file_download</i>
                     <fmt:message key="label.export"/>
                 </a>
                 <a href="#exportStaging" id="exportStagingSites" class="btn btn-default btn-sm sitesAction-hide">
-                    <i class="material-icons">file_download</i>
                     <fmt:message key="label.export"/> (<fmt:message key="label.stagingContent"/>)
                 </a>
             </c:if>
             <a href="#delete" id="deleteSites" class="btn btn-danger btn-sm sitesAction">
-                <i class="material-icons">delete</i>
                 <fmt:message key="label.delete"/>
             </a>
 
@@ -240,12 +236,10 @@
                         <input class="form-control" type="text" name="exportPath"/>
                         <span class="input-group-btn">
                             <a  class="btn btn-sm btn-default sitesAction" id="exportToFile" href="#exportToFile" title="<fmt:message key='label.export'/>">
-                                <i class="material-icons">file_download</i>
-                                &nbsp;<fmt:message key='label.export'/>
+                                <fmt:message key='label.export'/>
                             </a>
                             <a  class="btn btn-sm btn-default sitesAction" id="exportToFileStaging" href="#exportToFileStaging" title="<fmt:message key="label.export"/> (<fmt:message key="label.stagingContent"/>)">
-                                <i class="material-icons">file_download</i>
-                                &nbsp; <fmt:message key="label.export"/> (<fmt:message key="label.stagingContent"/>)
+                                <fmt:message key="label.export"/> (<fmt:message key="label.stagingContent"/>)
                             </a>
                         </span>
                     </div>
@@ -266,11 +260,9 @@
                             <div class="input-group">
                                 <span class="input-group-btn">
                                     <a class="btn btn-sm btn-default" href="<c:url value='/cms/export/default/systemsite_export_${now}.zip?exportformat=site&live=true&sitebox=systemsite' />">
-                                        <i class="material-icons">file_download</i>
                                         <fmt:message key='label.export' />
                                     </a>
                                     <a class="btn btn-sm btn-default" href="<c:url value='/cms/export/default/systemsite_staging_export_${now}.zip?exportformat=site&live=false&sitebox=systemsite' />">
-                                        <i class="material-icons">file_download</i>
                                         <fmt:message key="label.export"/> (<fmt:message key="label.stagingContent"/>)
                                     </a>
                                 </span>
@@ -296,8 +288,7 @@
                             </select>
                             <span class="input-group-btn">
                                 <button class="btn btn-sm btn-primary" type="submit" name="importPrepackaged" onclick="submitSiteForm('importPrepackaged'); return false;">
-                                    <i class="material-icons">done</i>
-                                    &nbsp;<fmt:message key='serverSettings.manageWebProjects.importprepackaged.proceed' />
+                                    <fmt:message key='serverSettings.manageWebProjects.importprepackaged.proceed' />
                                 </button>
                             </span>
                         </div>

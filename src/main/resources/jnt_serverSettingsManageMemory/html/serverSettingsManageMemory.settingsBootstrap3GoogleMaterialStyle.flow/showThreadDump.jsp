@@ -21,7 +21,6 @@
         <div class="panel-body">
             <form action="${flowExecutionUrl}" method="POST">
                 <button class="btn btn-default" type="submit" name="_eventId_back">
-                    <i class="material-icons">arrow_back</i>
                     <fmt:message key='serverSettings.manageMemory.memory.back'/>
                 </button>
             </form>

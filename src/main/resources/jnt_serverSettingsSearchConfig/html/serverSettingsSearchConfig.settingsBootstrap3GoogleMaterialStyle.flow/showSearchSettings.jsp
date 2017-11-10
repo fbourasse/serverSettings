@@ -60,7 +60,6 @@
                     <div class="col-md-12">
                         <div class="form-group">
                             <button class="btn btn-primary pull-right" type="submit" name="_eventId_submit">
-                                <i class="material-icons">save</i>
                                 <fmt:message key="label.save"/>
                             </button>
                         </div>

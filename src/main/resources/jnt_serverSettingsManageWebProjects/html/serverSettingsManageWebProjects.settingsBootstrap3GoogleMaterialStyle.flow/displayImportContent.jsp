@@ -70,7 +70,7 @@
                 <%@ include file="importValidation.jspf" %>
 
                 <c:if test="${importInfoMap.value.site}">
-                    <div class="form-group form-group-sm label-floating">
+                    <div class="form-group label-floating">
                         <label class="control-label" for="${importInfoMap.value.siteKey}siteTitle">
                             <fmt:message key="serverSettings.manageWebProjects.webProject.title"/>
                         </label>
@@ -79,7 +79,7 @@
                                value="${fn:escapeXml(importInfoMap.value.siteTitle)}"/>
                     </div>
 
-                    <div class="form-group form-group-sm label-floating">
+                    <div class="form-group label-floating">
                         <label class="control-label" for="${importInfoMap.value.siteKey}siteServerName">
                             <fmt:message key="serverSettings.manageWebProjects.webProject.serverName"/>
                         </label>
@@ -88,7 +88,7 @@
                                value="${fn:escapeXml(importInfoMap.value.siteServername)}"/>
                     </div>
 
-                    <div class="form-group form-group-sm label-floating">
+                    <div class="form-group label-floating">
                         <label class="control-label" for="${importInfoMap.value.siteKey}siteKey">
                             <fmt:message key="serverSettings.manageWebProjects.webProject.siteKey"/>
                         </label>
@@ -97,7 +97,7 @@
                                value="${fn:escapeXml(importInfoMap.value.siteKey)}"/>
                     </div>
 
-                    <div class="form-group form-group-sm label-floating">
+                    <div class="form-group label-floating">
                         <label class="control-label" for="${importInfoMap.value.siteKey}templates">
                             <fmt:message key="serverSettings.webProjectSettings.pleaseChooseTemplateSet"/>
                         </label>
@@ -109,7 +109,7 @@
                     </div>
 
                     <c:if test="${importInfoMap.value.legacyImport}">
-                        <div class="form-group form-group-sm label-floating">
+                        <div class="form-group label-floating">
                             <label class="control-label" for="${importInfoMap.value.siteKey}legacyMapping">
                                 <fmt:message key="serverSettings.manageWebProjects.selectDefinitionMapping"/>
                             </label>
@@ -121,7 +121,7 @@
                                 </c:forEach>
                             </select>
                         </div>
-                        <div class="form-group form-group-sm label-floating">
+                        <div class="form-group label-floating">
                             <label class="control-label" for="${importInfoMap.value.siteKey}legacyDefinitions">
                                 <fmt:message key="serverSettings.manageWebProjects.selectLegacyDefinitions"/>
                             </label>
@@ -137,13 +137,11 @@
                 </c:if>
             </c:forEach>
             <button class="btn btn-sm btn-default" type="submit" name="_eventId_cancel">
-                <i class="material-icons">cancel</i>
                 <fmt:message key='label.cancel'/>
             </button>
             <button class="btn btn-sm btn-primary pull-right" type="submit" name="_eventId_processImport" id="${currentNode.identifier}-processImport"
                     <c:if test="${not empty validationErrors or empty webprojectHandler.importsInfos}"> disabled="disabled"</c:if> >
                 <fmt:message key='label.next'/>
-                <i class="material-icons">navigate_next</i>
             </button>
         </div>
     </div>

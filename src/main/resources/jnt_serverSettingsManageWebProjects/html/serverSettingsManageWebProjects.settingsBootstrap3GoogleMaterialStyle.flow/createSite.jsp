@@ -25,33 +25,33 @@
         <form id="createSiteForm" action="${flowExecutionUrl}" method="POST">
             <div class="panel panel-default">
                 <div class="panel-body">
-                    <div class="form-group form-group-sm label-floating">
+                    <div class="form-group label-floating">
                         <label class="control-label" for="title">
                             <fmt:message key="label.name"/><strong class="text-danger">*</strong>
                         </label>
                         <input class="form-control" type="text" id="title" name="title" value="${fn:escapeXml(siteBean.title)}"/>
                     </div>
 
-                    <div class="form-group form-group-sm label-floating">
+                    <div class="form-group label-floating">
                         <label class="control-label" for="siteKey">
                             <fmt:message key="serverSettings.manageWebProjects.webProject.siteKey"/> <strong class="text-danger">*</strong>
                         </label>
                         <input class="form-control" type="text" id="siteKey" name="siteKey" value="${fn:escapeXml(siteBean.siteKey)}"/>
                     </div>
 
-                    <div class="form-group form-group-sm label-floating">
+                    <div class="form-group label-floating">
                         <label class="control-label" for="serverName">
                             <fmt:message key="serverSettings.manageWebProjects.webProject.serverName"/> <strong class="text-danger">*</strong>
                         </label>
                         <input class="form-control" type="text" id="serverName" name="serverName" value="${fn:escapeXml(siteBean.serverName)}"/>
                     </div>
 
-                    <div class="form-group form-group-sm label-floating is-empty">
+                    <div class="form-group label-floating is-empty">
                         <label class="control-label" for="description"><fmt:message key="label.description"/></label>
                         <textarea class="form-control" id="description" name="description" rows="3">${fn:escapeXml(siteBean.description)}</textarea>
                     </div>
 
-                    <div class="form-group form-group-sm">
+                    <div class="form-group">
                         <div class="checkbox">
                             <label for="defaultSite">
                                 <c:if test="${numberOfSites > 0}">
@@ -65,7 +65,7 @@
                         <input type="hidden" name="_defaultSite"/>
                     </div>
 
-                    <div class="form-group form-group-sm">
+                    <div class="form-group">
                         <div class="checkbox">
                             <label for="createAdmin">
                                 <input class="input-sm" type="checkbox" name="createAdmin" id="createAdmin" <c:if test="${siteBean.createAdmin}">checked="checked"</c:if> /> <fmt:message key="serverSettings.manageWebProjects.webProject.createAdmin"/>
@@ -76,12 +76,10 @@
 
                     <div class="form-group form-group-sm">
                         <button class="btn btn-sm btn-danger" type="submit" name="_eventId_cancel">
-                            <i class="material-icons">cancel</i>
                             <fmt:message key='label.cancel' />
                         </button>
                         <button class="btn btn-sm btn-primary pull-right" type="submit" name="_eventId_next">
                             <fmt:message key='label.next'/>
-                            <i class="material-icons">navigate_next</i>
                         </button>
                     </div>
                 </div>

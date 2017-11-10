@@ -13,7 +13,6 @@
             </div>
             <div class="panel-body text-center">
                 <a class="btn btn-primary" href="http://support.jahia.com" target="_blank">
-                    <i class="material-icons">exit_to_app</i>
                     <fmt:message key="serverSettings.reportAnIssue.jira"/>
                 </a>
             </div>

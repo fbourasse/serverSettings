@@ -80,14 +80,12 @@
                         <td colspan="2">
                             <form action="${flowExecutionUrl}" method="POST" style="display: inline;">
                                 <button class="btn btn-default btn-sm" type="submit" name="_eventId_refresh">
-                                    <i class="material-icons">sync</i>
                                     <fmt:message key='label.refresh'/>
                                 </button>
                             </form>
 
                             <form action="${flowExecutionUrl}" method="POST" style="display: inline;">
                                 <button class="btn btn-default btn-sm" type="submit" name="_eventId_gc">
-                                    <i class="material-icons">delete</i>
                                     <fmt:message key='serverSettings.manageMemory.memory.gc'/>
                                 </button>
                             </form>
@@ -95,7 +93,6 @@
                             <c:if test="${heapDumpSupported}">
                                 <form action="${flowExecutionUrl}" method="POST" style="display: inline;">
                                     <button class="btn btn-default btn-sm" type="submit" name="_eventId_heapDump">
-                                        <i class="material-icons">settings</i>
                                         <fmt:message key='serverSettings.manageMemory.memory.heapDump'/>
                                     </button>
                                 </form>
@@ -118,7 +115,6 @@
                         <td align="left">
                             <form action="${flowExecutionUrl}" method="POST" style="display: inline;">
                                 <button class="btn btn-default btn-sm" type="submit" name="_eventId_showTD">
-                                    <i class="material-icons">settings</i>
                                     <fmt:message key='serverSettings.manageMemory.threads.performThreadDump.page'/>
                                 </button>
                             </form>
@@ -127,7 +123,6 @@
                     <tr>
                         <td align="left">
                             <a class="btn btn-default btn-sm" href="<c:url value='/tools/threadDump.jsp?file=true'/>" target="_blank">
-                                <i class="material-icons">settings</i>
                                 <fmt:message key="serverSettings.manageMemory.threads.performThreadDump.file.download"/>
                             </a>
                         </td>
@@ -137,7 +132,6 @@
                             <form action="${flowExecutionUrl}" method="POST" style="display: inline;">
                                 <input type="hidden" name="threadDump" value="sysout"/>
                                 <button class="btn btn-default btn-sm" type="submit" name="_eventId_performTD">
-                                    <i class="material-icons">settings</i>
                                     <fmt:message key='serverSettings.manageMemory.threads.performThreadDump.system.out'/>
                                 </button>
                             </form>
@@ -148,7 +142,6 @@
                             <form action="${flowExecutionUrl}" method="POST" style="display: inline;">
                                 <input type="hidden" name="threadDump" value="file"/>
                                 <button class="btn btn-default btn-sm" type="submit" name="_eventId_performTD">
-                                    <i class="material-icons">settings</i>
                                     <fmt:message key='serverSettings.manageMemory.threads.performThreadDump.file'/>
                                 </button>
                                 <a href="#threadshint">*</a>
@@ -160,7 +153,6 @@
                             <form action="${flowExecutionUrl}" method="POST" class="form-inline">
                                 <input type="hidden" name="threadDump" value="file"/>
                                 <button class="btn btn-default btn-sm" type="submit" name="_eventId_scheduleTD">
-                                    <i class="material-icons">settings</i>
                                     <fmt:message key='serverSettings.manageMemory.threads.performThreadDump.multiple'/>
                                 </button>
                                 <a href="#threadshint">*</a>
@@ -193,13 +185,11 @@
                                 <c:choose>
                                     <c:when test="${memoryInfo.threadMonitorActivated}">
                                         <button class="btn btn-danger btn-sm" type="submit" name="_eventId_toggleTD">
-                                            <i class="material-icons">stop</i>
                                             <fmt:message key="serverSettings.manageMemory.threads.monitor.stop"/>
                                         </button>
                                     </c:when>
                                     <c:otherwise>
                                         <button class="btn btn-success btn-sm" type="submit" name="_eventId_toggleTD">
-                                            <i class="material-icons">play_arrow</i>
                                             <fmt:message key="serverSettings.manageMemory.threads.monitor.start"/>
                                         </button>
                                     </c:otherwise>
@@ -213,13 +203,11 @@
                                 <c:choose>
                                     <c:when test="${memoryInfo.errorFileDumperActivated}">
                                         <button class="btn btn-danger btn-sm" type="submit" name="_eventId_toggleEFD">
-                                            <i class="material-icons">stop</i>
                                             <fmt:message key="serverSettings.manageMemory.errors.dumper.stop"/>
                                         </button>
                                     </c:when>
                                     <c:otherwise>
                                         <button class="btn btn-success btn-sm" type="submit" name="_eventId_toggleEFD">
-                                            <i class="material-icons">play_arrow</i>
                                             <fmt:message key="serverSettings.manageMemory.errors.dumper.start"/>
                                         </button>
                                     </c:otherwise>

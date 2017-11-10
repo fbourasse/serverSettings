@@ -103,26 +103,21 @@
                     <div><strong><fmt:message key="label.actions"/></strong></div>
                     <div class="btn-group-sm">
                         <a class="btn btn-default" href="#refresh" onclick="go(); return false;" title="<fmt:message key='label.refresh'/>">
-                            <i class="material-icons">sync</i>
                             <fmt:message key="label.refresh"/>
                         </a>
                         <a class="btn btn-default" href="#flushOutputCaches" onclick="go('action', 'flushOutputCaches'); return false;" title="<fmt:message key="serverSettings.cache.flushOutputCaches.title"/>">
-                            <i class="material-icons">delete</i>
                             <fmt:message key="serverSettings.cache.flushOutputCaches"/>
                         </a>
                         <c:if test="${cacheManager.clusterActivated}">
                             <a class="btn btn-default" href="#flushOutputCaches" onclick="go('action', 'flushOutputCaches', 'propagate', 'true'); return false;" title="<fmt:message key="serverSettings.cache.flushOutputCaches.cluster.title"/>">
-                                <i class="material-icons">delete</i>
                                 <fmt:message key="serverSettings.cache.flushOutputCaches.cluster"/>
                             </a>
                         </c:if>
                         <a class="btn btn-default" href="#flushAllCaches" onclick="go('action', 'flushAllCaches'); return false;" title="<fmt:message key="serverSettings.cache.flushAllCaches.title"/>">
-                            <i class="material-icons">delete</i>
                             <fmt:message key="serverSettings.cache.flushAllCaches"/>
                         </a>
                         <c:if test="${cacheManager.clusterActivated}">
                             <a class="btn btn-default" href="#flushAllCaches" onclick="go('action', 'flushAllCaches', 'propagate', 'true'); return false;" title="<fmt:message key="serverSettings.cache.flushAllCaches.cluster.title"/>">
-                                <i class="material-icons">delete</i>
                                 <fmt:message key="serverSettings.cache.flushAllCaches.cluster"/>
                             </a>
                         </c:if>
@@ -147,12 +142,10 @@
                     <c:if test="${cacheManagement.showActions}">
                         <p>
                             <a class="btn btn-default" href="#flushCaches" onclick="go('action', 'flushCaches', 'name', '${manager.name}'); return false;" title="<fmt:message key="serverSettings.cache.flushCaches.title"/>">
-                                <i class="material-icons">delete</i>
                                 <fmt:message key="serverSettings.cache.flushCaches"/>&nbsp;${manager.name}
                             </a>
                             <c:if test="${cacheManager.clusterActivated}">
                                 <a class="btn btn-default" href="#flushCaches" onclick="go('action', 'flushCaches', 'name', '${manager.name}', 'propagate', 'true'); return false;" title="<fmt:message key="serverSettings.cache.flushCaches.cluster.title"/>">
-                                    <i class="material-icons">delete</i>
                                     <fmt:message key="serverSettings.cache.flushCaches.cluster"/>&nbsp;${manager.name}
                                 </a>
                             </c:if>

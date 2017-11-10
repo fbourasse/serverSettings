@@ -35,7 +35,7 @@
                 <c:forEach items="${jahiaPasswordPolicy.rules}" var="rule" varStatus="rlzStatus">
                     <tr>
                         <td>
-                            <div class="form-group form-group-sm">
+                            <div class="form-group">
                                 <div class="checkbox">
                                     <label>
                                         <input type="checkbox" id="pwd-rule-${rlzStatus.index}" name="rules[<c:out value='${rlzStatus.index}'/>].active" value="true" ${rule.active ? 'checked="checked"' : ''}/>
@@ -56,7 +56,6 @@
                 </c:forEach>
             </table>
             <button class="btn btn-primary pull-right" type="submit" name="_eventId_submitPwdPolicy">
-                <i class="material-icons">save</i>
                 <fmt:message key='label.save'/>
             </button>
         </form>

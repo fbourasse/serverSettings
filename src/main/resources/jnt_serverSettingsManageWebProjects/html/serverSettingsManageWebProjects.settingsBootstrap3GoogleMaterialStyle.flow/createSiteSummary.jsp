@@ -97,12 +97,10 @@
             </table>
 
             <button class="btn btn-sm btn-default" type="submit" name="_eventId_previous">
-                <i class="material-icons">navigate_before</i>
                 <fmt:message key='label.previous'/>
             </button>
             <button class="btn btn-sm btn-primary pull-right" type="submit" name="_eventId_next" id="${currentNode.identifier}-next">
                 <fmt:message key='label.save'/>
-                <i class="material-icons">save</i>
             </button>
         </div>
     </div>

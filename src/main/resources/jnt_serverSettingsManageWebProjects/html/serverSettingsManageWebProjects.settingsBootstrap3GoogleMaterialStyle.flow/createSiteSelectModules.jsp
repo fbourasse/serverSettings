@@ -139,12 +139,10 @@
             </c:if>
 
             <button class="btn btn-sm default" type="submit" name="_eventId_previous">
-                <i class="material-icons">navigate_before</i>
                 <fmt:message key='label.previous'/>
             </button>
             <button class="btn btn-sm btn-primary pull-right" type="submit" name="_eventId_next" onclick="manageSelectedModules.selectValue()">
                 <fmt:message key='label.next'/>
-                <i class="material-icons">navigate_next</i>
             </button>
         </div>
     </div>

@@ -115,7 +115,7 @@
             <div class="panel-body">
                 <form class="form-horizontal" name="jahiaAdmin" action='${flowExecutionUrl}' method="post">
 
-                    <div class="form-group form-group-sm">
+                    <div class="form-group">
                         <div class="togglebutton">
                             <label for="serviceActivated">
                                 <input type="checkbox" name="serviceActivated" id="serviceActivated"<c:if test='${mailSettings.serviceActivated}'> checked="checked"</c:if>/>
@@ -125,7 +125,7 @@
                         <input type="hidden" name="_serviceActivated"/>
                     </div>
 
-                    <div class="form-group form-group-sm label-floating">
+                    <div class="form-group label-floating">
                         <div class="input-group">
                             <label class="control-label">
                                 <fmt:message key="serverSettings.mailServerSettings.address"/>
@@ -139,21 +139,21 @@
                         </div>
                     </div>
 
-                    <div class="form-group form-group-sm label-floating">
+                    <div class="form-group label-floating">
                         <label class="control-label">
                             <fmt:message key="serverSettings.mailServerSettings.administrator"/>
                         </label>
                         <input class="form-control" type="text" name="to" size="64" maxlength="250" value="<c:out value='${mailSettings.to}'/>">
                     </div>
 
-                    <div class="form-group form-group-sm label-floating">
+                    <div class="form-group label-floating">
                         <label class="control-label">
                             <fmt:message key="serverSettings.mailServerSettings.from"/>
                         </label>
                         <input class="form-control" type="text" name="from" size="64" maxlength="250" value="<c:out value='${mailSettings.from}'/>">
                     </div>
 
-                    <div class="form-group form-group-sm label-floating">
+                    <div class="form-group label-floating">
                         <label class="control-label">
                             <fmt:message key="serverSettings.mailServerSettings.eventNotificationLevel"/>
                         </label>
@@ -171,11 +171,9 @@
 
                     <div class="form-group form-group-sm">
                         <button class="btn btn-sm btn-primary pull-right" type="submit" name="_eventId_submitMailSettings">
-                            <i class="material-icons">save</i>
                             <fmt:message key="label.save"/>
                         </button>
                         <button class="btn btn-sm btn-default pull-right" type="button" onclick="testSettings(); return false;">
-                            <i class="material-icons">thumb_up</i>
                             <fmt:message key="serverSettings.mailServerSettings.testSettings"/>
                         </button>
                     </div>

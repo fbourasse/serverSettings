@@ -55,28 +55,28 @@
             <form id="${currentNode.identifier}-updateSiteForm" action="${flowExecutionUrl}" method="POST">
                 <div class="panel-body">
 
-                    <div class="form-group form-group-sm label-floating">
+                    <div class="form-group label-floating">
                         <label class="control-label" for="title">
                             <fmt:message key="label.name"/><strong class="text-danger">*</strong>
                         </label>
                         <input class="form-control" type="text" id="title" name="title" value="${fn:escapeXml(siteBean.title)}"/>
                     </div>
 
-                    <div class="form-group form-group-sm label-floating">
+                    <div class="form-group label-floating">
                         <label class="control-label" for="serverName">
                             <fmt:message key="serverSettings.manageWebProjects.webProject.serverName"/><strong class="text-danger">*</strong>
                         </label>
                         <input class="form-control" type="text" id="serverName" name="serverName" value="${fn:escapeXml(siteBean.serverName)}"/>
                     </div>
 
-                    <div class="form-group form-group-sm label-floating">
+                    <div class="form-group label-floating">
                         <label>
                             <fmt:message key="serverSettings.manageWebProjects.webProject.templateSet"/>
                         </label>
                         <input class="form-control" type="text" value="${fn:escapeXml(siteBean.templatePackageName)}&nbsp;(${fn:escapeXml(siteBean.templateFolder)})" disabled />
                     </div>
 
-                    <div class="form-group form-group-sm label-floating">
+                    <div class="form-group label-floating">
                         <label>
                             <fmt:message key="label.modules"/>
                         </label>
@@ -87,7 +87,7 @@
                         </p>
                     </div>
 
-                    <div class="form-group form-group-sm">
+                    <div class="form-group">
                         <div class="checkbox">
                             <label for="defaultSite">
                                 <c:if test="${numberOfSites > 1}">
@@ -104,7 +104,7 @@
                         <input type="hidden" name="_defaultSite"/>
                     </div>
 
-                    <div class="form-group form-group-sm label-floating">
+                    <div class="form-group label-floating">
                         <label class="control-label" for="description">
                             <fmt:message key="label.description"/>
                         </label>
@@ -115,16 +115,13 @@
 
                     <div class="form-group form-group-sm">
                         <button class="btn btn-sm btn-danger" type="submit" id="${currentNode.identifier}-cancel">
-                            <i class="material-icons">cancel</i>
                             <fmt:message key='label.cancel' />
                         </button>
                         <button class="btn btn-sm btn-default" type="submit" id="${currentNode.identifier}-editModules">
-                            <i class="material-icons">list</i>
-                            &nbsp;<fmt:message key='serverSettings.manageWebProjects.webProject.selectModules' />
+                            <fmt:message key='serverSettings.manageWebProjects.webProject.selectModules' />
                         </button>
                         <button class="btn btn-sm btn-primary pull-right" type="submit" id="${currentNode.identifier}-next">
                             <fmt:message key='label.save'/>
-                            <i class="material-icons">save</i>
                         </button>
                     </div>
                 </div>

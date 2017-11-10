@@ -57,11 +57,9 @@
                         </tbody>
                     </table>
                     <button class="btn btn-sm btn-default" type="submit" name="_eventId_cancel">
-                        <i class="material-icons">cancel</i>
                         <fmt:message key='label.cancel' />
                     </button>
                     <button class="btn btn-sm btn-danger pull-right" type="submit" name="_eventId_deleteSitesConfirmed" id="${currentNode.identifier}-deleteSitesConfirmed">
-                        <i class="material-icons">delete_forever</i>
                         <fmt:message key='label.delete' />
                     </button>
                 </form>
