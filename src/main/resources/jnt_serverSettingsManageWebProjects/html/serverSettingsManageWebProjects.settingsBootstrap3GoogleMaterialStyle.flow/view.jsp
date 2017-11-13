@@ -325,7 +325,6 @@
                             <input class="form-control" type="text" name="importPath"/>
                             <span class="input-group-btn">
                                 <button class="btn btn-sm btn-primary" type="submit" name="_eventId_import" onclick="">
-                                    <i class="material-icons">file_upload</i>
                                     <fmt:message key='serverSettings.manageWebProjects.fileImport'/>
                                 </button>
                             </span>

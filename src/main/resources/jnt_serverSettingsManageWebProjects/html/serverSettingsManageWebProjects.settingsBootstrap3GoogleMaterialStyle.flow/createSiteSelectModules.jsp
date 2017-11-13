@@ -56,7 +56,7 @@
     <div class="panel panel-default">
         <div class="panel-body">
             <c:if test="${not editingModules}">
-                <div class="form-group form-group-sm label-floating">
+                <div class="form-group label-floating">
                     <label class="control-label" for="templateSet"><fmt:message key="serverSettings.webProjectSettings.pleaseChooseTemplateSet"/></label>
 
                     <select class="form-control" name="templateSet" id="templateSet">
@@ -70,7 +70,7 @@
             <p><strong><fmt:message key="serverSettings.manageWebProjects.webProject.selectModules"/></strong></p>
             <div class="row">
                 <div class="col-md-5">
-                    <div class="form-group form-group-sm label-floating">
+                    <div class="form-group label-floating">
                         <label><fmt:message key="jnt_serverSettingsManageWebProjects.createSiteSelectModules.label.unselectedModules"/></label>
                         <select id="unselectedModules" class="form-control" multiple>
                             <c:forEach items="${modules}" var="module">
@@ -112,7 +112,7 @@
                     </div>
                 </div>
                 <div class="col-md-5">
-                    <div class="form-group form-group-sm label-floating">
+                    <div class="form-group label-floating">
                         <label><fmt:message key="jnt_serverSettingsManageWebProjects.createSiteSelectModules.label.selectedModules"/></label>
                         <select id="selectedModules" class="form-control" name="modules" multiple>
                             <c:forEach items="${modules}" var="module">
@@ -127,7 +127,7 @@
 
 
             <c:if test="${not editingModules}">
-                <div class="form-group form-group-sm label-floating">
+                <div class="form-group label-floating">
                     <label class="control-label" for="language"><fmt:message key="serverSettings.manageWebProjects.webProject.selectLanguage"/></label>
 
                     <select class="form-control" name="language" id="language">
