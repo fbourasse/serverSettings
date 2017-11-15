@@ -56,11 +56,11 @@
                         </c:forEach>
                         </tbody>
                     </table>
-                    <button class="btn btn-sm btn-default" type="submit" name="_eventId_cancel">
-                        <fmt:message key='label.cancel' />
-                    </button>
                     <button class="btn btn-sm btn-danger pull-right" type="submit" name="_eventId_deleteSitesConfirmed" id="${currentNode.identifier}-deleteSitesConfirmed">
                         <fmt:message key='label.delete' />
+                    </button>
+                    <button class="btn btn-sm btn-default" type="submit" name="_eventId_cancel">
+                        <fmt:message key='label.cancel' />
                     </button>
                 </form>
             </div>
