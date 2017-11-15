@@ -247,17 +247,11 @@ public class SiteBean implements Serializable {
                 if (!sitesService.isSiteKeyValid(siteKey)) {
                     messages.addMessage(new MessageBuilder().error().source("siteKey")
                             .code("serverSettings.manageWebProjects.warningMsg.onlyLettersDigitsUnderscore").build());
-                } else if (!sitesService.isServerNameValid(serverName)) {
-                    messages.addMessage(new MessageBuilder()
-                            .error()
-                            .source("serverName")
-                            .code("serverSettings.manageWebProjects.warningMsg.invalidServerName").build());
-                } else if (!Url.isLocalhost(serverName) && sitesService.getSiteByServerName(serverName) != null) {
-                    messages.addMessage(new MessageBuilder()
-                            .error()
-                            .source("serverName")
-                            .code("serverSettings.manageWebProjects.warningMsg.chooseAnotherServerName").build());
-                } else if (sitesService.getSiteByKey(siteKey) != null) {
+                }
+
+                testServerNames(messages, sitesService);
+
+                if (sitesService.getSiteByKey(siteKey) != null) {
                     messages.addMessage(new MessageBuilder()
                             .error()
                             .source("siteKey")
@@ -295,17 +289,7 @@ public class SiteBean implements Serializable {
 
         try {
             if (StringUtils.isNotBlank(title) && StringUtils.isNotBlank(serverName)) {
-                if (!sitesService.isServerNameValid(serverName)) {
-                    messages.addMessage(new MessageBuilder()
-                            .error()
-                            .source("serverName")
-                            .code("serverSettings.manageWebProjects.warningMsg.invalidServerName").build());
-                } else if (!Url.isLocalhost(serverName) && sitesService.getSiteByServerName(serverName) != null && !sitesService.getSiteByServerName(serverName).getSiteKey().equals(siteKey)) {
-                    messages.addMessage(new MessageBuilder()
-                            .error()
-                            .source("serverName")
-                            .code("serverSettings.manageWebProjects.warningMsg.chooseAnotherServerName").build());
-                }
+                testServerNames(messages, sitesService);
             } else {
                 messages.addMessage(new MessageBuilder()
                         .error()
@@ -314,6 +298,27 @@ public class SiteBean implements Serializable {
             }
         } catch (JahiaException e) {
             logger.error(e.getMessage(), e);
+        }
+    }
+
+    private void testServerNames(MessageContext messages, JahiaSitesService sitesService) throws JahiaException {
+        testServerName(messages, sitesService, serverName, "serverName");
+        for (String serverNameAlias : StringUtils.split(serverNameAliases, ", ")) {
+            testServerName(messages, sitesService, serverNameAlias, "serverNameAliases");
+        }
+    }
+
+    private void testServerName(MessageContext messages, JahiaSitesService sitesService, String serverName, String source) throws JahiaException {
+        if (!sitesService.isServerNameValid(serverName)) {
+            messages.addMessage(new MessageBuilder()
+                    .error()
+                    .source(source)
+                    .code("serverSettings.manageWebProjects.warningMsg.invalidServerName").arg(serverName).build());
+        } else if (!Url.isLocalhost(serverName) && sitesService.getSiteByServerName(serverName) != null && !sitesService.getSiteByServerName(serverName).getSiteKey().equals(siteKey)) {
+            messages.addMessage(new MessageBuilder()
+                    .error()
+                    .source(source)
+                    .code("serverSettings.manageWebProjects.warningMsg.chooseAnotherServerName").arg(serverName).build());
         }
     }
 }
