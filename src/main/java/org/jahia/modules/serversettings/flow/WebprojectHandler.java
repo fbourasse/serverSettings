@@ -1,4 +1,4 @@
-/**
+/*
  * ==========================================================================================
  * =                   JAHIA'S DUAL LICENSING - IMPORTANT INFORMATION                       =
  * ==========================================================================================
@@ -56,24 +56,7 @@ import java.io.OutputStream;
 import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.MissingResourceException;
-import java.util.Properties;
-import java.util.Set;
-import java.util.SortedMap;
-import java.util.TreeMap;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
@@ -326,6 +309,11 @@ public class WebprojectHandler implements Serializable {
                                         null, null, null, null, null, null,
                                         null, null, session);
 
+                        if (StringUtils.isNotEmpty(bean.getServerNameAliases())) {
+                            site.setServerNameAliases(Arrays.asList(StringUtils.split(bean.getServerNameAliases(), ", ")));
+                            session.save();
+                        }
+
                         // set as default site
                         if (bean.isDefaultSite()) {
                             sitesService.setDefaultSite(site, session);
@@ -540,6 +528,9 @@ public class WebprojectHandler implements Serializable {
         siteBean.setDescription(site.getDescription());
         siteBean.setSiteKey(site.getSiteKey());
         siteBean.setServerName(site.getServerName());
+        List<String> aliases = site.getServerNameAliases();
+        Collections.sort(aliases);
+        siteBean.setServerNameAliases(StringUtils.join(aliases, ", "));
         siteBean.setTitle(site.getTitle());
         siteBean.setTemplatePackageName(site.getTemplatePackageName());
         siteBean.setTemplateFolder(site.getTemplateFolder());
@@ -1196,14 +1187,16 @@ public class WebprojectHandler implements Serializable {
             JCRSiteNode site = sitesService.getSiteByKey(siteKey, session);
             boolean serverNameChanged = !StringUtils
                             .equals(site.getServerName(), bean.getServerName());
-            if (serverNameChanged
-                            || !StringUtils.equals(site.getTitle(),
-                                            bean.getTitle())
-                            || !StringUtils.equals(site.getDescription(),
-                                            bean.getDescription())) {
+            List<String> aliases = Arrays.asList(StringUtils.split(bean.getServerNameAliases(), ", "));
+            Collections.sort(aliases);
+            boolean serverNameAliasesChanged = !site.getServerNameAliases().equals(aliases);
+            if (serverNameChanged || serverNameAliasesChanged
+                    || !StringUtils.equals(site.getTitle(), bean.getTitle())
+                    || !StringUtils.equals(site.getDescription(), bean.getDescription())) {
                 site.setServerName(bean.getServerName());
                 site.setTitle(bean.getTitle());
                 site.setDescription(bean.getDescription());
+                site.setServerNameAliases(aliases);
 
                 sitesService.updateSystemSitePermissions(site, session);
             }

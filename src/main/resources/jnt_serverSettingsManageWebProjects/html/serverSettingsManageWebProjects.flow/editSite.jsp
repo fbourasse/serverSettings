@@ -65,6 +65,16 @@
                     </div>
                 </div>
             </div>
+            <div class="container-fluid">
+                <div class="row-fluid">
+                    <div class="span8">
+                        <label for="serverNameAliases"><fmt:message key="serverSettings.manageWebProjects.webProject.serverNameAliases"/>:</label>
+                        <input class="span12" type="text" id="serverNameAliases" name="serverNameAliases" value="${fn:escapeXml(siteBean.serverNameAliases)}"/>
+                    </div>
+                </div>
+            </div>
+
+
 
             <div class="container-fluid">
                 <div class="row-fluid">

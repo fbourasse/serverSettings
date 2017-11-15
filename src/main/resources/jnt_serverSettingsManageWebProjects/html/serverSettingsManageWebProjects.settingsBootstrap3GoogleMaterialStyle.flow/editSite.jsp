@@ -70,6 +70,13 @@
                     </div>
 
                     <div class="form-group label-floating">
+                        <label class="control-label" for="serverName">
+                            <fmt:message key="serverSettings.manageWebProjects.webProject.serverNameAliases"/>
+                        </label>
+                        <input class="form-control" type="text" id="serverNameAliases" name="serverNameAliases" value="${fn:escapeXml(siteBean.serverNameAliases)}"/>
+                    </div>
+
+                    <div class="form-group label-floating">
                         <label>
                             <fmt:message key="serverSettings.manageWebProjects.webProject.templateSet"/>
                         </label>
@@ -114,14 +121,14 @@
                     <input type="hidden" id="${currentNode.identifier}-eventId" name="_eventId" value="next" />
 
                     <div class="form-group form-group-sm">
-                        <button class="btn btn-sm btn-danger" type="submit" id="${currentNode.identifier}-cancel">
+                        <button tabindex="0" class="btn btn-sm btn-primary pull-right" type="submit" id="${currentNode.identifier}-next">
+                            <fmt:message key='label.save'/>
+                        </button>
+                        <button tabindex="1" class="btn btn-sm btn-danger" type="submit" id="${currentNode.identifier}-cancel">
                             <fmt:message key='label.cancel' />
                         </button>
-                        <button class="btn btn-sm btn-default" type="submit" id="${currentNode.identifier}-editModules">
+                        <button tabindex="2" class="btn btn-sm btn-default" type="submit" id="${currentNode.identifier}-editModules">
                             <fmt:message key='serverSettings.manageWebProjects.webProject.selectModules' />
-                        </button>
-                        <button class="btn btn-sm btn-primary pull-right" type="submit" id="${currentNode.identifier}-next">
-                            <fmt:message key='label.save'/>
                         </button>
                     </div>
                 </div>

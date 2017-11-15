@@ -75,6 +75,7 @@ public class SiteBean implements Serializable {
 
     private List<String> modules = new ArrayList<String>();
     private String serverName = "localhost";
+    private String serverNameAliases = "";
 
     private String siteKey = "mySite";
 
@@ -118,6 +119,10 @@ public class SiteBean implements Serializable {
 
     public String getServerName() {
         return serverName;
+    }
+
+    public String getServerNameAliases() {
+        return serverNameAliases;
     }
 
     public String getSiteKey() {
@@ -183,6 +188,10 @@ public class SiteBean implements Serializable {
 
     public void setServerName(String serverName) {
         this.serverName = serverName;
+    }
+
+    public void setServerNameAliases(String serverNameAliases) {
+        this.serverNameAliases = serverNameAliases;
     }
 
     public void setSiteKey(String siteKey) {
