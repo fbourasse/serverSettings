@@ -46,6 +46,13 @@
                         <input class="form-control" type="text" id="serverName" name="serverName" value="${fn:escapeXml(siteBean.serverName)}"/>
                     </div>
 
+                    <div class="form-group label-floating">
+                        <label class="control-label" for="serverName">
+                            <fmt:message key="serverSettings.manageWebProjects.webProject.serverNameAliases"/>
+                        </label>
+                        <input class="form-control" type="text" id="serverNameAliases" name="serverNameAliases" value="${fn:escapeXml(siteBean.serverNameAliases)}"/>
+                    </div>
+
                     <div class="form-group label-floating is-empty">
                         <label class="control-label" for="description"><fmt:message key="label.description"/></label>
                         <textarea class="form-control" id="description" name="description" rows="3">${fn:escapeXml(siteBean.description)}</textarea>

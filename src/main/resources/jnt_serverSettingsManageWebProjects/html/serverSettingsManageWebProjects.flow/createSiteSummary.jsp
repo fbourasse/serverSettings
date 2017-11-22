@@ -45,6 +45,14 @@
                 </tr>
                 <tr>
                     <td>
+                        <fmt:message key="serverSettings.manageWebProjects.webProject.serverNameAliases"/>:&nbsp;
+                    </td>
+                    <td>
+                        ${fn:escapeXml(siteBean.serverNameAliases)}
+                    </td>
+                </tr>
+                <tr>
+                    <td>
                         <fmt:message key="label.description"/>:&nbsp;
                     </td>
                     <td>

@@ -524,9 +524,7 @@ public class WebprojectHandler implements Serializable {
         siteBean.setDescription(site.getDescription());
         siteBean.setSiteKey(site.getSiteKey());
         siteBean.setServerName(site.getServerName());
-        List<String> aliases = new LinkedList<>(site.getServerNameAliases());
-        Collections.sort(aliases);
-        siteBean.setServerNameAliases(StringUtils.join(aliases, ", "));
+        siteBean.setServerNameAliases(StringUtils.join(site.getServerNameAliases(), ", "));
         siteBean.setTitle(site.getTitle());
         siteBean.setTemplatePackageName(site.getTemplatePackageName());
         siteBean.setTemplateFolder(site.getTemplateFolder());

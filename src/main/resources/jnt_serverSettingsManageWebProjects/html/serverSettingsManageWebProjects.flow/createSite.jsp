@@ -38,6 +38,12 @@
                         <input class="span12" type="text" id="siteKey" name="siteKey" value="${fn:escapeXml(siteBean.siteKey)}"/>
                     </div>
                     <div class="span4">
+                        <label for="serverName"><fmt:message key="serverSettings.manageWebProjects.webProject.serverNameAliases"/></label>
+                        <input class="span12" type="text" id="serverNameAliases" name="serverNameAliases" value="${fn:escapeXml(siteBean.serverNameAliases)}"/>
+                    </div>
+                </div>
+                <div class="row-fluid">
+                    <div class="span4">
                         <label for="description"><fmt:message key="label.description"/></label>
                         <textarea class="span12" id="description" name="description">${fn:escapeXml(siteBean.description)}</textarea>
                     </div>

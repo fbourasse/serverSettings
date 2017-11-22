@@ -65,16 +65,19 @@
                     </div>
                 </div>
             </div>
+
             <div class="container-fluid">
                 <div class="row-fluid">
-                    <div class="span8">
+                    <div class="span4">
+                        <label for="description"><fmt:message key="label.description"/>:</label>
+                        <textarea class="span12" id="description" name="description">${fn:escapeXml(siteBean.description)}</textarea>
+                    </div>
+                    <div class="span4">
                         <label for="serverNameAliases"><fmt:message key="serverSettings.manageWebProjects.webProject.serverNameAliases"/>:</label>
                         <input class="span12" type="text" id="serverNameAliases" name="serverNameAliases" value="${fn:escapeXml(siteBean.serverNameAliases)}"/>
                     </div>
                 </div>
             </div>
-
-
 
             <div class="container-fluid">
                 <div class="row-fluid">
@@ -117,15 +120,6 @@
                                 <input style="margin-bottom:15px;" type="checkbox" name="defaultSite" id="defaultSite" ${siteBean.defaultSite ? 'checked="checked"' : ''}/>
                             </c:otherwise>
                         </c:choose>--%>
-                    </div>
-                </div>
-            </div>
-
-            <div class="container-fluid">
-                <div class="row-fluid">
-                    <div class="span8">
-                        <label for="description"><fmt:message key="label.description"/>:</label>
-                        <textarea class="span12" id="description" name="description">${fn:escapeXml(siteBean.description)}</textarea>
                     </div>
                 </div>
             </div>

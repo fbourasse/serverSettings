@@ -43,7 +43,7 @@
  */
 package org.jahia.modules.serversettings.flow;
 
-import org.codehaus.plexus.util.StringUtils;
+import org.apache.commons.lang.StringUtils;
 import org.jahia.data.templates.JahiaTemplatesPackage;
 import org.jahia.exceptions.JahiaException;
 import org.jahia.modules.serversettings.users.admin.AdminProperties;
@@ -59,6 +59,8 @@ import org.springframework.binding.validation.ValidationContext;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -191,7 +193,13 @@ public class SiteBean implements Serializable {
     }
 
     public void setServerNameAliases(String serverNameAliases) {
-        this.serverNameAliases = serverNameAliases;
+        if (StringUtils.isNotEmpty(serverNameAliases)) {
+            List<String> aliases = new LinkedList<>(Arrays.asList(StringUtils.split(serverNameAliases, ", ")));
+            Collections.sort(aliases);
+            this.serverNameAliases = StringUtils.join(aliases, ", ");
+        } else {
+            this.serverNameAliases = serverNameAliases;
+        }
     }
 
     public void setSiteKey(String siteKey) {
