@@ -47,7 +47,7 @@
                     </div>
 
                     <div class="form-group label-floating">
-                        <label class="control-label" for="serverName">
+                        <label class="control-label" for="serverNameAliases">
                             <fmt:message key="serverSettings.manageWebProjects.webProject.serverNameAliases"/>
                         </label>
                         <input class="form-control" type="text" id="serverNameAliases" name="serverNameAliases" value="${fn:escapeXml(siteBean.serverNameAliases)}"/>

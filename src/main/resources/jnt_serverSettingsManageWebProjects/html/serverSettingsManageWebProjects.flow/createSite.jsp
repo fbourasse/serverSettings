@@ -38,7 +38,7 @@
                         <input class="span12" type="text" id="siteKey" name="siteKey" value="${fn:escapeXml(siteBean.siteKey)}"/>
                     </div>
                     <div class="span4">
-                        <label for="serverName"><fmt:message key="serverSettings.manageWebProjects.webProject.serverNameAliases"/></label>
+                        <label for="serverNameAliases"><fmt:message key="serverSettings.manageWebProjects.webProject.serverNameAliases"/></label>
                         <input class="span12" type="text" id="serverNameAliases" name="serverNameAliases" value="${fn:escapeXml(siteBean.serverNameAliases)}"/>
                     </div>
                 </div>
