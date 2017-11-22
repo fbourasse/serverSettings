@@ -60,6 +60,8 @@
                         </label>
                         <input type="hidden" name="_defaultSite"/>
                     </div>
+                </div>
+                <div class="row-fluid">
                     <div class="span4">
                         <label for="createAdmin">
                             <input type="checkbox" name="createAdmin" id="createAdmin" <c:if test="${siteBean.createAdmin}">checked="checked"</c:if> /> <fmt:message key="serverSettings.manageWebProjects.webProject.createAdmin"/>
