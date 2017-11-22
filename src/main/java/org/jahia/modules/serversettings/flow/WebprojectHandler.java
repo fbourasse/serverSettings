@@ -296,6 +296,7 @@ public class WebprojectHandler implements Serializable {
                                         JCRSessionFactory.getInstance()
                                                         .getCurrentUser(),
                                         bean.getTitle(), bean.getServerName(),
+                                        StringUtils.isNotEmpty(bean.getServerNameAliases()) ? StringUtils.split(bean.getServerNameAliases(), ", ") : null,
                                         bean.getSiteKey(),
                                         bean.getDescription(),
                                         LanguageCodeConverters
@@ -308,11 +309,6 @@ public class WebprojectHandler implements Serializable {
                                                                         .size()]),
                                         null, null, null, null, null, null,
                                         null, null, session);
-
-                        if (StringUtils.isNotEmpty(bean.getServerNameAliases())) {
-                            site.setServerNameAliases(Arrays.asList(StringUtils.split(bean.getServerNameAliases(), ", ")));
-                            session.save();
-                        }
 
                         // set as default site
                         if (bean.isDefaultSite()) {
@@ -528,7 +524,7 @@ public class WebprojectHandler implements Serializable {
         siteBean.setDescription(site.getDescription());
         siteBean.setSiteKey(site.getSiteKey());
         siteBean.setServerName(site.getServerName());
-        List<String> aliases = site.getServerNameAliases();
+        List<String> aliases = new LinkedList<>(site.getServerNameAliases());
         Collections.sort(aliases);
         siteBean.setServerNameAliases(StringUtils.join(aliases, ", "));
         siteBean.setTitle(site.getTitle());
