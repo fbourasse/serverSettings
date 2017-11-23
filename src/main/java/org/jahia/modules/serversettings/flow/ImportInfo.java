@@ -76,8 +76,8 @@ public class ImportInfo implements Serializable {
     private String siteKey;
     private Properties siteProperties;
     private String siteServername;
+    private String siteServernameAliases;
     private String siteTitle;
-    private boolean siteTitleInvalid;
     private String templatePackageName;
     private String templates;
     private String type;
@@ -91,6 +91,7 @@ public class ImportInfo implements Serializable {
             map.put("sitekey", siteKey);
             map.put("sitetitle", siteTitle);
             map.put("siteservername", siteServername);
+            map.put("siteservernamealiases", siteServernameAliases);
             map.put("templates", templates);
         }
         return map;
@@ -188,15 +189,12 @@ public class ImportInfo implements Serializable {
         return site;
     }
 
-    public boolean isSiteTitleInvalid() {
-        return siteTitleInvalid;
-    }
-
     public void loadSiteProperties(Properties siteProperties) {
         this.siteProperties = siteProperties;
         siteKey = siteProperties.getProperty("sitekey");
         siteTitle = siteProperties.getProperty("sitetitle");
         siteServername = siteProperties.getProperty("siteservername");
+        siteServernameAliases = siteProperties.getProperty("siteservernamealiases");
         description = siteProperties.getProperty("description");
         templatePackageName = siteProperties.getProperty("templatePackageName");
         mixLanguage = Boolean.valueOf(siteProperties.getProperty("mixLanguage", "false"));
@@ -295,10 +293,6 @@ public class ImportInfo implements Serializable {
         this.siteTitle = siteTitle;
     }
 
-    public void setSiteTitleInvalid(boolean invalid) {
-        siteTitleInvalid = invalid;
-    }
-
     public void setTemplatePackageName(String templatePackageName) {
         this.templatePackageName = templatePackageName;
     }
@@ -321,5 +315,13 @@ public class ImportInfo implements Serializable {
 
     public int getOriginatingBuildNumber() {
         return originatingBuildNumber;
+    }
+
+    public String getSiteServernameAliases() {
+        return siteServernameAliases;
+    }
+
+    public void setSiteServernameAliases(String siteServernameAliases) {
+        this.siteServernameAliases = siteServernameAliases;
     }
 }

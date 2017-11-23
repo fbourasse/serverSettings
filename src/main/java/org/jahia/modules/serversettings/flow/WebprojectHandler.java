@@ -43,6 +43,8 @@
  */
 package org.jahia.modules.serversettings.flow;
 
+import static org.jahia.services.importexport.ImportExportBaseService.*;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
@@ -91,6 +93,7 @@ import org.jahia.services.importexport.validation.ValidationResults;
 import org.jahia.services.search.spell.CompositeSpellChecker;
 import org.jahia.services.sites.JahiaSite;
 import org.jahia.services.sites.JahiaSitesService;
+import org.jahia.services.sites.SiteCreationInfo;
 import org.jahia.services.templates.JahiaTemplateManagerService;
 import org.jahia.services.usermanager.JahiaGroupManagerService;
 import org.jahia.services.usermanager.JahiaUser;
@@ -143,26 +146,53 @@ public class WebprojectHandler implements Serializable {
     static final Logger logger = LoggerFactory.getLogger(WebprojectHandler.class);
 
     private static final HashSet<String> NON_SITE_IMPORTS = new HashSet<>(Arrays.asList(
-        "serverPermissions.xml",
-        "users.xml",
-        "users.zip",
+        SERVER_PERMISSIONS_XML,
+        USERS_XML,
+        USERS_ZIP,
         JahiaSitesService.SYSTEM_SITE_KEY + ".zip",
-        "references.zip",
-        "roles.zip",
-        "mounts.zip"
+        REFERENCES_ZIP,
+        ROLES_ZIP,
+        MOUNTS_ZIP
     ));
 
     private static final Map<String, Integer> RANK;
     static {
         RANK = new HashMap<>(8);
-        RANK.put("mounts.zip", 4);
+        RANK.put(MOUNTS_ZIP, 4);
         RANK.put("roles.xml", 5);
-        RANK.put("roles.zip", 5);
-        RANK.put("users.zip", 10);
-        RANK.put("users.xml", 10);
-        RANK.put("serverPermissions.xml", 20);
+        RANK.put(ROLES_ZIP, 5);
+        RANK.put(USERS_ZIP, 10);
+        RANK.put(USERS_XML, 10);
+        RANK.put(SERVER_PERMISSIONS_XML, 20);
         RANK.put("shared.zip", 30);
         RANK.put(JahiaSitesService.SYSTEM_SITE_KEY + ".zip", 40);
+    }
+
+    private static void validateServerName(String serverName, String keyOfUpdatedSite, String source, MessageContext messages)
+            throws JahiaException {
+        JahiaSitesService sitesService = JahiaSitesService.getInstance();
+        if (!sitesService.isServerNameValid(serverName)) {
+            messages.addMessage(new MessageBuilder().error().source(source)
+                    .code("serverSettings.manageWebProjects.warningMsg.invalidServerName").arg(serverName).build());
+        } else if (!Url.isLocalhost(serverName)) {
+            JahiaSite existingSite = sitesService.getSiteByServerName(serverName);
+            if (existingSite != null
+                    && (keyOfUpdatedSite == null || !existingSite.getSiteKey().equals(keyOfUpdatedSite))) {
+                messages.addMessage(new MessageBuilder().error().source(source)
+                        .code("serverSettings.manageWebProjects.warningMsg.chooseAnotherServerName").arg(serverName)
+                        .build());
+            }
+        }
+    }
+
+    static void validateServerNames(String serverName, String serverNameAliases, String keyOfUpdatedSite,
+            MessageContext messages) throws JahiaException {
+        validateServerName(serverName, keyOfUpdatedSite, "serverName", messages);
+        if (StringUtils.isNotEmpty(serverNameAliases)) {
+            for (String serverNameAlias : StringUtils.split(serverNameAliases, ", ")) {
+                validateServerName(serverNameAlias, keyOfUpdatedSite, "serverNameAliases", messages);
+            }
+        }
     }
 
     @Autowired
@@ -292,23 +322,11 @@ public class WebprojectHandler implements Serializable {
 
                     try {
 
-                        JahiaSite site = sitesService.addSite(
-                                        JCRSessionFactory.getInstance()
-                                                        .getCurrentUser(),
-                                        bean.getTitle(), bean.getServerName(),
-                                        StringUtils.isNotEmpty(bean.getServerNameAliases()) ? StringUtils.split(bean.getServerNameAliases(), ", ") : null,
-                                        bean.getSiteKey(),
-                                        bean.getDescription(),
-                                        LanguageCodeConverters
-                                                        .getLocaleFromCode(
-                                                                        bean.getLanguage()),
-                                        bean.getTemplateSet(),
-                                        bean.getModules()
-                                                        .toArray(new String[bean
-                                                                        .getModules()
-                                                                        .size()]),
-                                        null, null, null, null, null, null,
-                                        null, null, session);
+                        JahiaSite site = sitesService.addSite(new SiteCreationInfo(bean.getSiteKey(),
+                                bean.getServerName(), bean.getServerNameAliases(), bean.getTitle(),
+                                bean.getDescription(), bean.getTemplateSet(),
+                                bean.getModules().toArray(new String[bean.getModules().size()]), bean.getLanguage(),
+                                JCRSessionFactory.getInstance().getCurrentUser()), session);
 
                         // set as default site
                         if (bean.isDefaultSite()) {
@@ -430,61 +448,6 @@ public class WebprojectHandler implements Serializable {
 
         importExportBaseService.exportSites(new ByteArrayOutputStream(), params,
                         sites);
-    }
-
-    public void exportSites(RequestContext requestContext) {
-        // HttpServletResponse response = (HttpServletResponse)
-        // requestContext.getExternalContext().getNativeResponse();
-        // HttpServletRequest request = (HttpServletRequest)
-        // requestContext.getExternalContext().getNativeRequest();
-        // RenderContext renderContext = (RenderContext) request.getAttribute("renderContext");
-        // renderContext.setRedirect("/cms/export/default/my_export.zip?exportformat=site&live=true&sitebox=mySite");
-        // return;
-
-        // "localhost:8080/cms/export/default/my_export.zip?exportformat=site&live=true&sitebox=mySite"
-        // response.reset();
-        // response.setContentType("application/zip");
-        // response.setContentType("text/plain");
-        // make sure this file is not cached by the client (or a proxy middleman)
-        // WebUtils.setNoCacheHeaders(response);
-        // try {
-        // response.getWriter().append("Here is a test text");
-        // response.getWriter().flush();
-        // } catch (IOException e) {
-        // logger.error(e.getMessage(), e);
-        // }
-
-        // Map<String,Object> params = new LinkedHashMap<String, Object>();
-        // params.put(ImportExportService.INCLUDE_ALL_FILES, Boolean.TRUE);
-        // params.put(ImportExportService.INCLUDE_TEMPLATES, Boolean.TRUE);
-        // params.put(ImportExportService.INCLUDE_SITE_INFOS, Boolean.TRUE);
-        // params.put(ImportExportService.INCLUDE_DEFINITIONS, Boolean.TRUE);
-        // if (request.getParameter("live") == null ||
-        // Boolean.valueOf(request.getParameter("live"))) {
-        // params.put(ImportExportService.INCLUDE_LIVE_EXPORT, Boolean.TRUE);
-        // }
-        // // if (request.getParameter("users") == null ||
-        // Boolean.valueOf(request.getParameter("users"))) {
-        // params.put(ImportExportService.INCLUDE_USERS, Boolean.TRUE);
-        // // }
-        // params.put(ImportExportService.INCLUDE_ROLES, Boolean.TRUE);
-        // params.put(ImportExportService.VIEW_WORKFLOW, Boolean.TRUE);
-        // params.put(ImportExportService.XSL_PATH, cleanupXsl);
-        //
-        // try {
-        // OutputStream outputStream = response.getOutputStream();
-        // importExportBaseService.exportSites(outputStream, params, sites);
-        // outputStream.close();
-        // requestContext.getExternalContext().recordResponseComplete();
-        // } catch (IOException e) {
-        // logger.error(e.getMessage(), e);
-        // } catch (RepositoryException e) {
-        // logger.error(e.getMessage(), e);
-        // } catch (SAXException e) {
-        // logger.error(e.getMessage(), e);
-        // } catch (TransformerException e) {
-        // logger.error(e.getMessage(), e);
-        // }
     }
 
     public MultipartFile getImportFile() {
@@ -614,7 +577,7 @@ public class WebprojectHandler implements Serializable {
                     return;
                 }
 
-                if (n.equals("export.properties")) {
+                if (n.equals(EXPORT_PROPERTIES)) {
                     InputStream is = new BufferedInputStream(
                                     new FileInputStream(i));
                     try {
@@ -629,7 +592,7 @@ public class WebprojectHandler implements Serializable {
                     if (deleteFilesAtEnd) {
                         FileUtils.deleteQuietly(i);
                     }
-                } else if (n.equals("site.properties")
+                } else if (n.equals(SITE_PROPERTIES)
                                 || ((n.startsWith("export_")
                                                 && n.endsWith(".xml")))) {
                     // this is a single site import, stop everything and import
@@ -829,7 +792,7 @@ public class WebprojectHandler implements Serializable {
             try {
                 while ((z = zis2.getNextEntry()) != null) {
                     final String name = z.getName().replace('\\', '/');
-                    if ("site.properties".equals(name)) {
+                    if (SITE_PROPERTIES.equals(name)) {
                         Properties p = new Properties();
                         p.load(zis2);
                         importInfos.loadSiteProperties(p);
@@ -853,7 +816,7 @@ public class WebprojectHandler implements Serializable {
                     } else if (name.startsWith("export_")) {
                         isLegacySite = true;
                     } else if (validityCheckOnImport && !isLegacyImport
-                                    && name.contains("repository.xml")
+                                    && name.contains(REPOSITORY_XML)
                                     && !name.contains("/")) {
                         try {
                             long timer = System.currentTimeMillis();
@@ -910,6 +873,7 @@ public class WebprojectHandler implements Serializable {
                 if (importInfos.getSiteKey() == null) {
                     importInfos.setSiteKey("");
                     importInfos.setSiteServername("");
+                    importInfos.setSiteServernameAliases("");
                     importInfos.setSiteTitle("");
                     importInfos.setDescription("");
                     importInfos.setMixLanguage(Boolean.FALSE);
@@ -930,17 +894,10 @@ public class WebprojectHandler implements Serializable {
         logger.info("Processing Import");
 
         boolean successful = true;
-        boolean doImportServerPermissions = false;
-        for (ImportInfo infos : importsInfos.values()) {
-            if (infos.isSelected() && infos.getImportFileName().equals("serverPermissions.xml")) {
-                doImportServerPermissions = true;
-                break;
-            }
-        }
 
         for (ImportInfo infos : importsInfos.values()) {
-            File file = infos.getImportFile();
-            if (infos.isSelected() && infos.getImportFileName().equals("users.xml")) {
+            if (infos.isSelected() && infos.getImportFileName().equals(USERS_XML)) {
+                File file = infos.getImportFile();
                 try {
                     importExportBaseService.importUsers(file);
                 } catch (RepositoryException | IOException e) {
@@ -957,11 +914,14 @@ public class WebprojectHandler implements Serializable {
             files.add(infos.getImportFile());
         }
 
+        boolean anythingImported = false;
+
         try {
             for (final ImportInfo infos : importsInfos.values()) {
                 if (infos.isSelected()) {
                     String type = infos.getType();
                     if (type.equals("files")) {
+                        anythingImported = true;
                         try {
                             final File file = ImportUpdateService.getInstance().updateImport(
                                     infos.getImportFile(),
@@ -998,12 +958,13 @@ public class WebprojectHandler implements Serializable {
                             logger.error("Error when getting templates", e);
                         }
                     } else if (type.equals("xml")
-                            && (infos.getImportFileName().equals("serverPermissions.xml") || infos.getImportFileName()
-                            .equals("users.xml"))) {
+                            && (infos.getImportFileName().equals(SERVER_PERMISSIONS_XML) || infos.getImportFileName()
+                            .equals(USERS_XML))) {
                         // todo: shouldn't something been done here?
 
                     } else if (type.equals("site")) {
                         // site import
+                        anythingImported = true;
                         String tpl = infos.getTemplates();
                         if ("".equals(tpl)) {
                             tpl = null;
@@ -1033,22 +994,21 @@ public class WebprojectHandler implements Serializable {
                                 final Resource finalLegacyMappingFilePath = getLegacyMappingsInModules("map").get(legacyImportFilePath);
                                 final Resource finalLegacyDefinitionsFilePath = getLegacyMappingsInModules("cnd").get(legacyDefinitionsFilePath);
 
-                                final boolean finalDoImportServerPermissions = doImportServerPermissions;
-
                                 JCRObservationManager.doWithOperationType(null, JCRObservationManager.IMPORT, new JCRCallback<Object>() {
 
                                     @Override
                                     public Object doInJCR(JCRSessionWrapper jcrSession)
                                             throws RepositoryException {
                                         try {
-                                            sitesService.addSite(user, infos.getSiteTitle(), infos
-                                                            .getSiteServername(), infos.getSiteKey(), "",
-                                                    defaultLocale, finalTpl, null, "fileImport",
-                                                    file == null ? null : new FileSystemResource(file), infos
-                                                            .getImportFileName(), false,
-                                                    finalDoImportServerPermissions, infos
-                                                            .getOriginatingJahiaRelease(),
-                                                    finalLegacyMappingFilePath, finalLegacyDefinitionsFilePath);
+                                            sitesService.addSite(new SiteCreationInfo(infos.getSiteKey(),
+                                                    infos.getSiteServername(), infos.getSiteServernameAliases(),
+                                                    infos.getSiteTitle(), "", finalTpl, null,
+                                                    defaultLocale.toString(), user, "fileImport",
+                                                    file == null ? null : new FileSystemResource(file),
+                                                    infos.getImportFileName(),
+                                                    infos.getOriginatingJahiaRelease(),
+                                                    finalLegacyMappingFilePath,
+                                                    finalLegacyDefinitionsFilePath));
                                         } catch (JahiaException | IOException e) {
                                             throw new RepositoryException(e);
                                         }
@@ -1074,14 +1034,16 @@ public class WebprojectHandler implements Serializable {
                 }
             }
         } finally {
-            for (ImportInfo infos : importsInfos.values()) {
-                if (deleteFilesAtEnd) {
+            if (deleteFilesAtEnd) {
+                for (ImportInfo infos : importsInfos.values()) {
                     FileUtils.deleteQuietly(infos.getImportFile());
                 }
             }
         }
 
-        CompositeSpellChecker.updateSpellCheckerIndex();
+        if (anythingImported) {
+            CompositeSpellChecker.updateSpellCheckerIndex();
+        }
 
         return successful;
     }
@@ -1096,7 +1058,7 @@ public class WebprojectHandler implements Serializable {
         try {
             while ((z = zis2.getNextEntry()) != null) {
                 try {
-                    if ("site.properties".equals(z.getName())) {
+                    if (SITE_PROPERTIES.equals(z.getName())) {
                         Properties p = new Properties();
                         p.load(zis2);
                         Map<Integer, String> im = new TreeMap<>();
@@ -1259,50 +1221,35 @@ public class WebprojectHandler implements Serializable {
     }
 
     private void validateSite(MessageContext messageContext, ImportInfo infos) {
+        if (!infos.isSite()) {
+            return;
+        }
+        String siteTitle = infos.getSiteTitle();
+        String siteKey = infos.getSiteKey();
+        String serverName = infos.getSiteServername();
+        if (StringUtils.isEmpty(siteTitle) || StringUtils.isEmpty(siteKey) || StringUtils.isEmpty(serverName)) {
+            messageContext.addMessage(new MessageBuilder().error().source("siteKey")
+                    .code("serverSettings.manageWebProjects.warningMsg.completeRequestInfo").build());
+
+            return;
+        }
         try {
-            infos.setSiteTitleInvalid(
-                            StringUtils.isEmpty(infos.getSiteTitle()));
-
-            String siteKey = infos.getSiteKey();
-            if (infos.isSite()) {
-                boolean valid = sitesService.isSiteKeyValid(siteKey);
-                if (!valid) {
-                    messageContext.addMessage(new MessageBuilder().error()
-                                    .source("siteKey")
-                                    .code("serverSettings.manageWebProjects.invalidSiteKey")
-                                    .build());
-                }
-                if (valid && sitesService.getSiteByKey(siteKey) != null) {
-                    messageContext.addMessage(new MessageBuilder().error()
-                                    .source("siteKey")
-                                    .code("serverSettings.manageWebProjects.siteKeyExists")
-                                    .build());
-                }
-
-                String serverName = infos.getSiteServername();
-                if (infos.isLegacyImport() && (StringUtils
-                                .startsWithIgnoreCase(serverName, "http://")
-                                || StringUtils.startsWithIgnoreCase(serverName,
-                                                "https://"))) {
-                    serverName = StringUtils.substringAfter(serverName, "://");
-                    infos.setSiteServername(serverName);
-                }
-                valid = sitesService.isServerNameValid(serverName);
-                if (!valid) {
-                    messageContext.addMessage(new MessageBuilder().error()
-                                    .source("siteKey")
-                                    .code("serverSettings.manageWebProjects.invalidServerName")
-                                    .build());
-                }
-
-                if (valid && !Url.isLocalhost(serverName)
-                                && sitesService.getSite(serverName) != null) {
-                    messageContext.addMessage(new MessageBuilder().error()
-                                    .source("siteKey")
-                                    .code("serverSettings.manageWebProjects.serverNameExists")
-                                    .build());
-                }
+            boolean valid = sitesService.isSiteKeyValid(siteKey);
+            if (!valid) {
+                messageContext.addMessage(new MessageBuilder().error().source("siteKey")
+                        .code("serverSettings.manageWebProjects.invalidSiteKey").build());
             }
+            if (valid && sitesService.getSiteByKey(siteKey) != null) {
+                messageContext.addMessage(new MessageBuilder().error().source("siteKey")
+                        .code("serverSettings.manageWebProjects.siteKeyExists").build());
+            }
+
+            if (infos.isLegacyImport() && (StringUtils.startsWithIgnoreCase(serverName, "http://")
+                    || StringUtils.startsWithIgnoreCase(serverName, "https://"))) {
+                serverName = StringUtils.substringAfter(serverName, "://");
+                infos.setSiteServername(serverName);
+            }
+            validateServerNames(serverName, infos.getSiteServernameAliases(), null, messageContext);
         } catch (JahiaException e) {
             logger.error(e.getMessage(), e);
         }

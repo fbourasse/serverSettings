@@ -54,7 +54,7 @@
                             <div class="row-fluid">
                                 <div class="span4">
                                     <label for="${importInfoMap.value.siteKey}siteTitle">
-                                        <fmt:message key="serverSettings.manageWebProjects.webProject.title"/>
+                                        <fmt:message key="label.name"/> <span class="text-error"><strong>*</strong></span>
                                     </label>
                                     <input class="span12" type="text" id="${importInfoMap.value.siteKey}siteTitle"
                                            name="importsInfos['${importInfoMap.key}'].siteTitle"
@@ -62,7 +62,7 @@
                                 </div>
                                 <div class="span4">
                                     <label for="${importInfoMap.value.siteKey}siteServerName">
-                                        <fmt:message key="serverSettings.manageWebProjects.webProject.serverName"/>
+                                        <fmt:message key="serverSettings.manageWebProjects.webProject.serverName"/> <span class="text-error"><strong>*</strong></span>
                                     </label>
                                     <input class="span12" type="text" id="${importInfoMap.value.siteKey}siteServerName"
                                            name="importsInfos['${importInfoMap.key}'].siteServername"
@@ -72,12 +72,22 @@
                             <div class="row-fluid">
                                 <div class="span4">
                                     <label for="${importInfoMap.value.siteKey}siteKey">
-                                        <fmt:message key="serverSettings.manageWebProjects.webProject.siteKey"/>
+                                        <fmt:message key="serverSettings.manageWebProjects.webProject.siteKey"/> <span class="text-error"><strong>*</strong></span>
                                     </label>
                                     <input class="span12" type="text" id="${importInfoMap.value.siteKey}siteKey"
                                            name="importsInfos['${importInfoMap.key}'].siteKey"
                                            value="${fn:escapeXml(importInfoMap.value.siteKey)}"/>
                                 </div>
+                                <div class="span4">
+                                    <label for="${importInfoMap.value.siteKey}siteServerNameAliases">
+                                        <fmt:message key="serverSettings.manageWebProjects.webProject.serverNameAliases"/>
+                                    </label>
+                                    <input class="span12" type="text" id="${importInfoMap.value.siteKey}siteServerNameAliases"
+                                           name="importsInfos['${importInfoMap.key}'].siteServernameAliases"
+                                           value="${fn:escapeXml(importInfoMap.value.siteServernameAliases)}"/>
+                                </div>
+                            </div>
+                            <div class="row-fluid">
                                 <div class="span4">
                                     <label for="${importInfoMap.value.siteKey}templates">
                                         <fmt:message key="serverSettings.webProjectSettings.pleaseChooseTemplateSet"/>

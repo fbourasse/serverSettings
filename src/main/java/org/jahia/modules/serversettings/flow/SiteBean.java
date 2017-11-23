@@ -50,7 +50,6 @@ import org.jahia.modules.serversettings.users.admin.AdminProperties;
 import org.jahia.registries.ServicesRegistry;
 import org.jahia.services.sites.JahiaSitesService;
 import org.jahia.services.templates.JahiaTemplateManagerService;
-import org.jahia.utils.Url;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.binding.message.MessageBuilder;
@@ -310,23 +309,6 @@ public class SiteBean implements Serializable {
     }
 
     private void testServerNames(MessageContext messages, JahiaSitesService sitesService) throws JahiaException {
-        testServerName(messages, sitesService, serverName, "serverName");
-        for (String serverNameAlias : StringUtils.split(serverNameAliases, ", ")) {
-            testServerName(messages, sitesService, serverNameAlias, "serverNameAliases");
-        }
-    }
-
-    private void testServerName(MessageContext messages, JahiaSitesService sitesService, String serverName, String source) throws JahiaException {
-        if (!sitesService.isServerNameValid(serverName)) {
-            messages.addMessage(new MessageBuilder()
-                    .error()
-                    .source(source)
-                    .code("serverSettings.manageWebProjects.warningMsg.invalidServerName").arg(serverName).build());
-        } else if (!Url.isLocalhost(serverName) && sitesService.getSiteByServerName(serverName) != null && !sitesService.getSiteByServerName(serverName).getSiteKey().equals(siteKey)) {
-            messages.addMessage(new MessageBuilder()
-                    .error()
-                    .source(source)
-                    .code("serverSettings.manageWebProjects.warningMsg.chooseAnotherServerName").arg(serverName).build());
-        }
+        WebprojectHandler.validateServerNames(serverName, serverNameAliases, siteKey, messages);
     }
 }

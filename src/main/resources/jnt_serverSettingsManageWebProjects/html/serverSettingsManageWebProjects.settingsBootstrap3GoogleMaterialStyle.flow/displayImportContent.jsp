@@ -72,7 +72,7 @@
                 <c:if test="${importInfoMap.value.site}">
                     <div class="form-group label-floating">
                         <label class="control-label" for="${importInfoMap.value.siteKey}siteTitle">
-                            <fmt:message key="serverSettings.manageWebProjects.webProject.title"/>
+                            <fmt:message key="label.name"/> <strong class="text-danger">*</strong>
                         </label>
                         <input class="form-control" type="text" id="${importInfoMap.value.siteKey}siteTitle"
                                name="importsInfos['${importInfoMap.key}'].siteTitle"
@@ -80,8 +80,17 @@
                     </div>
 
                     <div class="form-group label-floating">
+                        <label class="control-label" for="${importInfoMap.value.siteKey}siteKey">
+                            <fmt:message key="serverSettings.manageWebProjects.webProject.siteKey"/> <strong class="text-danger">*</strong>
+                        </label>
+                        <input class="form-control" type="text" id="${importInfoMap.value.siteKey}siteKey"
+                               name="importsInfos['${importInfoMap.key}'].siteKey"
+                               value="${fn:escapeXml(importInfoMap.value.siteKey)}"/>
+                    </div>
+
+                    <div class="form-group label-floating">
                         <label class="control-label" for="${importInfoMap.value.siteKey}siteServerName">
-                            <fmt:message key="serverSettings.manageWebProjects.webProject.serverName"/>
+                            <fmt:message key="serverSettings.manageWebProjects.webProject.serverName"/> <strong class="text-danger">*</strong>
                         </label>
                         <input class="form-control" type="text" id="${importInfoMap.value.siteKey}siteServerName"
                                name="importsInfos['${importInfoMap.key}'].siteServername"
@@ -89,12 +98,12 @@
                     </div>
 
                     <div class="form-group label-floating">
-                        <label class="control-label" for="${importInfoMap.value.siteKey}siteKey">
-                            <fmt:message key="serverSettings.manageWebProjects.webProject.siteKey"/>
+                        <label class="control-label" for="${importInfoMap.value.siteKey}siteServerNameAliases">
+                            <fmt:message key="serverSettings.manageWebProjects.webProject.serverNameAliases"/>
                         </label>
-                        <input class="form-control" type="text" id="${importInfoMap.value.siteKey}siteKey"
-                               name="importsInfos['${importInfoMap.key}'].siteKey"
-                               value="${fn:escapeXml(importInfoMap.value.siteKey)}"/>
+                        <input class="form-control" type="text" id="${importInfoMap.value.siteKey}siteServerNameAliases"
+                               name="importsInfos['${importInfoMap.key}'].siteServernameAliases"
+                               value="${fn:escapeXml(importInfoMap.value.siteServernameAliases)}"/>
                     </div>
 
                     <div class="form-group label-floating">

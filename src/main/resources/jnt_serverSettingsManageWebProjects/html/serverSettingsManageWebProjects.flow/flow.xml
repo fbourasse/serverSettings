@@ -17,20 +17,7 @@
             <set name="flowScope.siteBean" value="webprojectHandler.selectedSiteBean"/>
         </transition>
         
-        <transition on="exportSites">
-            <evaluate expression="webprojectHandler.exportSites(flowRequestContext)"/>
-        </transition>
-        <transition on="exportStagingSites" to="exportStagingSites" />
         <transition on="deleteSites" to="deleteSites" />
-
-        <transition on="exportSystemSite">
-            <set name="webprojectHandler.sites" value="'systemsite'"/>
-            <evaluate expression="webprojectHandler.exportSites(flowRequestContext)"/>
-        </transition>
-
-        <transition on="exportStagingSystemSite" to="exportStagingSites" >
-            <set name="webprojectHandler.sites" value="'systemsite'"/>
-        </transition>
 
         <transition on="importPrepackaged" to="importPrepackaged" />
 
