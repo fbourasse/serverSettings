@@ -103,7 +103,7 @@
 </script>
 <script type="text/javascript" charset="utf-8">
     $(document).ready(function() {
-        dataTablesSettings.init('sitesTable', 10, [], null, null);
+        dataTablesSettings.init('sitesTable', 10, null, null);
     });
 </script>
 
