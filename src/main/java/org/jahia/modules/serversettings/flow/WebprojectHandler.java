@@ -509,10 +509,10 @@ public class WebprojectHandler implements Serializable {
 
     private void prepareFileImports(File f, String name,
                     MessageContext messageContext) {
-        ZipInputStream zis = null;
         if (f != null && f.exists()) {
+            ZipInputStream zis = null;
             try {
-                if (f != null && f.isDirectory()) {
+                if (f.isDirectory()) {
                     zis = new DirectoryZipInputStream(f);
                 } else {
                     zis = new ZipInputStream(new BufferedInputStream(
@@ -524,6 +524,12 @@ public class WebprojectHandler implements Serializable {
             } finally {
                 IOUtils.closeQuietly(zis);
             }
+        } else {
+            // we've detected non-existing files, issue an error message and exit
+            messageContext.addMessage(new MessageBuilder().error()
+                            .code("serverSettings.manageWebProjects.import.emptyFiles")
+                            .arg(f != null ? f.getPath() : "").build());
+            logger.error("File to be imported does not exist %s", f != null ? f.getPath() : "");
         }
     }
 
@@ -700,10 +706,7 @@ public class WebprojectHandler implements Serializable {
     public void prepareImport(MessageContext messageContext) {
         if (!StringUtils.isEmpty(importPath)) {
             File f = new File(importPath);
-
-            if (f.exists()) {
-                prepareFileImports(f, f.getName(), messageContext);
-            }
+            prepareFileImports(f, f.getName(), messageContext);
         } else if (!importFile.isEmpty()) {
             File file = null;
             try {
