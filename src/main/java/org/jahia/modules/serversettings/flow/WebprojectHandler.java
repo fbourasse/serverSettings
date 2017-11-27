@@ -43,31 +43,10 @@
  */
 package org.jahia.modules.serversettings.flow;
 
-import static org.jahia.services.importexport.ImportExportBaseService.*;
-
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.Serializable;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
-
-import javax.annotation.Nullable;
-import javax.jcr.RepositoryException;
-import javax.servlet.ServletContext;
-
+import com.google.common.base.Function;
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Ordering;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
@@ -78,11 +57,7 @@ import org.jahia.modules.sitesettings.users.management.UserProperties;
 import org.jahia.osgi.BundleResource;
 import org.jahia.registries.ServicesRegistry;
 import org.jahia.services.cache.CacheHelper;
-import org.jahia.services.content.JCRCallback;
-import org.jahia.services.content.JCRObservationManager;
-import org.jahia.services.content.JCRSessionFactory;
-import org.jahia.services.content.JCRSessionWrapper;
-import org.jahia.services.content.JCRTemplate;
+import org.jahia.services.content.*;
 import org.jahia.services.content.decorator.JCRSiteNode;
 import org.jahia.services.content.decorator.JCRUserNode;
 import org.jahia.services.importexport.ImportExportBaseService;
@@ -94,7 +69,6 @@ import org.jahia.services.search.spell.CompositeSpellChecker;
 import org.jahia.services.sites.JahiaSite;
 import org.jahia.services.sites.JahiaSitesService;
 import org.jahia.services.sites.SiteCreationInfo;
-import org.jahia.services.sites.SiteCreationInfoBuilder;
 import org.jahia.services.templates.JahiaTemplateManagerService;
 import org.jahia.services.usermanager.JahiaGroupManagerService;
 import org.jahia.services.usermanager.JahiaUser;
@@ -117,10 +91,19 @@ import org.springframework.core.io.Resource;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.webflow.execution.RequestContext;
 
-import com.google.common.base.Function;
-import com.google.common.base.Predicate;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Ordering;
+import javax.annotation.Nullable;
+import javax.jcr.RepositoryException;
+import javax.servlet.ServletContext;
+import java.io.*;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
+
+import static org.jahia.services.importexport.ImportExportBaseService.*;
 
 /**
  * Handle creation of Web projects in webflow.
@@ -322,17 +305,16 @@ public class WebprojectHandler implements Serializable {
                                 throws RepositoryException {
 
                     try {
-                        SiteCreationInfo siteCreationInfo = new SiteCreationInfoBuilder().
-                                setSiteKey(bean.getSiteKey()).
-                                setTitle(bean.getTitle()).
-                                setServerName(bean.getServerName()).
-                                setServerNameAliasesAsString(bean.getServerNameAliases()).
-                                setDescription(bean.getDescription()).
-                                setTemplateSet(bean.getTemplateSet()).
-                                setModulesToDeploy(bean.getModules().toArray(new String[bean.getModules().size()])).
-                                setLocale(bean.getLanguage()).
-                                setSiteAdmin(JCRSessionFactory.getInstance().getCurrentUser()).
-                                createSiteCreationInfo();
+                        SiteCreationInfo siteCreationInfo = SiteCreationInfo.builder().
+                                siteKey(bean.getSiteKey()).
+                                title(bean.getTitle()).
+                                serverName(bean.getServerName()).
+                                serverNameAliases(bean.getServerNameAliases()).
+                                description(bean.getDescription()).
+                                templateSet(bean.getTemplateSet()).
+                                modulesToDeploy(bean.getModules().toArray(new String[bean.getModules().size()])).
+                                locale(bean.getLanguage()).
+                                siteAdmin(JCRSessionFactory.getInstance().getCurrentUser()).build();
                         JahiaSite site = sitesService.addSite(siteCreationInfo, session);
 
                         // set as default site
@@ -1010,23 +992,22 @@ public class WebprojectHandler implements Serializable {
                                     public Object doInJCR(JCRSessionWrapper jcrSession)
                                             throws RepositoryException {
                                         try {
-                                            SiteCreationInfo siteCreationInfo = new SiteCreationInfoBuilder().
-                                                    setSiteKey(infos.getSiteKey()).
-                                                    setServerName(infos.getSiteServername()).
-                                                    setServerNameAliasesAsString(infos.getSiteServernameAliases()).
-                                                    setTitle(infos.getSiteTitle()).
-                                                    setDescription("").
-                                                    setTemplateSet(finalTpl).
-                                                    setModulesToDeploy(null).
-                                                    setLocale(defaultLocale.toString()).
-                                                    setSiteAdmin(user).
-                                                    setFirstImport("fileImport").
-                                                    setFileImport(file == null ? null : new FileSystemResource(file)).
-                                                    setFileImportName(infos.getImportFileName()).
-                                                    setOriginatingJahiaRelease(infos.getOriginatingJahiaRelease()).
-                                                    setLegacyMappingFilePath(finalLegacyMappingFilePath).
-                                                    setLegacyDefinitionsFilePath(finalLegacyDefinitionsFilePath).
-                                                    createSiteCreationInfo();
+                                            SiteCreationInfo siteCreationInfo = SiteCreationInfo.builder().
+                                                    siteKey(infos.getSiteKey()).
+                                                    serverName(infos.getSiteServername()).
+                                                    serverNameAliases(infos.getSiteServernameAliases()).
+                                                    title(infos.getSiteTitle()).
+                                                    description("").
+                                                    templateSet(finalTpl).
+                                                    modulesToDeploy(null).
+                                                    locale(defaultLocale.toString()).
+                                                    siteAdmin(user).
+                                                    firstImport("fileImport").
+                                                    fileImport(file == null ? null : new FileSystemResource(file)).
+                                                    fileImportName(infos.getImportFileName()).
+                                                    originatingJahiaRelease(infos.getOriginatingJahiaRelease()).
+                                                    legacyMappingFilePath(finalLegacyMappingFilePath).
+                                                    legacyDefinitionsFilePath(finalLegacyDefinitionsFilePath).build();
                                             sitesService.addSite(siteCreationInfo);
                                         } catch (JahiaException | IOException e) {
                                             throw new RepositoryException(e);
