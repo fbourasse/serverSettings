@@ -518,7 +518,7 @@ public class WebprojectHandler implements Serializable {
             messageContext.addMessage(new MessageBuilder().error()
                             .code("serverSettings.manageWebProjects.import.emptyFiles")
                             .arg(f != null ? f.getPath() : "").build());
-            logger.error("File to be imported does not exist %s", f != null ? f.getPath() : "");
+            logger.error("File to be imported does not exist {}", f != null ? f.getPath() : "");
         }
     }
 
