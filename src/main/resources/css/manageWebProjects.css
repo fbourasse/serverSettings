@@ -1,0 +1,8 @@
+.higher-select {
+    height: 160px !important;
+}
+
+/* Used to cancel a weird animation from the site settings css */
+.btn:not(.btn-raised) {
+    margin: 0px !important;
+}

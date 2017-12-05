@@ -265,7 +265,7 @@
         </select>
         <button class="btn btn-primary" type="submit" name="importPrepackaged" onclick="submitSiteForm('importPrepackaged'); return false;">
             <i class="icon-ok icon-white"></i>
-            &nbsp;<fmt:message key='serverSettings.manageWebProjects.importprepackaged.proceed' />
+            &nbsp;<fmt:message key='label.next'/>
         </button>
     </fieldset>
 
@@ -278,7 +278,7 @@
                 <input type="file" name="importFile"/>
                 <button class="btn btn-primary" type="submit" name="_eventId_import" onclick="">
                     <i class="icon-download icon-white"></i>
-                    &nbsp;<fmt:message key='serverSettings.manageWebProjects.fileImport'/>
+                    &nbsp;<fmt:message key='serverSettings.manageWebProjects.up'/>
                 </button>
             </div>
             <div class="box-1">
@@ -286,7 +286,7 @@
                 <input class="span5" type="text"  name="importPath"/>
                 <button class="btn btn-primary" type="submit" name="_eventId_import" onclick="">
                     <i class="icon-download icon-white"></i>
-                    &nbsp;<fmt:message key='serverSettings.manageWebProjects.fileImport'/>
+                    &nbsp;<fmt:message key='serverSettings.manageWebProjects.import.upload'/>
                 </button>
             </div>
 

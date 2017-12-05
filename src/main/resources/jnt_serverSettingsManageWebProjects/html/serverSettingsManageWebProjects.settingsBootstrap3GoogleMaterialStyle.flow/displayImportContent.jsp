@@ -147,7 +147,7 @@
             </c:forEach>
             <button class="btn btn-sm btn-primary pull-right" type="submit" name="_eventId_processImport" id="${currentNode.identifier}-processImport"
                     <c:if test="${not empty validationErrors or empty webprojectHandler.importsInfos}"> disabled="disabled"</c:if> >
-                <fmt:message key='label.next'/>
+                <fmt:message key='serverSettings.manageWebProjects.fileImport'/>
             </button>
             <button class="btn btn-sm btn-default" type="submit" name="_eventId_cancel">
                 <fmt:message key='label.cancel'/>

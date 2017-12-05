@@ -288,7 +288,7 @@
                             </select>
                             <span class="input-group-btn">
                                 <button class="btn btn-sm btn-primary" type="submit" name="importPrepackaged" onclick="submitSiteForm('importPrepackaged'); return false;">
-                                    <fmt:message key='serverSettings.manageWebProjects.importprepackaged.proceed' />
+                                    <fmt:message key='label.next'/>
                                 </button>
                             </span>
                         </div>
@@ -325,7 +325,7 @@
                             <input class="form-control" type="text" name="importPath"/>
                             <span class="input-group-btn">
                                 <button class="btn btn-sm btn-primary" type="submit" name="_eventId_import" onclick="">
-                                    <fmt:message key='serverSettings.manageWebProjects.fileImport'/>
+                                    <fmt:message key='serverSettings.manageWebProjects.import.upload'/>
                                 </button>
                             </span>
                         </div>

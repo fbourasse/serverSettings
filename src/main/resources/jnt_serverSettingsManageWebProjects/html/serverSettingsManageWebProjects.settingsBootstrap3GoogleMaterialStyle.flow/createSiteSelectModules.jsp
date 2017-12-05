@@ -5,6 +5,7 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="functions" uri="http://www.jahia.org/tags/functions" %>
 
+<template:addResources type="css" resources="manageWebProjects.css"/>
 <template:addResources>
     <script type="application/javascript">
         var manageSelectedModules = {
@@ -69,10 +70,10 @@
 
             <p><strong><fmt:message key="serverSettings.manageWebProjects.webProject.selectModules"/></strong></p>
             <div class="row">
-                <div class="col-md-5">
+                <div class="col-sm-5 col-md-5">
                     <div class="form-group label-floating">
                         <label><fmt:message key="jnt_serverSettingsManageWebProjects.createSiteSelectModules.label.unselectedModules"/></label>
-                        <select id="unselectedModules" class="form-control" multiple>
+                        <select id="unselectedModules" class="form-control higher-select" multiple>
                             <c:forEach items="${modules}" var="module">
                                 <c:if test="${not functions:contains(siteBean.modules,module.id)}">
                                     <option value="${module.id}">${module.name} (${module.id})</option>
@@ -81,7 +82,7 @@
                         </select>
                     </div>
                 </div>
-                <div class="col-md-2">
+                <div class="col-sm-1 col-md-1" align="center">
                     <div class="row text-center">
                         <div class="btn-group-vertical">
                             <button type="button" class="btn btn-xs btn-default"
@@ -111,10 +112,10 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-md-5">
+                <div class="col-sm-6 col-md-6">
                     <div class="form-group label-floating">
                         <label><fmt:message key="jnt_serverSettingsManageWebProjects.createSiteSelectModules.label.selectedModules"/></label>
-                        <select id="selectedModules" class="form-control" name="modules" multiple>
+                        <select id="selectedModules" class="form-control higher-select" name="modules" multiple>
                             <c:forEach items="${modules}" var="module">
                                 <c:if test="${functions:contains(siteBean.modules,module.id)}">
                                     <option value="${module.id}">${module.name} (${module.id})</option>
@@ -125,18 +126,21 @@
                 </div>
             </div>
 
+            <div class="row">
+                <div class="col-sm-4 col-md-4">
+                    <c:if test="${not editingModules}">
+                        <div class="form-group label-floating">
+                            <label class="control-label" for="language"><fmt:message key="serverSettings.manageWebProjects.webProject.selectLanguage"/></label>
 
-            <c:if test="${not editingModules}">
-                <div class="form-group label-floating">
-                    <label class="control-label" for="language"><fmt:message key="serverSettings.manageWebProjects.webProject.selectLanguage"/></label>
-
-                    <select class="form-control" name="language" id="language">
-                        <c:forEach items="${allLocales}" var="locale">
-                            <option value="${locale}" ${siteBean.language eq locale ? 'selected="true"' : ''}>${locale.displayName}</option>
-                        </c:forEach>
-                    </select>
+                            <select class="form-control" name="language" id="language">
+                                <c:forEach items="${allLocales}" var="locale">
+                                    <option value="${locale}" ${siteBean.language eq locale ? 'selected="true"' : ''}>${locale.displayName}</option>
+                                </c:forEach>
+                            </select>
+                        </div>
+                    </c:if>
                 </div>
-            </c:if>
+            </div>
 
             <button class="btn btn-sm btn-primary pull-right" type="submit" name="_eventId_next" onclick="manageSelectedModules.selectValue()">
                 <fmt:message key='label.next'/>
