@@ -278,7 +278,7 @@
                 <input type="file" name="importFile"/>
                 <button class="btn btn-primary" type="submit" name="_eventId_import" onclick="">
                     <i class="icon-download icon-white"></i>
-                    &nbsp;<fmt:message key='serverSettings.manageWebProjects.up'/>
+                    &nbsp;<fmt:message key='serverSettings.manageWebProjects.import.upload'/>
                 </button>
             </div>
             <div class="box-1">
