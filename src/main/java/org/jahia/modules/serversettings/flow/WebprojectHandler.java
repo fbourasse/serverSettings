@@ -1083,7 +1083,7 @@ public class WebprojectHandler implements Serializable {
                     messageContext.addMessage(new MessageBuilder()
                             .error()
                             .source("siteKey")
-                            .code("serverSettings.manageWebProjects.invalidSiteKey").build());
+                            .code("serverSettings.manageWebProjects.warningMsg.onlyLettersDigitsUnderscore").build());
                 }
                 if (valid && sitesService.getSiteByKey(siteKey) != null) {
                     messageContext.addMessage(new MessageBuilder()
