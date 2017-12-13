@@ -113,7 +113,7 @@
     <div class="col-md-8 col-md-offset-2">
         <div class="panel panel-default">
             <div class="panel-body">
-                <form class="form-horizontal" name="jahiaAdmin" action='${flowExecutionUrl}' method="post">
+                <form name="jahiaAdmin" action='${flowExecutionUrl}' method="post">
 
                     <div class="form-group">
                         <div class="togglebutton">

@@ -126,10 +126,10 @@
 
                 <c:forEach items="${cacheManagers}" var="entry" varStatus="managerStatus">
                     <c:set var="manager" value="${entry.value}"/>
-                    <h2><fmt:message key="serverSettings.cache.cacheManager"/>: ${manager.name}
+                    <h3><fmt:message key="serverSettings.cache.cacheManager"/>: ${manager.name}
                         <c:if test="${cacheManagement.showConfig}">
-                            <a class="btn btn-info btn-fab btn-fab-xs configLink" title="<fmt:message key='serverSettings.cache.configLink.title'/>" href="#managerconfig-${managerStatus.index}">
-                                <i class="material-icons">info</i>
+                            <a class="btn btn-info btn-fab btn-fab-ms configLink" title="<fmt:message key='serverSettings.cache.configLink.title'/>" href="#managerconfig-${managerStatus.index}">
+                                <i class="material-icons">info_outline</i>
                             </a>
                             <div style="display: none;">
                                 <div id="managerconfig-${managerStatus.index}">
@@ -138,7 +138,7 @@
                                 </div>
                             </div>
                         </c:if>
-                    </h2>
+                    </h3>
                     <c:if test="${cacheManagement.showActions}">
                         <p>
                             <a class="btn btn-default" href="#flushCaches" onclick="go('action', 'flushCaches', 'name', '${manager.name}'); return false;" title="<fmt:message key="serverSettings.cache.flushCaches.title"/>">
@@ -198,7 +198,7 @@
                                 <c:if test="${cacheManagement.showConfig}">
                                     <td align="center">
                                         <a class="btn btn-info btn-fab btn-fab-xs configLink" title="<fmt:message key='serverSettings.cache.showDetail'/>" href="#config-${managerStatus.index}-${status.index}">
-                                            <i class="material-icons">info</i>
+                                            <i class="material-icons">info_outline</i>
                                         </a>
                                         <div style="display: none;">
                                             <div id="config-${managerStatus.index}-${status.index}">

@@ -18,130 +18,128 @@
 <jcr:node path="/users/root" var="adminUser"/>
 
 <div class="page-header">
-    <h2><fmt:message key="serverSettings.adminProperties"/></h2>
+  <h2><fmt:message key="serverSettings.adminProperties"/></h2>
 </div>
 
 <c:forEach var="msg" items="${flowRequestContext.messageContext.allMessages}">
-    <div class="${msg.severity == 'ERROR' ? 'validationError' : ''} alert ${msg.severity == 'ERROR' ? 'alert-danger' : 'alert-success'}"><button type="button" class="close" data-dismiss="alert">&times;</button>${fn:escapeXml(msg.text)}</div>
+  <div class="${msg.severity == 'ERROR' ? 'validationError' : ''} alert ${msg.severity == 'ERROR' ? 'alert-danger' : 'alert-success'}"><button type="button" class="close" data-dismiss="alert">&times;</button>${fn:escapeXml(msg.text)}</div>
 </c:forEach>
 
 <div class="row">
-    <div class="col-md-offset-2 col-md-8">
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <fmt:message key="label.username"/>:&nbsp;${adminUser.name}
-            </div>
-            <div class="panel-body">
-                <form:form modelAttribute="adminProperties" class="form" autocomplete="off">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group label-floating">
-                                <label class="control-label" for="firstName">
-                                    <fmt:message key="label.firstName"/>
-                                </label>
-                                <form:input class="form-control" type="text" id="firstName" path="firstName"/>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group label-floating">
-                                <label class="control-label" for="lastName">
-                                    <fmt:message key="label.lastName"/>
-                                </label>
-                                <form:input class="form-control" type="text" id="lastName" path="lastName"/>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group label-floating">
-                                <label class="control-label" for="email">
-                                    <fmt:message key="label.email"/>
-                                </label>
-                                <form:input class="form-control" type="text" id="email" path="email"/>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group label-floating">
-                                <label class="control-label" for="organization">
-                                    <fmt:message key="label.organization"/>
-                                </label>
-                                <form:input type="text" class="form-control" id="organization" path="organization" autocomplete="off"/>
-                            </div>
-                        </div>
-                    </div>
+  <div class="col-md-offset-2 col-md-8">
+      <div class="panel panel-default">
+          <div class="panel-heading">
+              <fmt:message key="label.username"/>:&nbsp;${adminUser.name}
+          </div>
+          <div class="panel-body">
+              <form:form modelAttribute="adminProperties" class="form" autocomplete="off">
+                  <div class="row">
+                      <div class="col-md-6">
+                          <div class="form-group label-floating">
+                              <label class="control-label" for="firstName">
+                                  <fmt:message key="label.firstName"/>
+                              </label>
+                              <form:input class="form-control" type="text" id="firstName" path="firstName"/>
+                          </div>
+                      </div>
+                      <div class="col-md-6">
+                          <div class="form-group label-floating">
+                              <label class="control-label" for="lastName">
+                                  <fmt:message key="label.lastName"/>
+                              </label>
+                              <form:input class="form-control" type="text" id="lastName" path="lastName"/>
+                          </div>
+                      </div>
+                  </div>
+                  <div class="row">
+                      <div class="col-md-6">
+                          <div class="form-group label-floating">
+                              <label class="control-label" for="email">
+                                  <fmt:message key="label.email"/>
+                              </label>
+                              <form:input class="form-control" type="text" id="email" path="email"/>
+                          </div>
+                      </div>
+                      <div class="col-md-6">
+                          <div class="form-group label-floating">
+                              <label class="control-label" for="organization">
+                                  <fmt:message key="label.organization"/>
+                              </label>
+                              <form:input type="text" class="form-control" id="organization" path="organization" autocomplete="off"/>
+                          </div>
+                      </div>
+                  </div>
 
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="checkbox">
-                                <label for="emailNotifications">
-                                    <form:checkbox cssClass="input-sm" id="emailNotifications" path="emailNotificationsDisabled" />
-                                    <fmt:message key="siteSettings.user.emailNotifications"/>
-                                </label>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group form-group-sm label-floating">
-                                <label class="control-label" for="preferredLanguage">
-                                    <fmt:message key="siteSettings.user.preferredLanguage"/>
-                                </label>
-                                <select class="form-control" id="preferredLanguage" name="preferredLanguage" size="1">
-                                    <c:forEach items="${functions:availableAdminBundleLocale(renderContext.UILocale)}" var="uiLanguage">
-                                        <option value="${uiLanguage}" <c:if test="${uiLanguage eq adminProperties.preferredLanguage}">selected="selected" </c:if>>${functions:displayLocaleNameWith(uiLanguage, renderContext.UILocale)}</option>
-                                    </c:forEach>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
+                  <div class="row">
+                      <div class="col-md-6">
+                          <div class="checkbox">
+                              <label for="emailNotifications">
+                                  <form:checkbox cssClass="input-sm" id="emailNotifications" path="emailNotificationsDisabled" />
+                                  <fmt:message key="siteSettings.user.emailNotifications"/>
+                              </label>
+                          </div>
+                      </div>
+                      <div class="col-md-6">
+                          <div class="form-group label-floating">
+                              <label class="control-label" for="preferredLanguage">
+                                  <fmt:message key="siteSettings.user.preferredLanguage"/>
+                              </label>
+                              <select class="form-control" id="preferredLanguage" name="preferredLanguage" size="1">
+                                  <c:forEach items="${functions:availableAdminBundleLocale(renderContext.UILocale)}" var="uiLanguage">
+                                      <option value="${uiLanguage}" <c:if test="${uiLanguage eq adminProperties.preferredLanguage}">selected="selected" </c:if>>${functions:displayLocaleNameWith(uiLanguage, renderContext.UILocale)}</option>
+                                  </c:forEach>
+                              </select>
+                          </div>
+                      </div>
+                  </div>
 
-                    <c:if test="${renderContext.user.root}">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group label-floating">
-                                <label class="control-label" for="password">
-                                    <fmt:message key="label.password"/>
-                                </label>
-                                <form:input class="form-control" type="password" id="password" path="password" autocomplete="off"/>
-                                <span class="help-block text-info"><fmt:message key="siteSettings.user.edit.password.no.change"/></span>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group label-floating">
-                                <label class="control-label" for="passwordConfirm">
-                                    <fmt:message key="label.confirmPassword"/>
-                                </label>
-                                <form:input type="password" class="form-control" id="passwordConfirm" path="passwordConfirm" autocomplete="off"/>
-                                <span class="help-block text-info"><fmt:message key="siteSettings.user.edit.password.no.change"/></span>
-                            </div>
-                        </div>
-                    </div>
-                    </c:if>
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="form-group form-group-sm" style="margin-top:15px;">
-                                <button class="btn btn-sm btn-primary pull-right" id="submit" type="submit" name="_eventId_submit">
-                                    <fmt:message key='label.save'/>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </form:form>
+                  <c:if test="${renderContext.user.root}">
+                  <div class="row">
+                      <div class="col-md-6">
+                          <div class="form-group label-floating">
+                              <label class="control-label" for="password">
+                                  <fmt:message key="label.password"/>
+                              </label>
+                              <form:input class="form-control" type="password" id="password" path="password" autocomplete="off"/>
+                              <span class="help-block text-info"><fmt:message key="siteSettings.user.edit.password.no.change"/></span>
+                          </div>
+                      </div>
+                      <div class="col-md-6">
+                          <div class="form-group label-floating">
+                              <label class="control-label" for="passwordConfirm">
+                                  <fmt:message key="label.confirmPassword"/>
+                              </label>
+                              <form:input type="password" class="form-control" id="passwordConfirm" path="passwordConfirm" autocomplete="off"/>
+                              <span class="help-block text-info"><fmt:message key="siteSettings.user.edit.password.no.change"/></span>
+                          </div>
+                      </div>
+                  </div>
+                  </c:if>
+                  <div class="row">
+                      <div class="col-md-12">
+                          <div class="form-group" style="margin-top:15px;">
+                              <button class="btn btn-primary pull-right" id="submit" type="submit" name="_eventId_submit">
+                                  <fmt:message key='label.save'/>
+                              </button>
+                          </div>
+                      </div>
+                  </div>
+              </form:form>
 
-                <hr/>
-                <fieldset id="groupsFields" title="<fmt:message key="siteSettings.user.groups.list"/>">
-                    <div class="form-group">
-                        <label class="col-md-2 control-label" for="groupsFields">
-                            <fmt:message key="siteSettings.user.groups.list"/>
-                        </label>
-                        <div class="col-md-10">
-                            <select class="form-control" name="selectMember" size="6" multiple>
-                                <c:forEach items="${userGroups}" var="group">
-                                    <option value="${user:formatUserValueOption(group)}">${user:formatUserTextOption(group, 'Name, 20;SiteTitle, 15;Properties, 20')}</option>
-                                </c:forEach>
-                            </select>
-                        </div>
-                    </div>
-                </fieldset>
-            </div>
-        </div>
-    </div>
+              <hr/>
+              <fieldset id="groupsFields" title="<fmt:message key="siteSettings.user.groups.list"/>">
+
+                      <h4 class="col-md-12" for="groupsFields">
+                          <fmt:message key="siteSettings.user.groups.list"/>
+                      </h4>
+                      <div class="col-md-10">
+                              <c:forEach items="${userGroups}" var="group">
+                                  <div>${user:formatUserTextOption(group, 'Name, 20;SiteTitle, 15;Properties, 20')}</div>
+                              </c:forEach>
+                      </div>
+              </fieldset>
+              <br>
+          </div>
+      </div>
+  </div>
 </div>
