@@ -82,28 +82,28 @@
                         </select>
                     </div>
                 </div>
-                <div class="col-sm-1 col-md-1" align="center">
+                <div class="col-sm-1 col-md-1" align="center" style="margin-top: 34px;">
                     <div class="row text-center">
                         <div class="btn-group-vertical">
-                            <button type="button" class="btn btn-xs btn-default"
+                            <button type="button" class="btn btn-default"
                                     title="<fmt:message key='jnt_serverSettingsManageWebProjects.createSiteSelectModules.title.selectAll'/>"
                                     data-toggle="tooltip" data-placement="top"
                                     onclick="manageSelectedModules.selectAll()">
                                 <i class="material-icons">last_page</i>
                             </button>
-                            <button type="button" class="btn btn-xs btn-primary"
+                            <button type="button" class="btn btn-primary"
                                     title="<fmt:message key='jnt_serverSettingsManageWebProjects.createSiteSelectModules.title.select'/>"
                                     data-toggle="tooltip" data-placement="top"
                                     onclick="manageSelectedModules.select()">
                                 <i class="material-icons">chevron_right</i>
                             </button>
-                            <button type="button" class="btn btn-xs btn-primary"
+                            <button type="button" class="btn btn-primary"
                                     title="<fmt:message key='jnt_serverSettingsManageWebProjects.createSiteSelectModules.title.deselect'/>"
                                     data-toggle="tooltip" data-placement="bottom"
                                     onclick="manageSelectedModules.deselect()">
                                 <i class="material-icons">chevron_left</i>
                             </button>
-                            <button type="button" class="btn btn-xs btn-default"
+                            <button type="button" class="btn btn-default"
                                     title="<fmt:message key='jnt_serverSettingsManageWebProjects.createSiteSelectModules.title.deselectAll'/>"
                                     data-toggle="tooltip" data-placement="bottom"
                                     onclick="manageSelectedModules.deselectAll()">
@@ -142,10 +142,10 @@
                 </div>
             </div>
 
-            <button class="btn btn-sm btn-primary pull-right" type="submit" name="_eventId_next" onclick="manageSelectedModules.selectValue()">
+            <button class="btn btn-primary pull-right" type="submit" name="_eventId_next" onclick="manageSelectedModules.selectValue()">
                 <fmt:message key='label.next'/>
             </button>
-            <button class="btn btn-sm default" type="submit" name="_eventId_previous">
+            <button class="btn default pull-right" type="submit" name="_eventId_previous">
                 <fmt:message key='label.previous'/>
             </button>
         </div>

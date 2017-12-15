@@ -46,7 +46,7 @@
         <div class="panel-body">
             <jsp:useBean id="validationErrors" class="java.util.HashMap" scope="request"/>
             <c:forEach items="${webprojectHandler.importsInfos}" var="importInfoMap">
-                <div class="form-group form-group-sm">
+                <div class="form-group">
                     <div class="checkbox">
                         <label for="${importInfoMap.key}">
                             <input type="checkbox" id="${importInfoMap.key}"
@@ -145,11 +145,11 @@
                     </c:if>
                 </c:if>
             </c:forEach>
-            <button class="btn btn-sm btn-primary pull-right" type="submit" name="_eventId_processImport" id="${currentNode.identifier}-processImport"
+            <button class="btn btn-primary pull-right" type="submit" name="_eventId_processImport" id="${currentNode.identifier}-processImport"
                     <c:if test="${not empty validationErrors or empty webprojectHandler.importsInfos}"> disabled="disabled"</c:if> >
                 <fmt:message key='serverSettings.manageWebProjects.fileImport'/>
             </button>
-            <button class="btn btn-sm btn-default" type="submit" name="_eventId_cancel">
+            <button class="btn btn-default pull-right" type="submit" name="_eventId_cancel">
                 <fmt:message key='label.cancel'/>
             </button>
         </div>

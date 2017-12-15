@@ -104,10 +104,10 @@
                 </tbody>
             </table>
 
-            <button class="btn btn-sm btn-primary pull-right" type="submit" name="_eventId_next" id="${currentNode.identifier}-next">
+            <button class="btn btn-primary pull-right" type="submit" name="_eventId_next" id="${currentNode.identifier}-next">
                 <fmt:message key='label.save'/>
             </button>
-            <button class="btn btn-sm btn-default" type="submit" name="_eventId_previous">
+            <button class="btn btn-default pull-right" type="submit" name="_eventId_previous">
                 <fmt:message key='label.previous'/>
             </button>
         </div>
