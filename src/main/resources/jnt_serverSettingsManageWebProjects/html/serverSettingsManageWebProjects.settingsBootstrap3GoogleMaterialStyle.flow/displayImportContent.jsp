@@ -51,6 +51,7 @@
                         <label for="${importInfoMap.key}">
                             <input type="checkbox" id="${importInfoMap.key}"
                                    class="importCheckbox${importInfoMap.value.validationResult.blocking ? ' importBlocking' : ''}"
+                                   id="${importInfoMap.key}"
                                    name="importsInfos['${importInfoMap.key}'].selected" value="true"
                                    <c:if test="${importInfoMap.value.selected}">checked="checked"</c:if>/>
                                    ${importInfoMap.key}
@@ -58,9 +59,10 @@
                     </div>
                     <input type="hidden" id="${importInfoMap.key}" name="_importsInfos['${importInfoMap.key}'].selected"/>
                     <c:if test="${importInfoMap.value.validationResult.blocking}">
-                        <div class="checkbox">
+                        <div class="checkbox"
+                             onchange="switchClass($(this).prev().prev().children().children([id='${importInfoMap.key}']))">
                             <label>
-                                <input type="checkbox" onchange="switchClass($(this).prev().prev())"/>
+                                <input type="checkbox"/>
                                 <fmt:message key="serverSettings.manageWebProjects.import.ignore.errors"/>
                             </label>
                         </div>
@@ -169,7 +171,7 @@
                 $("#${currentNode.identifier}-processImport").attr("disabled", "disabled");
             }
         }
-        function swicthClass(el) {
+        function switchClass(el) {
             if (el.hasClass("importBlocking")) {
                 el.removeClass("importBlocking");
             } else {
