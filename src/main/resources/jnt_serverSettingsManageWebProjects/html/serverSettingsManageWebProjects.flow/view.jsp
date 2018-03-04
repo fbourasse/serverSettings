@@ -1,3 +1,4 @@
+<%@page import="org.jahia.bin.Export"%>
 <%@ taglib prefix="template" uri="http://www.jahia.org/tags/templateLib" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
@@ -24,7 +25,9 @@
 <fmt:message key="label.workInProgressTitle" var="i18nWaiting"/><c:set var="i18nWaiting" value="${functions:escapeJavaScript(i18nWaiting)}"/>
 <fmt:message key="serverSettings.manageWebProjects.noWebProjectSelected" var="i18nNoSiteSelected"/>
 <c:set var="i18nNoSiteSelected" value="${functions:escapeJavaScript(i18nNoSiteSelected)}"/>
-<c:set var="exportAllowed" value="${renderContext.user.root}"/>
+<c:set var="exportSitesRequiredPermission" value="<%= Export.EXPORT_SITES_REQUIRED_PERMISSION %>"/>
+<jcr:node var="rootNode" path="/"/>
+<c:set var="exportAllowed" value="${jcr:hasPermission(rootNode, exportSitesRequiredPermission)}"/>
 <script type="text/javascript">
     function submitSiteForm(act, site) {
     	if (typeof site != 'undefined') {
