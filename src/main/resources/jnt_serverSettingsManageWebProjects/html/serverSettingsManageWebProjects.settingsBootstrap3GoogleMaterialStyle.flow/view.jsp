@@ -24,7 +24,6 @@
 <fmt:message key="label.workInProgressTitle" var="i18nWaiting"/><c:set var="i18nWaiting" value="${functions:escapeJavaScript(i18nWaiting)}"/>
 <fmt:message key="serverSettings.manageWebProjects.noWebProjectSelected" var="i18nNoSiteSelected"/>
 <c:set var="i18nNoSiteSelected" value="${functions:escapeJavaScript(i18nNoSiteSelected)}"/>
-<c:set var="exportAllowed" value="${renderContext.user.root}"/>
 <script type="text/javascript">
     function submitSiteForm(act, site) {
     	if (typeof site != 'undefined') {
@@ -54,7 +53,6 @@
     		submitSiteForm(act);
     		return false;
     	});
-    	<c:if test="${exportAllowed}">
         $("#exportSites").click(function (){
             var selectedSites = [];
             var checkedSites = $("input[name='selectedSites']:checked");
@@ -98,7 +96,6 @@
             $(this).target = "_blank";
             window.open("${url.context}/cms/export/default/"+name+ '_staging_export_${now}.zip?exportformat=site&live=false'+sitebox);
         });
-        </c:if>
     })
 </script>
 <script type="text/javascript" charset="utf-8">
@@ -123,14 +120,12 @@
             <a href="#create" id="createSite" class="btn btn-primary sitesAction">
                 <fmt:message key="serverSettings.manageWebProjects.add"/>
             </a>
-            <c:if test="${exportAllowed}">
-                <a href="#export" id="exportSites" class="btn btn-default sitesAction-hide">
-                    <fmt:message key="label.export"/>
-                </a>
-                <a href="#exportStaging" id="exportStagingSites" class="btn btn-default sitesAction-hide">
-                    <fmt:message key="label.export"/> (<fmt:message key="label.stagingContent"/>)
-                </a>
-            </c:if>
+            <a href="#export" id="exportSites" class="btn btn-default sitesAction-hide">
+                <fmt:message key="label.export"/>
+            </a>
+            <a href="#exportStaging" id="exportStagingSites" class="btn btn-default sitesAction-hide">
+                <fmt:message key="label.export"/> (<fmt:message key="label.stagingContent"/>)
+            </a>
             <a href="#delete" id="deleteSites" class="btn btn-danger sitesAction">
                 <fmt:message key="label.delete"/>
             </a>
@@ -229,7 +224,6 @@
                 </tbody>
             </table>
 
-            <c:if test="${exportAllowed}">
                 <div class="form-group label-floating is-empty">
                     <div class="input-group">
                         <label class="control-label"><fmt:message key="serverSettings.manageWebProjects.exportServerDirectory"/></label>
@@ -244,12 +238,10 @@
                         </span>
                     </div>
                 </div>
-            </c:if>
         </div>
     </div>
 
     <div class="row">
-        <c:if test="${exportAllowed}">
             <div class="col-md-6">
                 <div class="panel panel-default">
                     <div class="panel-heading">
@@ -271,8 +263,7 @@
                     </div>
                 </div>
             </div>
-        </c:if>
-        <c:set value="${(exportAllowed)?'col-md-6':'col-md-12'}" var="colSizeClass"/>
+        <c:set value="col-md-6" var="colSizeClass"/>
         <div class="${colSizeClass}">
             <div class="panel panel-default">
                 <div class="panel-heading">
