@@ -131,7 +131,7 @@
             </a>
 
             <c:forEach var="msg" items="${flowRequestContext.messageContext.allMessages}">
-                <div class="alert ${msg.severity == 'ERROR' ? 'validationError' : ''} ${msg.severity == 'ERROR' ? 'alert-error' : 'alert-success'}">
+                <div class="alert ${msg.severity == 'ERROR' ? ' validationError alert-danger' : ' alert-success'}">
                     <button type="button" class="close" data-dismiss="alert">&times;</button>
                     ${fn:escapeXml(msg.text)}
                 </div>
@@ -224,45 +224,45 @@
                 </tbody>
             </table>
 
-                <div class="form-group label-floating is-empty">
-                    <div class="input-group">
-                        <label class="control-label"><fmt:message key="serverSettings.manageWebProjects.exportServerDirectory"/></label>
-                        <input class="form-control" type="text" name="exportPath"/>
-                        <span class="input-group-btn">
-                            <a class="btn btn-default sitesAction" id="exportToFile" href="#exportToFile" title="<fmt:message key='label.export'/>">
-                                <fmt:message key='label.export'/>
-                            </a>
-                            <a class="btn btn-default sitesAction" id="exportToFileStaging" href="#exportToFileStaging" title="<fmt:message key="label.export"/> (<fmt:message key="label.stagingContent"/>)">
-                                <fmt:message key="label.export"/> (<fmt:message key="label.stagingContent"/>)
-                            </a>
-                        </span>
-                    </div>
+            <div class="form-group label-floating is-empty">
+                <div class="input-group">
+                    <label class="control-label"><fmt:message key="serverSettings.manageWebProjects.exportServerDirectory"/></label>
+                    <input class="form-control" type="text" name="exportPath"/>
+                    <span class="input-group-btn">
+                        <a class="btn btn-default sitesAction" id="exportToFile" href="#exportToFile" title="<fmt:message key='label.export'/>">
+                            <fmt:message key='label.export'/>
+                        </a>
+                        <a class="btn btn-default sitesAction" id="exportToFileStaging" href="#exportToFileStaging" title="<fmt:message key="label.export"/> (<fmt:message key="label.stagingContent"/>)">
+                            <fmt:message key="label.export"/> (<fmt:message key="label.stagingContent"/>)
+                        </a>
+                    </span>
                 </div>
+            </div>
         </div>
     </div>
 
     <div class="row">
-            <div class="col-md-6">
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <fmt:message key="serverSettings.manageWebProjects.systemsite"/>
-                    </div>
-                    <div class="panel-body">
-                        <div class="form-group is-empty">
-                            <div class="input-group">
-                                <span class="input-group-btn">
-                                    <a class="btn btn-default" href="<c:url value='/cms/export/default/systemsite_export_${now}.zip?exportformat=site&live=true&sitebox=systemsite' />">
-                                        <fmt:message key='label.export' />
-                                    </a>
-                                    <a class="btn btn-default" href="<c:url value='/cms/export/default/systemsite_staging_export_${now}.zip?exportformat=site&live=false&sitebox=systemsite' />">
-                                        <fmt:message key="label.export"/> (<fmt:message key="label.stagingContent"/>)
-                                    </a>
-                                </span>
-                            </div>
+        <div class="col-md-6">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <fmt:message key="serverSettings.manageWebProjects.systemsite"/>
+                </div>
+                <div class="panel-body">
+                    <div class="form-group is-empty">
+                        <div class="input-group">
+                            <span class="input-group-btn">
+                                <a class="btn btn-default" href="<c:url value='/cms/export/default/systemsite_export_${now}.zip?exportformat=site&live=true&sitebox=systemsite' />">
+                                    <fmt:message key='label.export' />
+                                </a>
+                                <a class="btn btn-default" href="<c:url value='/cms/export/default/systemsite_staging_export_${now}.zip?exportformat=site&live=false&sitebox=systemsite' />">
+                                    <fmt:message key="label.export"/> (<fmt:message key="label.stagingContent"/>)
+                                </a>
+                            </span>
                         </div>
                     </div>
                 </div>
             </div>
+        </div>
         <c:set value="col-md-6" var="colSizeClass"/>
         <div class="${colSizeClass}">
             <div class="panel panel-default">
