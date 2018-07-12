@@ -23,6 +23,8 @@
 <fmt:formatDate value="${nowDate}" pattern="yyyy-MM-dd-HH-mm" var="now"/>
 <fmt:message key="label.workInProgressTitle" var="i18nWaiting"/><c:set var="i18nWaiting" value="${functions:escapeJavaScript(i18nWaiting)}"/>
 <fmt:message key="serverSettings.manageWebProjects.noWebProjectSelected" var="i18nNoSiteSelected"/>
+<fmt:message key="serverSettings.manageWebProjects.exportPath.error" var="i18nNoExportPath"/>
+<fmt:message key="serverSettings.manageWebProjects.fileImport.error" var="i18nNothingToImport"/>
 <c:set var="i18nNoSiteSelected" value="${functions:escapeJavaScript(i18nNoSiteSelected)}"/>
 <script type="text/javascript">
     function submitSiteForm(act, site) {
@@ -40,6 +42,18 @@
     	$('#sitesForm').submit();
     }
 
+    function validateUploadForm() {
+        if (!$('#importPath').val().trim() && document.getElementById('importFile').files.length !== 1) {
+            $.snackbar({
+                content: "${i18nNothingToImport}",
+                style: "error"
+            });
+            return false;
+        }
+
+        $('#importForm').submit();
+    }
+
     $(document).ready(function () {
     	$("a.sitesAction").click(function () {
     		var act=$(this).attr('id');
@@ -50,6 +64,13 @@
                 });
     			return false;
     		}
+            if ((act !== 'exportToFile' || act !== 'exportToFileStaging') && !$('#exportPath').val().trim()) {
+                $.snackbar({
+                    content: "${i18nNoExportPath}",
+                    style: "error"
+                });
+                return false;
+            }
     		submitSiteForm(act);
     		return false;
     	});
@@ -227,7 +248,7 @@
             <div class="form-group label-floating is-empty">
                 <div class="input-group">
                     <label class="control-label"><fmt:message key="serverSettings.manageWebProjects.exportServerDirectory"/></label>
-                    <input class="form-control" type="text" name="exportPath"/>
+                    <input class="form-control" type="text" name="exportPath" id="exportPath"/>
                     <span class="input-group-btn">
                         <a class="btn btn-default sitesAction" id="exportToFile" href="#exportToFile" title="<fmt:message key='label.export'/>">
                             <fmt:message key='label.export'/>
@@ -296,11 +317,12 @@
         <fmt:message key="serverSettings.manageWebProjects.multipleimport"/>
     </div>
     <div class="panel-body">
-        <form action="${flowExecutionUrl}" method="post" enctype="multipart/form-data">
+        <form id="importForm" action="${flowExecutionUrl}" method="post" enctype="multipart/form-data">
+            <input type="hidden" name="_eventId" value="import" />
             <div class="row">
                 <div class="col-md-6">
                     <div class="form-group is-empty is-fileinput label-floating">
-                        <input type="file" name="importFile"/>
+                        <input type="file" name="importFile" id="importFile"/>
                         <div class="input-group">
                             <span class="input-group-addon"><i class="material-icons">touch_app</i></span>
                             <label class="control-label"><fmt:message key="serverSettings.manageWebProjects.multipleimport.fileselect"/></label>
@@ -313,9 +335,9 @@
                     <div class="form-group is-empty label-floating">
                         <div class="input-group">
                             <label class="control-label"><fmt:message key="serverSettings.manageWebProjects.multipleimport.fileinput"/></label>
-                            <input class="form-control" type="text" name="importPath"/>
+                            <input class="form-control" type="text" name="importPath" id="importPath"/>
                             <span class="input-group-btn">
-                                <button class="btn btn-primary" type="submit" name="_eventId_import" onclick="">
+                                <button class="btn btn-primary" type="button" onclick="validateUploadForm()">
                                     <fmt:message key='serverSettings.manageWebProjects.import.upload'/>
                                 </button>
                             </span>
