@@ -64,7 +64,7 @@
                 });
     			return false;
     		}
-            if ((act !== 'exportToFile' || act !== 'exportToFileStaging') && !$('#exportPath').val().trim()) {
+            if ((act === 'exportToFile' || act === 'exportToFileStaging') && !$('#exportPath').val().trim()) {
                 $.snackbar({
                     content: "${i18nNoExportPath}",
                     style: "error"
