@@ -101,6 +101,7 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 
 import static org.jahia.services.importexport.ImportExportBaseService.*;
@@ -695,19 +696,46 @@ public class WebprojectHandler implements Serializable {
     public void prepareImport(MessageContext messageContext) {
         if (!StringUtils.isEmpty(importPath)) {
             File f = new File(importPath);
+            if (!checkZipOrDirectory(f)) {
+                messageContext.addMessage(new MessageBuilder().error()
+                        .code("serverSettings.manageWebProjects.import.wrongFormat")
+                        .arg(f.getPath()).build());
+                return;
+            }
             prepareFileImports(f, f.getName(), messageContext);
         } else if (!importFile.isEmpty()) {
+            if (!importFile.getContentType().endsWith("/zip")) {
+                messageContext.addMessage(new MessageBuilder().error()
+                        .code("serverSettings.manageWebProjects.import.wrongFormat")
+                        .arg(importFile.getOriginalFilename()).build());
+                return;
+            }
             File file = null;
             try {
                 file = File.createTempFile(importFile.getOriginalFilename(),
                                 ".tmp");
                 importFile.transferTo(file);
+                if (!checkZipOrDirectory(file)) {
+                    messageContext.addMessage(new MessageBuilder().error()
+                            .code("serverSettings.manageWebProjects.import.wrongFormat")
+                            .arg(file.getPath()).build());
+                    return;
+                }
                 prepareFileImports(file, importFile.getName(), messageContext);
             } catch (IOException e) {
                 logger.error(e.getMessage(), e);
             } finally {
                 FileUtils.deleteQuietly(file);
             }
+        }
+    }
+
+    private boolean checkZipOrDirectory(File f) {
+        try {
+            ZipFile z = new ZipFile(f);
+            return true;
+        } catch (Exception e) {
+            return f.isDirectory();
         }
     }
 
