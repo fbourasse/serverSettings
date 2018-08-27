@@ -694,45 +694,40 @@ public class WebprojectHandler implements Serializable {
     }
 
     public void prepareImport(MessageContext messageContext) {
+        boolean isValidImport = true;
+        String importResourceName = null;
         if (!StringUtils.isEmpty(importPath)) {
             File f = new File(importPath);
-            if (!checkZipOrDirectory(f)) {
-                messageContext.addMessage(new MessageBuilder().error()
-                        .code("serverSettings.manageWebProjects.import.wrongFormat")
-                        .arg(f.getPath()).build());
-                return;
+            importResourceName = f.getPath();
+            isValidImport = isZipOrDirectory(f);
+            if (isValidImport) {
+                prepareFileImports(f, f.getName(), messageContext);
             }
-            prepareFileImports(f, f.getName(), messageContext);
         } else if (!importFile.isEmpty()) {
-            if (!importFile.getContentType().endsWith("/zip")) {
-                messageContext.addMessage(new MessageBuilder().error()
-                        .code("serverSettings.manageWebProjects.import.wrongFormat")
-                        .arg(importFile.getOriginalFilename()).build());
-                return;
-            }
             File file = null;
             try {
-                file = File.createTempFile(importFile.getOriginalFilename(),
-                                ".tmp");
+                importResourceName = importFile.getOriginalFilename();
+                file = File.createTempFile(importResourceName, ".tmp");
                 importFile.transferTo(file);
-                if (!checkZipOrDirectory(file)) {
-                    messageContext.addMessage(new MessageBuilder().error()
-                            .code("serverSettings.manageWebProjects.import.wrongFormat")
-                            .arg(file.getPath()).build());
-                    return;
+                isValidImport = isZipOrDirectory(file);
+                if (isValidImport) {
+                    prepareFileImports(file, importFile.getName(), messageContext);
                 }
-                prepareFileImports(file, importFile.getName(), messageContext);
             } catch (IOException e) {
                 logger.error(e.getMessage(), e);
             } finally {
                 FileUtils.deleteQuietly(file);
             }
         }
+        if (!isValidImport) {
+            messageContext.addMessage(new MessageBuilder().error()
+                    .code("serverSettings.manageWebProjects.import.wrongFormat").arg(importResourceName).build());
+            this.importsInfos = Collections.emptyMap();
+        }
     }
 
-    private boolean checkZipOrDirectory(File f) {
-        try {
-            ZipFile z = new ZipFile(f);
+    private static boolean isZipOrDirectory(File f) {
+        try (ZipFile z = new ZipFile(f)) {
             return true;
         } catch (Exception e) {
             return f.isDirectory();
