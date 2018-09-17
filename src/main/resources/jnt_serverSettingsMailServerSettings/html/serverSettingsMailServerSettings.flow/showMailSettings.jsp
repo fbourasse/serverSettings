@@ -147,6 +147,14 @@
         </div>
 
         <div class="control-group">
+            <label class="control-label" for="workflowNotificationsDisabled"><fmt:message key="serverSettings.mailServerSettings.workflowNotificationsDisabled"/>&nbsp;:</label>
+            <div class="controls">
+                    <input type="checkbox" name="workflowNotificationsDisabled" id="workflowNotificationsDisabled" ${mailSettings.workflowNotificationsDisabled ?'checked="checked"' : ''}/>
+                <input type="hidden" name="_workflowNotificationsDisabled"/>
+            </div>
+        </div>
+
+        <div class="control-group">
             <div class="controls">
                 <button class="btn btn-primary" type="submit" name="_eventId_submitMailSettings"><i class="icon-ok icon-white"></i>&nbsp;<fmt:message key="label.save"/></button>
                 <button class="btn" type="button" onclick="testSettings(); return false;"><i class="icon-thumbs-up"></i>&nbsp;<fmt:message key="serverSettings.mailServerSettings.testSettings"/></button>

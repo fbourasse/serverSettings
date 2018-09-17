@@ -169,6 +169,16 @@
                         </select>
                     </div>
 
+                    <div class="form-group">
+                        <div class="checkbox">
+                            <label>
+                                <input type="checkbox" name="workflowNotificationsDisabled" ${mailSettings.workflowNotificationsDisabled ?'checked="checked"' : ''}/>
+                                <fmt:message key="serverSettings.mailServerSettings.workflowNotificationsDisabled"/>
+                            </label>
+                        </div>
+                        <input type="hidden" name="_workflowNotificationsDisabled"/>
+                    </div>
+
                     <div class="form-group form-group-sm">
                         <button class="btn btn-sm btn-primary pull-right" type="submit" name="_eventId_submitMailSettings">
                             <fmt:message key="label.save"/>
