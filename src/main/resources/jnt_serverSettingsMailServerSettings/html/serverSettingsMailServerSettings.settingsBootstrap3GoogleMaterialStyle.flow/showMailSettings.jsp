@@ -85,6 +85,12 @@
             });
         }
     }
+
+    function toggleVisibility() {
+        var isPassword = document.getElementById('uriEntry').getAttribute("type") === "password";
+            document.getElementById('uriEntry').setAttribute("type", isPassword ? "text" : "password");
+            document.getElementById("visibilityIcon").innerHTML = isPassword ? "visibility_off" : "visibility";
+    };
 </script>
 
 <div class="page-header">
@@ -130,9 +136,15 @@
                             <label class="control-label">
                                 <fmt:message key="serverSettings.mailServerSettings.address"/>
                             </label>
-                            <input class="form-control" type="text" name="uri" size="70" maxlength="250" value="<c:out value='${mailSettings.uri}'/>"/>
+                            <input class="form-control" type="password" id="uriEntry" name="uri" size="70" maxlength="250" value="<c:out
+                            value='${mailSettings.uri}'/>"/>
                             <span class="input-group-btn">
-                                <a class="btn btn-fab btn-fab-xs btn-info" href="http://jira.jahia.org/browse/JKB-20" target="_blank" style="cursor: pointer;">
+                                <span onclick="toggleVisibility()" class="btn btn-fab btn-fab-xs">
+                                    <i id="visibilityIcon" class="material-icons">visibility</i>
+                                </span>
+                            </span>
+                            <span class="input-group-btn">
+                                <a class="btn btn-fab btn-fab-xs btn-info" href="https://academy.jahia.com/documentation/knowledge-base/configuration-mail-server-in-jahia" target="_blank" style="cursor: pointer;">
                                     <i class="material-icons">info</i>
                                 </a>
                             </span>
