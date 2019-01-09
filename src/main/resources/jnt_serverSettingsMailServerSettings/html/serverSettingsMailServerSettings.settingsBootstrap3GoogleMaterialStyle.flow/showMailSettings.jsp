@@ -91,6 +91,10 @@
             document.getElementById('uriEntry').setAttribute("type", isPassword ? "text" : "password");
             document.getElementById("visibilityIcon").innerHTML = isPassword ? "visibility_off" : "visibility";
     };
+
+    $(document).ready(function(){
+        $('[data-toggle="tooltip"]').tooltip();
+    });
 </script>
 
 <div class="page-header">
@@ -152,10 +156,18 @@
                     </div>
 
                     <div class="form-group label-floating">
-                        <label class="control-label">
-                            <fmt:message key="serverSettings.mailServerSettings.administrator"/>
-                        </label>
-                        <input class="form-control" type="text" name="to" size="64" maxlength="250" value="<c:out value='${mailSettings.to}'/>">
+                        <div class="input-group">
+                            <label class="control-label">
+                                <fmt:message key="serverSettings.mailServerSettings.administrator"/>
+                            </label>
+                            <input class="form-control" type="text" name="to" size="64" maxlength="250" value="<c:out value='${mailSettings.to}'/>">
+                            <span class="input-group-btn">
+                                <a class="btn btn-fab btn-fab-xs btn-info" href="#" data-toggle="tooltip" data-placement="left"
+                                   title="<fmt:message key="serverSettings.mailServerSettings.administratorTooltip"/>" style="cursor:pointer;">
+                                <i class="material-icons">info</i>
+                                </a>
+                            </span>
+                        </div>
                     </div>
 
                     <div class="form-group label-floating">
