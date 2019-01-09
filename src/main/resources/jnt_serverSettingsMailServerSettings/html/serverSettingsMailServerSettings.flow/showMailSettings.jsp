@@ -5,6 +5,7 @@
 <%@ taglib prefix="jcr" uri="http://www.jahia.org/tags/jcr" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="functions" uri="http://www.jahia.org/tags/functions" %>
+<%@ page import="org.jahia.settings.SettingsBean" %>
 <%--@elvariable id="currentNode" type="org.jahia.services.content.JCRNodeWrapper"--%>
 <%--@elvariable id="out" type="java.io.PrintWriter"--%>
 <%--@elvariable id="script" type="org.jahia.services.render.scripting.Script"--%>
@@ -72,6 +73,9 @@
         }
     }//-->
 
+    var academyLink = "<%= SettingsBean.getInstance().getString("mailConfigurationAcademyLink","https://academy.jahia.com/documentation/knowledge-base/configuration-mail-server-in-jahia")%>"
+    window.onload = function() { document.getElementById('academyBtn').setAttribute('href',academyLink)};
+
     function toggleVisibility() {
         var isPassword = document.getElementById('uriEntry').getAttribute("type") === "password";
         document.getElementById('uriEntry').setAttribute("type", isPassword ? "text" : "password");
@@ -122,7 +126,8 @@
                 <span onclick="toggleVisibility()" class="btn">
                     <i id="visibilityIcon" class="icon-eye-open"></i>
                 </span>
-                <a class="btn btn-info" href="https://academy.jahia.com/documentation/knowledge-base/configuration-mail-server-in-jahia" target="_blank" style="cursor: pointer;"><i class="icon-info-sign icon-white"></i></a>
+                <a class="btn btn-info" id="academyBtn" target="_blank"
+                   style="cursor: pointer;"><i class="icon-info-sign icon-white"></i></a>
             </div>
         </div>
 
