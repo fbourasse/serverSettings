@@ -96,6 +96,58 @@
             document.getElementById("visibilityIcon").innerHTML = isPassword ? "visibility_off" : "visibility";
     };
 
+    function validateRegex(element) {
+        var regexEmail = RegExp('[A-Za-z0-9._%+-]+@(?:[A-Za-z0-9-]+\\.)+[A-Za-z]{2,}');
+        var validMail = true;
+        document.forms["jahiaAdmin"][element].value.split(',').forEach(function(mail) {
+            if (validMail) {
+                if (!regexEmail.test(mail)) {
+                    errorHandling(document.forms["jahiaAdmin"][element],true);
+                    if (element === 'to') {
+                        $.snackbar({
+                            content: "<fmt:message key="serverSettings.mailServerSettings.errors.emailList"/>" + "\n",
+                            style: "error"
+                        });
+                    }
+                    if (element === 'from') {
+                        $.snackbar({
+                            content: "<fmt:message key="serverSettings.mailServerSettings.errors.email"/>" + "\n",
+                            style: "error"
+                        });
+                    }
+                    validMail = false;
+                }
+            }
+
+        });
+        return validMail;
+    }
+
+    function errorHandling(element,add) {
+        if (add) {
+            if (element.name === "from") {
+                element.parentNode.classList.add('has-error');
+            }
+            element.parentNode.parentNode.classList.add('has-error');
+        } else {
+            element.parentNode.parentNode.classList.remove('has-error');
+        }
+    }
+
+    function validateForm() {
+        var valid = true;
+        var toTest = ['to', 'from']
+        toTest.forEach(function(formInput) {
+                errorHandling(document.forms["jahiaAdmin"][formInput], false);
+                if (valid) {
+                    valid = validateRegex(formInput);
+                }
+            }
+        );
+
+        return valid;
+    }
+
     $(document).ready(function(){
         $('[data-toggle="tooltip"]').tooltip();
     });
@@ -122,7 +174,6 @@
         <fmt:message key="label.changeSaved"/>
     </div>
 </c:if>
-
 <div class="row">
     <div class="col-md-8 col-md-offset-2">
         <div class="panel panel-default">
@@ -165,7 +216,8 @@
                             <label class="control-label">
                                 <fmt:message key="serverSettings.mailServerSettings.administrator"/>
                             </label>
-                            <input class="form-control" type="text" name="to" size="64" maxlength="250" value="<c:out value='${mailSettings.to}'/>">
+                            <input class="form-control" type="text" name="to" size="64" maxlength="250" value="<c:out
+                            value='${mailSettings.to}'/>">
                             <span class="input-group-btn">
                                 <a class="btn btn-fab btn-fab-xs btn-info" href="#" data-toggle="tooltip" data-placement="left"
                                    title="<fmt:message key="serverSettings.mailServerSettings.administratorTooltip"/>" style="cursor:pointer;">
@@ -179,7 +231,8 @@
                         <label class="control-label">
                             <fmt:message key="serverSettings.mailServerSettings.from"/>
                         </label>
-                        <input class="form-control" type="text" name="from" size="64" maxlength="250" value="<c:out value='${mailSettings.from}'/>">
+                        <input class="form-control" type="text" name="from" size="64" maxlength="250" value="<c:out
+                        value='${mailSettings.from}'/>">
                     </div>
 
                     <div class="form-group label-floating">
@@ -209,7 +262,7 @@
                     </div>
 
                     <div class="form-group form-group-sm">
-                        <button class="btn btn-sm btn-primary pull-right" type="submit" name="_eventId_submitMailSettings">
+                        <button class="btn btn-sm btn-primary pull-right" type="submit" onclick="return validateForm()" name="_eventId_submitMailSettings">
                             <fmt:message key="label.save"/>
                         </button>
                         <button class="btn btn-sm btn-default pull-right" type="button" onclick="testSettings(); return false;">

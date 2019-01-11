@@ -73,6 +73,49 @@
         }
     }//-->
 
+    function validateRegex(element) {
+        var regexEmail = RegExp('[A-Za-z0-9._%+-]+@(?:[A-Za-z0-9-]+\\.)+[A-Za-z]{2,}');
+        var validMail = true;
+        document.forms["jahiaAdmin"][element].value.split(',').forEach(function(mail) {
+            if (validMail) {
+                if (!regexEmail.test(mail)) {
+                    errorHandling(document.forms["jahiaAdmin"][element],true);
+                    if (element === 'to') {
+                        alert("<fmt:message key="serverSettings.mailServerSettings.errors.emailList"/>");
+                    }
+                    if (element === 'from') {
+                        alert("<fmt:message key="serverSettings.mailServerSettings.errors.email"/>");
+                    }
+                    validMail = false;
+                }
+            }
+
+        });
+        return validMail;
+    }
+
+    function errorHandling(element,add) {
+        if (add) {
+            element.parentNode.parentNode.classList.add('error');
+        } else {
+            element.parentNode.parentNode.classList.remove('error');
+        }
+    }
+
+    function validateForm() {
+        var valid = true;
+        var toTest = ['to', 'from']
+        toTest.forEach(function(formInput) {
+                errorHandling(document.forms["jahiaAdmin"][formInput], false);
+                if (valid) {
+                    valid = validateRegex(formInput);
+                }
+            }
+        );
+
+        return valid;
+    }
+
     var academyLink = "<%= SettingsBean.getInstance().getString("mailConfigurationAcademyLink","https://academy.jahia.com/documentation/knowledge-base/configuration-mail-server-in-jahia")%>"
     window.onload = function() { document.getElementById('academyBtn').setAttribute('href',academyLink)};
 
@@ -81,6 +124,10 @@
         document.getElementById('uriEntry').setAttribute("type", isPassword ? "text" : "password");
         document.getElementById("visibilityIcon").classList = isPassword ? "icon-eye-close" : "icon-eye-open";
     };
+
+    $(document).ready(function(){
+        $('[data-toggle="tooltip"]').tooltip();
+    });
 </script>
 
 
@@ -135,13 +182,17 @@
             <label class="control-label"><fmt:message key="serverSettings.mailServerSettings.administrator"/>&nbsp;:</label>
             <div class="controls">
                 <input type="text" name="to" size="64" maxlength="250" value="<c:out value='${mailSettings.to}'/>">
+                <a class="btn btn-info" target="_blank" data-toggle="tooltip" data-placement="right" title="<fmt:message key="serverSettings.mailServerSettings.administratorTooltip"/>">
+                    <i class="icon-info-sign icon-white"></i>
+                </a>
             </div>
         </div>
 
         <div class="control-group">
             <label class="control-label"><fmt:message key="serverSettings.mailServerSettings.from"/>&nbsp;:</label>
             <div class="controls">
-                <input type="text" name="from" size="64" maxlength="250" value="<c:out value='${mailSettings.from}'/>">
+                <input type="text" title="<fmt:message key="serverSettings.mailServerSettings.errors.email"/>" name="from" size="64"
+                       maxlength="250" value="<c:out value='${mailSettings.from}'/>">
             </div>
         </div>
 
@@ -171,8 +222,11 @@
 
         <div class="control-group">
             <div class="controls">
-                <button class="btn btn-primary" type="submit" name="_eventId_submitMailSettings"><i class="icon-ok icon-white"></i>&nbsp;<fmt:message key="label.save"/></button>
-                <button class="btn" type="button" onclick="testSettings(); return false;"><i class="icon-thumbs-up"></i>&nbsp;<fmt:message key="serverSettings.mailServerSettings.testSettings"/></button>
+                <button class="btn btn-primary" type="submit" onclick="return validateForm()" name="_eventId_submitMailSettings">
+                    <i class="icon-ok icon-white"></i>
+                    &nbsp;<fmt:message key="label.save"/></button>
+                <button class="btn" type="button" onclick="testSettings(); return false;">
+                    <i class="icon-thumbs-up"></i>&nbsp;<fmt:message key="serverSettings.mailServerSettings.testSettings"/></button>
             </div>
         </div>
     </form>
