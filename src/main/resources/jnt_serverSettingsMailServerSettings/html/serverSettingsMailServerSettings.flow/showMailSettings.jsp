@@ -83,9 +83,8 @@
                     var formGroup = $("#group-"+element);
                     alert(formGroup.get(0).getAttribute("data-error"));
                     formGroup.addClass('error');
+                    validMail = false;
                 }
-
-                validMail = false;
             }
         });
         return validMail;

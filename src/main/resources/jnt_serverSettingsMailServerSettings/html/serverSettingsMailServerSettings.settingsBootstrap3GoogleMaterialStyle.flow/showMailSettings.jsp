@@ -111,9 +111,8 @@
                         style: "error"
                     });
                     formGroup.addClass('has-error');
+                    validMail = false;
                 }
-
-                validMail = false;
             }
         });
         return validMail;
