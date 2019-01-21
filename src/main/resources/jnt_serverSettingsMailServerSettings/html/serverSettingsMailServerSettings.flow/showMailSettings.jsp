@@ -109,9 +109,12 @@
     window.onload = function() { document.getElementById('academyBtn').setAttribute('href',academyLink)};
 
     function toggleVisibility() {
-        var isPassword = document.getElementById('uriEntry').getAttribute("type") === "password";
-        document.getElementById('uriEntry').setAttribute("type", isPassword ? "text" : "password");
-        document.getElementById("visibilityIcon").classList = isPassword ? "icon-eye-close" : "icon-eye-open";
+        var $uriEntry = $('#uriEntry');
+        var $visibilityIcon = $('#visibilityIcon');
+        var isPassword = $uriEntry.get(0).getAttribute("type") === "password";
+        $uriEntry.get(0).setAttribute("type", isPassword ? "text" : "password");
+        isPassword ? $visibilityIcon.switchClass("icon-eye-open","icon-eye-close") :
+            $visibilityIcon.switchClass("icon-eye-close","icon-eye-open");
     }
     $(document).ready(function(){
         $('[data-toggle="tooltip"]').tooltip();

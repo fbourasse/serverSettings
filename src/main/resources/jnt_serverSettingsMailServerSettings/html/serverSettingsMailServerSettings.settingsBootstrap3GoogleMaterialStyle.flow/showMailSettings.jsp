@@ -91,11 +91,14 @@
     window.onload = function() { document.getElementById('academyBtn').setAttribute('href',academyLink)};
 
     function toggleVisibility() {
-        var isPassword = document.getElementById('uriEntry').getAttribute("type") === "password";
-            document.getElementById('uriEntry').setAttribute("type", isPassword ? "text" : "password");
-            document.getElementById("visibilityIcon").innerHTML = isPassword ? "visibility_off" : "visibility";
+        var $uriEntry = $('#uriEntry');
+        var $visibilityIcon = $('#visibilityIcon');
+        var isPassword = $uriEntry.get(0).getAttribute("type") === "password";
+            $uriEntry.get(0).setAttribute("type", isPassword ? "text" : "password");
+        isPassword ? $visibilityIcon.html("visibility_off") : $visibilityIcon.html("visibility");
     }
     function validateRegex(element) {
+
         var regexEmail = RegExp('[A-Za-z0-9._%+-]+@(?:[A-Za-z0-9-]+\\.)+[A-Za-z]{2,}');
         var validMail = true;
         var toSplit = $("input[name="+element+"]").get(0).value.split(',');
