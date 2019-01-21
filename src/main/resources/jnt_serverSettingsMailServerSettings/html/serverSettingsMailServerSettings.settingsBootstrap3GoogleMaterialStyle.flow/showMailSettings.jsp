@@ -87,58 +87,40 @@
         }
     }
 
-    var academyLink = "<%= SettingsBean.getInstance().getString("mailConfigurationAcademyLink","https://academy.jahia.com/documentation/knowledge-base/configuration-mail-server-in-jahia")%>"
+    var academyLink = "<%= SettingsBean.getInstance().getString("mailConfigurationAcademyLink","https://academy.jahia.com/documentation/knowledge-base/configuration-mail-server-in-jahia")%>";
     window.onload = function() { document.getElementById('academyBtn').setAttribute('href',academyLink)};
 
     function toggleVisibility() {
         var isPassword = document.getElementById('uriEntry').getAttribute("type") === "password";
             document.getElementById('uriEntry').setAttribute("type", isPassword ? "text" : "password");
             document.getElementById("visibilityIcon").innerHTML = isPassword ? "visibility_off" : "visibility";
-    };
-
+    }
     function validateRegex(element) {
         var regexEmail = RegExp('[A-Za-z0-9._%+-]+@(?:[A-Za-z0-9-]+\\.)+[A-Za-z]{2,}');
         var validMail = true;
-        document.forms["jahiaAdmin"][element].value.split(',').forEach(function(mail) {
+        var toSplit = $("input[name="+element+"]").get(0).value.split(',');
+        $(toSplit).each(function(index, mail) {
             if (validMail) {
                 if (!regexEmail.test(mail)) {
-                    errorHandling(document.forms["jahiaAdmin"][element],true);
-                    if (element === 'to') {
-                        $.snackbar({
-                            content: "<fmt:message key="serverSettings.mailServerSettings.errors.emailList"/>" + "\n",
-                            style: "error"
-                        });
-                    }
-                    if (element === 'from') {
-                        $.snackbar({
-                            content: "<fmt:message key="serverSettings.mailServerSettings.errors.email"/>" + "\n",
-                            style: "error"
-                        });
-                    }
-                    validMail = false;
+                    var formGroup = $("#group-"+element);
+                    $.snackbar({
+                        content: formGroup.get(0).getAttribute("data-error"),
+                        style: "error"
+                    });
+                    formGroup.addClass('has-error');
                 }
-            }
 
+                validMail = false;
+            }
         });
         return validMail;
     }
 
-    function errorHandling(element,add) {
-        if (add) {
-            if (element.name === "from") {
-                element.parentNode.classList.add('has-error');
-            }
-            element.parentNode.parentNode.classList.add('has-error');
-        } else {
-            element.parentNode.parentNode.classList.remove('has-error');
-        }
-    }
-
     function validateForm() {
         var valid = true;
-        var toTest = ['to', 'from']
-        toTest.forEach(function(formInput) {
-                errorHandling(document.forms["jahiaAdmin"][formInput], false);
+        var toTest = ["to","from"];
+        $(toTest).each(function(index, formInput) {
+                $("#group-"+formInput).removeClass('has-error');
                 if (valid) {
                     valid = validateRegex(formInput);
                 }
@@ -211,7 +193,7 @@
                         </div>
                     </div>
 
-                    <div class="form-group label-floating">
+                    <div class="form-group label-floating" id="group-to" data-error="<fmt:message key="serverSettings.mailServerSettings.errors.emailList"/>">
                         <div class="input-group">
                             <label class="control-label">
                                 <fmt:message key="serverSettings.mailServerSettings.administrator"/>
@@ -227,7 +209,7 @@
                         </div>
                     </div>
 
-                    <div class="form-group label-floating">
+                    <div class="form-group label-floating" id="group-from" data-error="<fmt:message key="serverSettings.mailServerSettings.errors.email"/>">
                         <label class="control-label">
                             <fmt:message key="serverSettings.mailServerSettings.from"/>
                         </label>

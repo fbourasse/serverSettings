@@ -76,37 +76,26 @@
     function validateRegex(element) {
         var regexEmail = RegExp('[A-Za-z0-9._%+-]+@(?:[A-Za-z0-9-]+\\.)+[A-Za-z]{2,}');
         var validMail = true;
-        document.forms["jahiaAdmin"][element].value.split(',').forEach(function(mail) {
+        var toSplit = $("input[name="+element+"]").get(0).value.split(',');
+        $(toSplit).each(function(index, mail) {
             if (validMail) {
                 if (!regexEmail.test(mail)) {
-                    errorHandling(document.forms["jahiaAdmin"][element],true);
-                    if (element === 'to') {
-                        alert("<fmt:message key="serverSettings.mailServerSettings.errors.emailList"/>");
-                    }
-                    if (element === 'from') {
-                        alert("<fmt:message key="serverSettings.mailServerSettings.errors.email"/>");
-                    }
-                    validMail = false;
+                    var formGroup = $("#group-"+element);
+                    alert(formGroup.get(0).getAttribute("data-error"));
+                    formGroup.addClass('error');
                 }
-            }
 
+                validMail = false;
+            }
         });
         return validMail;
     }
 
-    function errorHandling(element,add) {
-        if (add) {
-            element.parentNode.parentNode.classList.add('error');
-        } else {
-            element.parentNode.parentNode.classList.remove('error');
-        }
-    }
-
     function validateForm() {
         var valid = true;
-        var toTest = ['to', 'from']
-        toTest.forEach(function(formInput) {
-                errorHandling(document.forms["jahiaAdmin"][formInput], false);
+        var toTest = ["to","from"];
+        $(toTest).each(function(index, formInput) {
+                $("#group-"+formInput).removeClass('error');
                 if (valid) {
                     valid = validateRegex(formInput);
                 }
@@ -116,15 +105,14 @@
         return valid;
     }
 
-    var academyLink = "<%= SettingsBean.getInstance().getString("mailConfigurationAcademyLink","https://academy.jahia.com/documentation/knowledge-base/configuration-mail-server-in-jahia")%>"
+    var academyLink = "<%= SettingsBean.getInstance().getString("mailConfigurationAcademyLink","https://academy.jahia.com/documentation/knowledge-base/configuration-mail-server-in-jahia")%>";
     window.onload = function() { document.getElementById('academyBtn').setAttribute('href',academyLink)};
 
     function toggleVisibility() {
         var isPassword = document.getElementById('uriEntry').getAttribute("type") === "password";
         document.getElementById('uriEntry').setAttribute("type", isPassword ? "text" : "password");
         document.getElementById("visibilityIcon").classList = isPassword ? "icon-eye-close" : "icon-eye-open";
-    };
-
+    }
     $(document).ready(function(){
         $('[data-toggle="tooltip"]').tooltip();
     });
@@ -178,7 +166,7 @@
             </div>
         </div>
 
-        <div class="control-group">
+        <div class="control-group" id="group-to" data-error="<fmt:message key="serverSettings.mailServerSettings.errors.emailList"/>">
             <label class="control-label"><fmt:message key="serverSettings.mailServerSettings.administrator"/>&nbsp;:</label>
             <div class="controls">
                 <input type="text" name="to" size="64" maxlength="250" value="<c:out value='${mailSettings.to}'/>">
@@ -188,11 +176,10 @@
             </div>
         </div>
 
-        <div class="control-group">
+        <div class="control-group" id="group-from" data-error="<fmt:message key="serverSettings.mailServerSettings.errors.email"/>">
             <label class="control-label"><fmt:message key="serverSettings.mailServerSettings.from"/>&nbsp;:</label>
             <div class="controls">
-                <input type="text" title="<fmt:message key="serverSettings.mailServerSettings.errors.email"/>" name="from" size="64"
-                       maxlength="250" value="<c:out value='${mailSettings.from}'/>">
+                <input type="text" name="from" size="64" maxlength="250" value="<c:out value='${mailSettings.from}'/>">
             </div>
         </div>
 
