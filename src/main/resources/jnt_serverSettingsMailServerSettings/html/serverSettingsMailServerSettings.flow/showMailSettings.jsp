@@ -16,7 +16,8 @@
 <%--@elvariable id="url" type="org.jahia.services.render.URLGenerator"--%>
 <%--@elvariable id="mailSettings" type="org.jahia.services.mail.MailSettings"--%>
 <%--@elvariable id="flowRequestContext" type="org.springframework.webflow.execution.RequestContext"--%>
-<template:addResources type="javascript" resources="jquery.min.js,jquery-ui.min.js,admin-bootstrap.js,bootstrapSwitch.js"/>
+<template:addResources type="javascript"
+                       resources="jquery.min.js,jquery-ui.min.js,admin-bootstrap.js,bootstrapSwitch.js,regexValidation.js"/>
 <template:addResources type="css" resources="jquery-ui.smoothness.css,jquery-ui.smoothness-jahia.css,bootstrapSwitch.css"/>
 
 <script type="text/javascript">
@@ -73,37 +74,14 @@
         }
     }//-->
 
-    function validateRegex(element) {
-        var regexEmail = RegExp('[A-Za-z0-9._%+-]+@(?:[A-Za-z0-9-]+\\.)+[A-Za-z]{2,}');
-        var validMail = true;
-        var toSplit = $("input[name="+element+"]").get(0).value.split(',');
-        $(toSplit).each(function(index, mail) {
-            if (validMail) {
-                if (!regexEmail.test(mail)) {
-                    var formGroup = $("#group-"+element);
-                    alert(formGroup.get(0).getAttribute("data-error"));
-                    formGroup.addClass('error');
-                    validMail = false;
-                }
-            }
-        });
-        return validMail;
+    function displayErrors(element) {
+        var formGroup = $("#group-"+element);
+        alert(formGroup.get(0).getAttribute("data-error"));
+        formGroup.addClass('error');
+        validMail = false;
     }
 
-    function validateForm() {
-        var valid = true;
-        var toTest = ["to","from"];
-        $(toTest).each(function(index, formInput) {
-                $("#group-"+formInput).removeClass('error');
-                if (valid) {
-                    valid = validateRegex(formInput);
-                }
-            }
-        );
-
-        return valid;
-    }
-
+    var fieldsToValidate = ["to","from"];
     var academyLink = "<%= SettingsBean.getInstance().getString("mailConfigurationAcademyLink","https://academy.jahia.com/documentation/knowledge-base/configuration-mail-server-in-jahia")%>";
     window.onload = function() { document.getElementById('academyBtn').setAttribute('href',academyLink)};
 
@@ -171,7 +149,8 @@
         <div class="control-group" id="group-to" data-error="<fmt:message key="serverSettings.mailServerSettings.errors.emailList"/>">
             <label class="control-label"><fmt:message key="serverSettings.mailServerSettings.administrator"/>&nbsp;:</label>
             <div class="controls">
-                <input type="text" name="to" size="64" maxlength="250" value="<c:out value='${mailSettings.to}'/>">
+                <input type="text" name="to" size="64" maxlength="250" onchange="$('#group-to').removeClass('error')" value="<c:out
+                value='${mailSettings.to}'/>">
                 <a class="btn btn-info" target="_blank" data-toggle="tooltip" data-placement="right" title="<fmt:message key="serverSettings.mailServerSettings.administratorTooltip"/>">
                     <i class="icon-info-sign icon-white"></i>
                 </a>
@@ -181,7 +160,8 @@
         <div class="control-group" id="group-from" data-error="<fmt:message key="serverSettings.mailServerSettings.errors.email"/>">
             <label class="control-label"><fmt:message key="serverSettings.mailServerSettings.from"/>&nbsp;:</label>
             <div class="controls">
-                <input type="text" name="from" size="64" maxlength="250" value="<c:out value='${mailSettings.from}'/>">
+                <input type="text" name="from" size="64" maxlength="250" onchange="$('#group-from').removeClass('error')" value="<c:out
+                    value='${mailSettings.from}'/>">
             </div>
         </div>
 
@@ -211,7 +191,8 @@
 
         <div class="control-group">
             <div class="controls">
-                <button class="btn btn-primary" type="submit" onclick="return validateForm()" name="_eventId_submitMailSettings">
+                <button class="btn btn-primary" type="submit" onclick="return validateForm(fieldsToValidate,displayErrors)"
+                        name="_eventId_submitMailSettings">
                     <i class="icon-ok icon-white"></i>
                     &nbsp;<fmt:message key="label.save"/></button>
                 <button class="btn" type="button" onclick="testSettings(); return false;">

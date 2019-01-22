@@ -16,7 +16,7 @@
 <%--@elvariable id="url" type="org.jahia.services.render.URLGenerator"--%>
 <%--@elvariable id="mailSettings" type="org.jahia.services.mail.MailSettings"--%>
 <%--@elvariable id="flowRequestContext" type="org.springframework.webflow.execution.RequestContext"--%>
-<template:addResources type="javascript" resources="jquery.min.js"/>
+<template:addResources type="javascript" resources="jquery.min.js,regexValidation.js"/>
 
 <script type="text/javascript">
     function testSettings() {
@@ -87,6 +87,7 @@
         }
     }
 
+    var fieldsToValidate = ["to","from"];
     var academyLink = "<%= SettingsBean.getInstance().getString("mailConfigurationAcademyLink","https://academy.jahia.com/documentation/knowledge-base/configuration-mail-server-in-jahia")%>";
     window.onload = function() { document.getElementById('academyBtn').setAttribute('href',academyLink)};
 
@@ -97,39 +98,14 @@
             $uriEntry.get(0).setAttribute("type", isPassword ? "text" : "password");
         isPassword ? $visibilityIcon.html("visibility_off") : $visibilityIcon.html("visibility");
     }
-    function validateRegex(element) {
 
-        var regexEmail = RegExp('[A-Za-z0-9._%+-]+@(?:[A-Za-z0-9-]+\\.)+[A-Za-z]{2,}');
-        var validMail = true;
-        var toSplit = $("input[name="+element+"]").get(0).value.split(',');
-        $(toSplit).each(function(index, mail) {
-            if (validMail) {
-                if (!regexEmail.test(mail)) {
-                    var formGroup = $("#group-"+element);
-                    $.snackbar({
-                        content: formGroup.get(0).getAttribute("data-error"),
-                        style: "error"
-                    });
-                    formGroup.addClass('has-error');
-                    validMail = false;
-                }
-            }
+    function displayErrors(element) {
+        var formGroup = $("#group-"+element);
+        $.snackbar({
+            content: formGroup.get(0).getAttribute("data-error"),
+            style: "error"
         });
-        return validMail;
-    }
-
-    function validateForm() {
-        var valid = true;
-        var toTest = ["to","from"];
-        $(toTest).each(function(index, formInput) {
-                $("#group-"+formInput).removeClass('has-error');
-                if (valid) {
-                    valid = validateRegex(formInput);
-                }
-            }
-        );
-
-        return valid;
+        formGroup.addClass('has-error');
     }
 
     $(document).ready(function(){
@@ -246,7 +222,9 @@
                     </div>
 
                     <div class="form-group form-group-sm">
-                        <button class="btn btn-sm btn-primary pull-right" type="submit" onclick="return validateForm()" name="_eventId_submitMailSettings">
+                        <button class="btn btn-sm btn-primary pull-right" type="submit" onclick="return
+                        validateForm(fieldsToValidate,displayErrors)"
+                                name="_eventId_submitMailSettings">
                             <fmt:message key="label.save"/>
                         </button>
                         <button class="btn btn-sm btn-default pull-right" type="button" onclick="testSettings(); return false;">
