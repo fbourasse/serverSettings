@@ -68,18 +68,16 @@ public class MailSettingsValidator implements Serializable {
             } else if (!MailService.isValidEmailAddress(mailSettings.getFrom(), false)) {
                 validationContext.getMessageContext().addMessage(
                         new MessageBuilder().error().source("from")
-                                .code("serverSettings.mailServerSettings.errors.email").arg("from").build());
+                                .code("serverSettings.mailServerSettings.errors.email.from").build());
             }
-            if (mailSettings.getNotificationSeverity() != 0
-                    && (mailSettings.getTo() == null || mailSettings.getTo().isEmpty())) {
+            if (mailSettings.getTo() == null || mailSettings.getTo().isEmpty()) {
                 validationContext.getMessageContext().addMessage(
                         new MessageBuilder().error().source("to")
                                 .code("serverSettings.mailServerSettings.errors.administrator.mandatory").build());
-            } else if (mailSettings.getNotificationSeverity() != 0
-                    && !MailService.isValidEmailAddress(mailSettings.getTo(), true)) {
+            } else if (!MailService.isValidEmailAddress(mailSettings.getTo(), true)) {
                 validationContext.getMessageContext().addMessage(
                         new MessageBuilder().error().source("to")
-                                .code("serverSettings.mailServerSettings.errors.email").build());
+                                .code("serverSettings.mailServerSettings.errors.email.to").build());
             }
             if (mailSettings.getUri() == null || mailSettings.getUri().isEmpty()) {
                 validationContext.getMessageContext().addMessage(
