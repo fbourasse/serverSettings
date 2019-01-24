@@ -222,8 +222,7 @@
                     </div>
 
                     <div class="form-group form-group-sm">
-                        <button class="btn btn-sm btn-primary pull-right" type="submit" onclick="return
-                        validateForm(fieldsToValidate,displayErrors)"
+                        <button class="btn btn-sm btn-primary pull-right" type="submit" onclick="return validateForm(fieldsToValidate,displayErrors)"
                                 name="_eventId_submitMailSettings">
                             <fmt:message key="label.save"/>
                         </button>
