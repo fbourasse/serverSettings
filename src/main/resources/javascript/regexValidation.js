@@ -14,9 +14,12 @@ function validateRegex(element, displayErrors) {
 
 function validateForm(fields, displayErrors) {
     var valid = true;
-    $(fields).each(function (index, formInput) {
-            valid = validateRegex(formInput, displayErrors) && valid;
-        }
-    );
+    if ($('#serviceActivated').prop("checked")) {
+        $(fields).each(function (index, formInput) {
+                valid = validateRegex(formInput, displayErrors) && valid;
+            }
+        );
+    }
+
     return valid;
 }
