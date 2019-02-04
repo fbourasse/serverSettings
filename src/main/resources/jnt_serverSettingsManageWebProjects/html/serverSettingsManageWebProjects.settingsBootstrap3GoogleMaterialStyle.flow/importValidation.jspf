@@ -229,7 +229,7 @@
                     <fmt:param value="${checks.length}"/>
                 </fmt:message>
                 <div style="display: block">
-                    <div class="alert${checks.blocking ? ' alert-error' : ''}">
+                    <div class="alert${checks.blocking ? ' alert-danger' : 'alert-info'}">
                         <button type="button" class="close" data-dismiss="alert">&times;</button>
                             ${fn:escapeXml(errorSummary)}
                     </div>
