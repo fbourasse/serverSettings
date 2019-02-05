@@ -5,6 +5,7 @@
 <%@ taglib prefix="jcr" uri="http://www.jahia.org/tags/jcr" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="functions" uri="http://www.jahia.org/tags/functions" %>
+<%@ page import="org.jahia.settings.SettingsBean" %>
 <%--@elvariable id="currentNode" type="org.jahia.services.content.JCRNodeWrapper"--%>
 <%--@elvariable id="out" type="java.io.PrintWriter"--%>
 <%--@elvariable id="script" type="org.jahia.services.render.scripting.Script"--%>
@@ -15,7 +16,7 @@
 <%--@elvariable id="url" type="org.jahia.services.render.URLGenerator"--%>
 <%--@elvariable id="mailSettings" type="org.jahia.services.mail.MailSettings"--%>
 <%--@elvariable id="flowRequestContext" type="org.springframework.webflow.execution.RequestContext"--%>
-<template:addResources type="javascript" resources="jquery.min.js"/>
+<template:addResources type="javascript" resources="jquery.min.js,regexValidation.js"/>
 
 <script type="text/javascript">
     function testSettings() {
@@ -85,6 +86,31 @@
             });
         }
     }
+
+    var fieldsToValidate = ["to","from"];
+    var academyLink = "<%= SettingsBean.getInstance().getString("mailConfigurationAcademyLink","https://academy.jahia.com/documentation/knowledge-base/configuration-mail-server-in-jahia")%>";
+    window.onload = function() { document.getElementById('academyBtn').setAttribute('href',academyLink)};
+
+    function toggleVisibility() {
+        var uriEntry = $('#uriEntry');
+        var visibilityIcon = $('#visibilityIcon');
+        var isPassword = uriEntry.get(0).getAttribute("type") === "password";
+            uriEntry.get(0).setAttribute("type", isPassword ? "text" : "password");
+        isPassword ? visibilityIcon.html("visibility_off") : visibilityIcon.html("visibility");
+    }
+
+    function displayErrors(element) {
+        var formGroup = $("#group-"+element);
+        $.snackbar({
+            content: formGroup.get(0).getAttribute("data-error"),
+            style: "error"
+        });
+        formGroup.addClass('has-error');
+    }
+
+    $(document).ready(function(){
+        $('[data-toggle="tooltip"]').tooltip();
+    });
 </script>
 
 <div class="page-header">
@@ -108,7 +134,6 @@
         <fmt:message key="label.changeSaved"/>
     </div>
 </c:if>
-
 <div class="row">
     <div class="col-md-8 col-md-offset-2">
         <div class="panel panel-default">
@@ -130,27 +155,44 @@
                             <label class="control-label">
                                 <fmt:message key="serverSettings.mailServerSettings.address"/>
                             </label>
-                            <input class="form-control" type="text" name="uri" size="70" maxlength="250" value="<c:out value='${mailSettings.uri}'/>"/>
+                            <input class="form-control" type="password" id="uriEntry" name="uri" size="70" maxlength="250" value="<c:out
+                            value='${mailSettings.uri}'/>"/>
                             <span class="input-group-btn">
-                                <a class="btn btn-fab btn-fab-xs btn-info" href="http://jira.jahia.org/browse/JKB-20" target="_blank" style="cursor: pointer;">
+                                <span onclick="toggleVisibility()" class="btn btn-fab btn-fab-xs">
+                                    <i id="visibilityIcon" class="material-icons">visibility</i>
+                                </span>
+                            </span>
+                            <span class="input-group-btn">
+                                <a class="btn btn-fab btn-fab-xs btn-info" id="academyBtn" target="_blank"
+                                style="cursor: pointer;">
                                     <i class="material-icons">info</i>
                                 </a>
                             </span>
                         </div>
                     </div>
 
-                    <div class="form-group label-floating">
-                        <label class="control-label">
-                            <fmt:message key="serverSettings.mailServerSettings.administrator"/>
-                        </label>
-                        <input class="form-control" type="text" name="to" size="64" maxlength="250" value="<c:out value='${mailSettings.to}'/>">
+                    <div class="form-group label-floating" id="group-to" data-error="<fmt:message key="serverSettings.mailServerSettings.errors.emailList"/>">
+                        <div class="input-group">
+                            <label class="control-label">
+                                <fmt:message key="serverSettings.mailServerSettings.administrator"/>
+                            </label>
+                            <input class="form-control" type="text" name="to" size="64" maxlength="250" value="<c:out
+                            value='${mailSettings.to}'/>">
+                            <span class="input-group-btn">
+                                <a class="btn btn-fab btn-fab-xs btn-info" href="#" data-toggle="tooltip" data-placement="left"
+                                   title="<fmt:message key="serverSettings.mailServerSettings.administratorTooltip"/>" style="cursor:pointer;">
+                                <i class="material-icons">info</i>
+                                </a>
+                            </span>
+                        </div>
                     </div>
 
-                    <div class="form-group label-floating">
+                    <div class="form-group label-floating" id="group-from" data-error="<fmt:message key="serverSettings.mailServerSettings.errors.email"/>">
                         <label class="control-label">
                             <fmt:message key="serverSettings.mailServerSettings.from"/>
                         </label>
-                        <input class="form-control" type="text" name="from" size="64" maxlength="250" value="<c:out value='${mailSettings.from}'/>">
+                        <input class="form-control" type="text" name="from" size="64" maxlength="250" value="<c:out
+                        value='${mailSettings.from}'/>">
                     </div>
 
                     <div class="form-group label-floating">
@@ -180,7 +222,8 @@
                     </div>
 
                     <div class="form-group form-group-sm">
-                        <button class="btn btn-sm btn-primary pull-right" type="submit" name="_eventId_submitMailSettings">
+                        <button class="btn btn-sm btn-primary pull-right" type="submit" onclick="return validateForm(fieldsToValidate,displayErrors)"
+                                name="_eventId_submitMailSettings">
                             <fmt:message key="label.save"/>
                         </button>
                         <button class="btn btn-sm btn-default pull-right" type="button" onclick="testSettings(); return false;">

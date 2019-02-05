@@ -5,6 +5,7 @@
 <%@ taglib prefix="jcr" uri="http://www.jahia.org/tags/jcr" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="functions" uri="http://www.jahia.org/tags/functions" %>
+<%@ page import="org.jahia.settings.SettingsBean" %>
 <%--@elvariable id="currentNode" type="org.jahia.services.content.JCRNodeWrapper"--%>
 <%--@elvariable id="out" type="java.io.PrintWriter"--%>
 <%--@elvariable id="script" type="org.jahia.services.render.scripting.Script"--%>
@@ -15,7 +16,8 @@
 <%--@elvariable id="url" type="org.jahia.services.render.URLGenerator"--%>
 <%--@elvariable id="mailSettings" type="org.jahia.services.mail.MailSettings"--%>
 <%--@elvariable id="flowRequestContext" type="org.springframework.webflow.execution.RequestContext"--%>
-<template:addResources type="javascript" resources="jquery.min.js,jquery-ui.min.js,admin-bootstrap.js,bootstrapSwitch.js"/>
+<template:addResources type="javascript"
+                       resources="jquery.min.js,jquery-ui.min.js,admin-bootstrap.js,bootstrapSwitch.js,regexValidation.js"/>
 <template:addResources type="css" resources="jquery-ui.smoothness.css,jquery-ui.smoothness-jahia.css,bootstrapSwitch.css"/>
 
 <script type="text/javascript">
@@ -71,6 +73,29 @@
             });
         }
     }//-->
+
+    function displayErrors(element) {
+        var formGroup = $("#group-"+element);
+        alert(formGroup.get(0).getAttribute("data-error"));
+        formGroup.addClass('error');
+        validMail = false;
+    }
+
+    var fieldsToValidate = ["to","from"];
+    var academyLink = "<%= SettingsBean.getInstance().getString("mailConfigurationAcademyLink","https://academy.jahia.com/documentation/knowledge-base/configuration-mail-server-in-jahia")%>";
+    window.onload = function() { document.getElementById('academyBtn').setAttribute('href',academyLink)};
+
+    function toggleVisibility() {
+        var uriEntry = $('#uriEntry');
+        var visibilityIcon = $('#visibilityIcon');
+        var isPassword = uriEntry.get(0).getAttribute("type") === "password";
+        uriEntry.get(0).setAttribute("type", isPassword ? "text" : "password");
+        isPassword ? visibilityIcon.switchClass("icon-eye-open","icon-eye-close") :
+            visibilityIcon.switchClass("icon-eye-close","icon-eye-open");
+    }
+    $(document).ready(function(){
+        $('[data-toggle="tooltip"]').tooltip();
+    });
 </script>
 
 
@@ -111,22 +136,32 @@
         <div class="control-group">
             <label class="control-label"><fmt:message key="serverSettings.mailServerSettings.address"/> &nbsp;:</label>
             <div class="controls ">
-                <input type="text" name="uri" size="70" maxlength="250" value="<c:out value='${mailSettings.uri}'/>"/>&nbsp;
-                <a class="btn btn-info" href="http://jira.jahia.org/browse/JKB-20" target="_blank" style="cursor: pointer;"><i class="icon-info-sign icon-white"></i></a>
+                <input type="password" id="uriEntry" name="uri" size="70" maxlength="250"
+                       value="<c:out value='${mailSettings.uri}'/>"/>&nbsp;
+                <span onclick="toggleVisibility()" class="btn">
+                    <i id="visibilityIcon" class="icon-eye-open"></i>
+                </span>
+                <a class="btn btn-info" id="academyBtn" target="_blank"
+                   style="cursor: pointer;"><i class="icon-info-sign icon-white"></i></a>
             </div>
         </div>
 
-        <div class="control-group">
+        <div class="control-group" id="group-to" data-error="<fmt:message key="serverSettings.mailServerSettings.errors.emailList"/>">
             <label class="control-label"><fmt:message key="serverSettings.mailServerSettings.administrator"/>&nbsp;:</label>
             <div class="controls">
-                <input type="text" name="to" size="64" maxlength="250" value="<c:out value='${mailSettings.to}'/>">
+                <input type="text" name="to" size="64" maxlength="250" onchange="$('#group-to').removeClass('error')" value="<c:out
+                value='${mailSettings.to}'/>">
+                <a class="btn btn-info" target="_blank" data-toggle="tooltip" data-placement="right" title="<fmt:message key="serverSettings.mailServerSettings.administratorTooltip"/>">
+                    <i class="icon-info-sign icon-white"></i>
+                </a>
             </div>
         </div>
 
-        <div class="control-group">
+        <div class="control-group" id="group-from" data-error="<fmt:message key="serverSettings.mailServerSettings.errors.email"/>">
             <label class="control-label"><fmt:message key="serverSettings.mailServerSettings.from"/>&nbsp;:</label>
             <div class="controls">
-                <input type="text" name="from" size="64" maxlength="250" value="<c:out value='${mailSettings.from}'/>">
+                <input type="text" name="from" size="64" maxlength="250" onchange="$('#group-from').removeClass('error')" value="<c:out
+                    value='${mailSettings.from}'/>">
             </div>
         </div>
 
@@ -156,8 +191,12 @@
 
         <div class="control-group">
             <div class="controls">
-                <button class="btn btn-primary" type="submit" name="_eventId_submitMailSettings"><i class="icon-ok icon-white"></i>&nbsp;<fmt:message key="label.save"/></button>
-                <button class="btn" type="button" onclick="testSettings(); return false;"><i class="icon-thumbs-up"></i>&nbsp;<fmt:message key="serverSettings.mailServerSettings.testSettings"/></button>
+                <button class="btn btn-primary" type="submit" onclick="return validateForm(fieldsToValidate,displayErrors)"
+                        name="_eventId_submitMailSettings">
+                    <i class="icon-ok icon-white"></i>
+                    &nbsp;<fmt:message key="label.save"/></button>
+                <button class="btn" type="button" onclick="testSettings(); return false;">
+                    <i class="icon-thumbs-up"></i>&nbsp;<fmt:message key="serverSettings.mailServerSettings.testSettings"/></button>
             </div>
         </div>
     </form>
