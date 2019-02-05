@@ -28,7 +28,7 @@
         GNU General Public License for more details.
 
         You should have received a copy of the GNU General Public License
-        along with this program. If not, see <http://www.gnu.org/licenses/>.
+        along with this program. If not, see <http://www.gnu.org/licenses />.
 
 
         2/ JSEL - Commercial and Supported Versions of the program
@@ -54,7 +54,7 @@
         <relativePath />
     </parent>
     <artifactId>serverSettings</artifactId>
-    <version>8.0.7-backlog_9284-SNAPSHOT</version>
+    <version>8.0.7-SNAPSHOT</version>
     <packaging>bundle</packaging>
     <name>Jahia Server Settings</name>
     <description>Server settings</description>
