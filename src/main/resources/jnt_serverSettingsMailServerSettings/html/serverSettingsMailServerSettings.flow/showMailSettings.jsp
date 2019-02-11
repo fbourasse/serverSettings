@@ -192,11 +192,9 @@
         <div class="control-group">
             <div class="controls">
                 <button class="btn btn-primary" type="submit" onclick="return validateForm(fieldsToValidate,displayErrors)"
-                        name="_eventId_submitMailSettings">
-                    <i class="icon-ok icon-white"></i>
+                        name="_eventId_submitMailSettings"><i class="icon-ok icon-white"></i>
                     &nbsp;<fmt:message key="label.save"/></button>
-                <button class="btn" type="button" onclick="testSettings(); return false;">
-                    <i class="icon-thumbs-up"></i>&nbsp;<fmt:message key="serverSettings.mailServerSettings.testSettings"/></button>
+                <button class="btn" type="button" onclick="testSettings(); return false;"><i class="icon-thumbs-up"></i>&nbsp;<fmt:message key="serverSettings.mailServerSettings.testSettings"/></button>
             </div>
         </div>
     </form>
