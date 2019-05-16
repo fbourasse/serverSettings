@@ -510,7 +510,10 @@ public class WebprojectHandler implements Serializable {
                 }
                 prepareFileImports(zis, name, messageContext);
             } catch (FileNotFoundException e) {
-                logger.error("Cannot read import file :" + e.getMessage());
+                logger.error("Cannot read import file :" + e.getMessage(), e);
+                messageContext.addMessage(new MessageBuilder().error()
+                        .code("serverSettings.manageWebProjects.import.readError")
+                        .arg(f.getPath()).build());
             } finally {
                 IOUtils.closeQuietly(zis);
             }
